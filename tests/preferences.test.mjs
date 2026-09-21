@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 const source = readFileSync(new URL('../public/js/modules/preferences.js', import.meta.url), 'utf8')
   .replace("import translations from '../translations.js';", '')
   .replace('export function initPreferences', 'function initPreferences');
-const translations = JSON.parse(readFileSync(new URL('../Content/locales/es.json', import.meta.url), 'utf8'));
+const translations = JSON.parse(readFileSync(new URL('../content/locales/es.json', import.meta.url), 'utf8'));
 
 // Small DOM adapter to exercise preference state, completion and storage failures.
 function setup({ reduced = true, stored = {}, blocked = false } = {}) {

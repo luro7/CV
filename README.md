@@ -1,32 +1,32 @@
 # Lucas Rosat — Professional CV
 
-Personal portfolio and curriculum vitae focused on Data Engineering, SQL development, reporting, automation, and AI-assisted engineering.
+Source code for my professional CV and portfolio, focused on Data Engineering, SQL development, reporting, automation, and AI-assisted engineering.
 
 **Live site:** https://lucasrosat.pages.dev  
 **LinkedIn:** https://www.linkedin.com/in/rosat-lucas/
 
-## Overview
+## Project overview
 
-This repository contains the source code for a bilingual professional CV website built as a lightweight static application.
+This is a bilingual static website built with HTML, CSS, JavaScript, and a small Node.js build pipeline.
 
-The project is intentionally dependency-free at runtime and separates content, presentation, rendering, validation, and deployment assets so the site can be maintained without editing generated files directly.
+The project keeps content, rendering, presentation, client-side behavior, validation, and generated output clearly separated. It has no runtime framework and no production package dependencies.
 
-## Architecture
+## Project structure
 
 ```text
-Content/
-  site.json                 Primary CV content
+content/
+  site.json                 CV content
   locales/                  Translations
 
 src/
-  render.mjs                Static rendering logic
+  render.mjs                Static rendering
   templates/
     sections/               Page sections
     cards/                  Reusable content components
     shared/                 Shared layout components
 
 public/
-  assets/                   Images, credentials and icons
+  assets/                   Images, credential badges, and icons
   css/                      Styles
   js/                       Client-side behavior
   _headers                  Security headers
@@ -36,20 +36,16 @@ public/
 scripts/
   build.mjs                 Production build
   check.mjs                 Structural and content validation
-  serve.mjs                 Development server
+  serve.mjs                 Local development server
 
 tests/
   preferences.test.mjs      Language and theme behavior tests
 
-docs/
-  FUENTES.md                Content provenance
-  MANTENIMIENTO.md          Maintenance notes
-  PUBLICACION.md            Deployment process
-  SEO.md                    SEO and indexing notes
-  UX.md                     UX and accessibility decisions
+.github/workflows/
+  ci.yml                    Automated validation
 ```
 
-Generated output is written to `dist/` and is not committed to source control.
+Generated production files are written to `dist/` and are intentionally excluded from source control.
 
 ## Development
 
@@ -58,8 +54,6 @@ Requirements:
 - Node.js 20 or newer
 - No package installation required
 
-Available commands:
-
 ```bash
 npm run build
 npm run check
@@ -67,9 +61,9 @@ npm test
 npm start
 ```
 
-## Quality
+## Quality controls
 
-The project includes automated checks for:
+Automated validation covers:
 
 - unresolved template variables
 - duplicate HTML IDs
@@ -78,16 +72,12 @@ The project includes automated checks for:
 - unexpected external links
 - canonical URL and structured data
 - sitemap and robots configuration
-- Google Search Console verification
+- search-engine ownership verification file
 - language and theme preference behavior
 
-## Deployment
+GitHub Actions runs the validation and test suite on pushes and pull requests to `main`.
 
-The site is deployed as a static application on Cloudflare Pages.
-
-Production output is generated in `dist/`. Deployment-specific notes are maintained in `docs/PUBLICACION.md`.
-
-## Design principles
+## Engineering principles
 
 - semantic and accessible HTML
 - progressive enhancement
@@ -95,9 +85,14 @@ Production output is generated in `dist/`. Deployment-specific notes are maintai
 - light and dark themes
 - English and Spanish interface
 - minimal external dependencies
-- source-controlled content and templates
-- generated production output separated from source files
+- content separated from presentation
+- generated output separated from source
+- automated checks for critical site behavior
 
-## License
+## Deployment
 
-This repository contains personal CV content and assets. Source code is published for portfolio purposes unless otherwise stated.
+The production site is deployed as a static application on Cloudflare Pages from the generated `dist/` output.
+
+## Repository scope
+
+This repository contains only the source and public assets required to build the portfolio. Personal source documents, local-machine configuration, deployment account identifiers, and private contact data are intentionally excluded.
