@@ -1,51 +1,103 @@
-# Lucas Rosat — CV profesional
+# Lucas Rosat — Professional CV
 
-Landing CV sin foto, en inglés y español, con LinkedIn como único enlace de contacto. Contenido tomado del CV y contrastado con LinkedIn, sin texto promocional. HTML y CSS estáticos, con JavaScript modular para sección activa, idioma y tema; el contenido y los desplegables funcionan también sin JavaScript.
+Personal portfolio and curriculum vitae focused on Data Engineering, SQL development, reporting, automation, and AI-assisted engineering.
 
-## Abrir y generar
+**Live site:** https://lucasrosat.pages.dev  
+**LinkedIn:** https://www.linkedin.com/in/rosat-lucas/
 
-- `exec/Abrir-Web.cmd`: genera la página y abre http://localhost:5081/. Mantener la ventana abierta mientras se usa la vista local.
-- `exec/Generar-Web.cmd`: genera `dist/`, la carpeta lista para publicar.
-- Requiere Node.js 20 o superior solo para generar y previsualizar. Los accesos también detectan el Node incluido con Codex en esta PC.
+## Overview
 
-## Organización
+This repository contains the source code for a bilingual professional CV website built as a lightweight static application.
 
-Se sigue la estructura del proyecto vecino `LandingViejo`:
+The project is intentionally dependency-free at runtime and separates content, presentation, rendering, validation, and deployment assets so the site can be maintained without editing generated files directly.
+
+## Architecture
 
 ```text
-Content/site.json               Contenido editable del CV
-src/render.mjs                 Renderizado y escape seguro de contenido
-src/templates/layout.html      Documento HTML y metadatos
-src/templates/sections/        Hero, perfil, experiencia, formación, contacto
-src/templates/cards/           Experiencia, especialidades y formación
-src/templates/shared/          Cabecera y pie
-public/css/main.css            Estilos base
-public/css/experience.css      Navegación, temas, controles y transiciones
-Content/locales/es.json        Traducciones al español
-public/assets/favicon.svg      Marca tipográfica LR
-public/js/modules/             Navegación progresiva por secciones
-public/_headers                Cabeceras de seguridad de Cloudflare Pages
-public/robots.txt              Indexación
-scripts/                      Generación, servidor y comprobaciones
-exec/                         Accesos para Windows
-docs/                         Mantenimiento, fuentes y publicación
-dist/                         Archivos generados para subir
-Lucas_Rosat_CV_2026_Tools_Compact_v2.pdf  Referencia original, no publicada
+Content/
+  site.json                 Primary CV content
+  locales/                  Translations
+
+src/
+  render.mjs                Static rendering logic
+  templates/
+    sections/               Page sections
+    cards/                  Reusable content components
+    shared/                 Shared layout components
+
+public/
+  assets/                   Images, credentials and icons
+  css/                      Styles
+  js/                       Client-side behavior
+  _headers                  Security headers
+  robots.txt                Search engine directives
+  sitemap.xml               Sitemap
+
+scripts/
+  build.mjs                 Production build
+  check.mjs                 Structural and content validation
+  serve.mjs                 Development server
+
+tests/
+  preferences.test.mjs      Language and theme behavior tests
+
+docs/
+  FUENTES.md                Content provenance
+  MANTENIMIENTO.md          Maintenance notes
+  PUBLICACION.md            Deployment process
+  SEO.md                    SEO and indexing notes
+  UX.md                     UX and accessibility decisions
 ```
 
-No editar `dist/`: los cambios se realizan en contenido, plantillas o estilos y luego se regenera.
+Generated output is written to `dist/` and is not committed to source control.
 
-## Comprobaciones
+## Development
 
-```powershell
-node scripts/build.mjs
-node scripts/check.mjs
-node --test tests/preferences.test.mjs
-node scripts/serve.mjs
+Requirements:
+
+- Node.js 20 or newer
+- No package installation required
+
+Available commands:
+
+```bash
+npm run build
+npm run check
+npm test
+npm start
 ```
 
-No hace falta `npm install`. Puerto local 5081 para poder usar simultáneamente la landing de Marcos en 5080.
+## Quality
 
-Ver [mantenimiento](docs/MANTENIMIENTO.md), [fuentes](docs/FUENTES.md) y [publicación](docs/PUBLICACION.md).
+The project includes automated checks for:
 
-Ver [criterios de interfaz](docs/UX.md) para navegación, idioma, tema y fuentes.
+- unresolved template variables
+- duplicate HTML IDs
+- broken internal anchors
+- missing local assets
+- unexpected external links
+- canonical URL and structured data
+- sitemap and robots configuration
+- Google Search Console verification
+- language and theme preference behavior
+
+## Deployment
+
+The site is deployed as a static application on Cloudflare Pages.
+
+Production output is generated in `dist/`. Deployment-specific notes are maintained in `docs/PUBLICACION.md`.
+
+## Design principles
+
+- semantic and accessible HTML
+- progressive enhancement
+- responsive layout
+- light and dark themes
+- English and Spanish interface
+- minimal external dependencies
+- source-controlled content and templates
+- generated production output separated from source files
+
+## License
+
+This repository contains personal CV content and assets. Source code is published for portfolio purposes unless otherwise stated.
