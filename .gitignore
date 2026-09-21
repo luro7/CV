@@ -4,5 +4,12 @@ node_modules/
 .env
 .env.*
 !.env.example
-*.zip
+
+# Local and generated artifacts
 tmp/
+*.zip
+*.pdf
+
+# Keep private/local working material out of the public repository
+private/
+.local/
