@@ -1,0 +1,12 @@
+{
+  "provider": "Cloudflare Pages",
+  "project": "lucasrosat",
+  "project_id": "71da89e2-5c06-45c5-bc1a-78d681204529",
+  "production_branch": "main",
+  "url": "https://lucasrosat.pages.dev",
+  "status": "deployed",
+  "output_directory": "dist",
+  "deployment_method": "direct-upload",
+  "verified_http_status": 200,
+  "verified_at": "2026-09-12T14:45:52.0134466-03:00"
+}

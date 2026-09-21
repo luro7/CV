@@ -1,0 +1,26 @@
+Add-Type -AssemblyName System.Drawing
+$bitmap = [Drawing.Bitmap]::new(1200,630)
+$graphics = [Drawing.Graphics]::FromImage($bitmap)
+$graphics.SmoothingMode = 'AntiAlias'
+$graphics.TextRenderingHint = 'AntiAliasGridFit'
+$graphics.Clear([Drawing.ColorTranslator]::FromHtml('#f6f7f2'))
+$green = [Drawing.SolidBrush]::new([Drawing.ColorTranslator]::FromHtml('#153b31'))
+$muted = [Drawing.SolidBrush]::new([Drawing.ColorTranslator]::FromHtml('#576b60'))
+$lime = [Drawing.SolidBrush]::new([Drawing.ColorTranslator]::FromHtml('#d0f895'))
+$graphics.FillRectangle($green,0,0,28,630)
+$graphics.FillEllipse($green,76,64,82,82)
+$logoFont = [Drawing.Font]::new('Segoe UI',26,[Drawing.FontStyle]::Bold)
+$nameFont = [Drawing.Font]::new('Segoe UI',60,[Drawing.FontStyle]::Bold)
+$roleFont = [Drawing.Font]::new('Segoe UI',27)
+$smallFont = [Drawing.Font]::new('Segoe UI',18)
+$graphics.DrawString('LR',$logoFont,$lime,89,82)
+$graphics.DrawString('CURRICULUM VITAE',$smallFont,$muted,184,91)
+$graphics.DrawString('Lucas Rosat',$nameFont,$green,70,214)
+$graphics.DrawString('Data Engineering & AI Automation',$roleFont,$green,76,321)
+$graphics.FillRectangle($green,80,420,1036,2)
+$graphics.DrawString('SQL  /  DATA  /  AI  /  AUTOMATION',$smallFont,$muted,76,457)
+$graphics.DrawString('lucasrosat.pages.dev',$smallFont,$green,867,544)
+$bitmap.Save((Join-Path $PSScriptRoot '../public/linkedin-preview.png'),[Drawing.Imaging.ImageFormat]::Png)
+$graphics.Dispose()
+$bitmap.Dispose()
+foreach($item in @($green,$muted,$lime,$logoFont,$nameFont,$roleFont,$smallFont)) { $item.Dispose() }

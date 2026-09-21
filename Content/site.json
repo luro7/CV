@@ -1,0 +1,182 @@
+{
+  "name": "Lucas Rosat",
+  "linkedin": "https://www.linkedin.com/in/rosat-lucas/",
+  "location": "Bahía Blanca, Buenos Aires, Argentina",
+  "title": "Data Engineering Analyst | AI Automation Engineer | SQL Developer",
+  "description": "Lucas Rosat, Data Engineering Analyst, AI Automation Engineer and SQL Developer. Experience with SQL Server, Azure Data Factory, SSIS, Power BI and Power Automate.",
+  "intro": "I am a Data Engineering Analyst and AI Automation Engineer with a strong background in SQL development, data integration, reporting, process automation, and enterprise solutions.",
+  "expertise": [
+    {
+      "number": "01",
+      "title": "Data engineering",
+      "tools": [
+        "SQL Development",
+        "SQL Server",
+        "T-SQL",
+        "ETL",
+        "Data Integration",
+        "Query Optimization",
+        "Database Systems",
+        "SSIS",
+        "Azure Data Factory"
+      ]
+    },
+    {
+      "number": "02",
+      "title": "AI & automation",
+      "tools": [
+        "Artificial Intelligence",
+        "Generative AI",
+        "AI Agents",
+        "Microsoft Copilot",
+        "ChatGPT",
+        "OpenAI Codex",
+        "AI Automation",
+        "Power Automate",
+        "Process Automation and Optimization",
+        "PowerShell"
+      ]
+    },
+    {
+      "number": "03",
+      "title": "Reporting & operations",
+      "tools": [
+        "Data Analysis",
+        "Power BI",
+        "Reporting",
+        "SSRS",
+        "BMC Control-M",
+        "Azure DevOps",
+        "Technical Analysis",
+        "Troubleshooting",
+        "Enterprise Data and Business Processes"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "company": "Accenture",
+      "role": "Data Engineering Analyst",
+      "date": "Dec 2022 — Present",
+      "current": true,
+      "points": [
+        "Design and maintain complex data-processing and reporting logic, including stored procedures, validations, ETL workflows and business rules.",
+        "Design AI agents that support technical analysis, troubleshooting, requirements understanding, process documentation and engineering workflows.",
+        "Apply AI-assisted development to reduce repetitive work, accelerate debugging and code analysis, and support implementation workflows.",
+        "Build and support automated data integrations and scheduled processes across enterprise systems.",
+        "Build and maintain reporting solutions focused on data accuracy, usability and alignment with business requirements.",
+        "Collaborate with functional, development and testing teams to define technical solutions, establish acceptance criteria, validate end-to-end behavior and resolve complex data issues."
+      ],
+      "tools": [
+        "Microsoft Copilot Enterprise",
+        "OpenAI Codex",
+        "Power Automate",
+        "SQL Server",
+        "T-SQL",
+        "SSIS",
+        "Azure Data Factory",
+        "Power BI",
+        "SSRS",
+        "PowerShell",
+        "BMC Control-M",
+        "Azure DevOps"
+      ]
+    },
+    {
+      "company": "Accenture",
+      "role": "SQL Developer",
+      "date": "May 2021 — Dec 2022",
+      "current": false,
+      "points": [
+        "Developed and optimized database queries and stored procedures, supported ETL workflows and maintained enterprise reporting solutions.",
+        "Implemented and supported scheduling, deployment and automation workflows for recurring data processes."
+      ],
+      "tools": [
+        "SQL Server",
+        "T-SQL",
+        "SSIS",
+        "SSRS",
+        "BMC Control-M",
+        "Azure DevOps",
+        "Visual Studio"
+      ]
+    },
+    {
+      "company": "Grupo Aoniken",
+      "role": "SQL Developer & Technical Support",
+      "date": "Feb 2020 — May 2021",
+      "current": false,
+      "points": [
+        "Developed database solutions and provided technical support for business systems, troubleshooting data and application issues and supporting end users.",
+        "Investigated incidents through relational data analysis and supported day-to-day operational processes."
+      ],
+      "tools": [
+        "SQL",
+        "Relational Databases"
+      ]
+    },
+    {
+      "company": "Iddea Devs",
+      "role": "Web Developer",
+      "date": "Jan 2019 — Dec 2019",
+      "current": false,
+      "points": [
+        "Developed responsive and dynamic web applications based on client requirements."
+      ],
+      "tools": [
+        "HTML",
+        "CSS",
+        "PHP",
+        "SQL"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "title": "Advanced Technician in Systems Analysis",
+      "institution": "Juan XXIII Institute · Bahía Blanca",
+      "detail": "4 years of study"
+    },
+    {
+      "title": "Systems Engineering",
+      "institution": "Universidad Nacional del Sur",
+      "detail": "One year completed"
+    },
+    {
+      "title": "Java Programming",
+      "institution": "Quantumm Institute",
+      "detail": "2017"
+    }
+  ],
+  "certifications": [
+    {
+      "title": "Reinvention with Agentic AI",
+      "institution": "Accenture",
+      "date": "Feb 2026",
+      "image": "/assets/credentials/accenture-agentic-ai.png",
+      "credentialUrl": "https://www.credly.com/badges/a42c4332-35ac-47e7-b437-99037b692bf8/linked_in_profile"
+    },
+    {
+      "title": "Generative AI APIs for Practical Applications: An Introduction",
+      "institution": "Skillsoft",
+      "date": "Apr 2024",
+      "image": "/assets/credentials/skillsoft-generative-ai.png",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/a18db90b-3b9f-4e06-961c-92f686679d34"
+    },
+    {
+      "title": "Artificial Intelligence and Machine Learning",
+      "institution": "Skillsoft",
+      "date": "Mar 2024",
+      "image": "/assets/credentials/skillsoft-ai-machine-learning.png",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/c736b38b-c866-49f1-82ed-57cdf5887686"
+    }
+  ],
+  "about": [
+    "I am a Data Engineering Analyst and AI Automation Engineer with a strong background in SQL development, data integration, reporting, process automation, and enterprise solutions.",
+    "Throughout my experience, I have worked with SQL Server, ETL processes, data analysis, reporting solutions, Power BI, Power Automate, Azure DevOps, BMC Control-M, and Microsoft development technologies, designing and supporting solutions that improve data processing, reporting, and business operations.",
+    "In addition to my Data Engineering background, I actively work with Generative AI and AI-driven automation. I have designed and developed multiple AI agents using Microsoft Copilot to support technical analysis, SQL development, troubleshooting, requirements understanding, process documentation, and day-to-day engineering activities.",
+    "I also use AI and automation technologies to improve development workflows, reduce repetitive work, accelerate problem solving, and create more efficient ways of interacting with technical and business processes.",
+    "My background in Systems Analysis, programming, algorithms, databases, and software development allows me to quickly adapt to new technologies and programming languages and apply them to real-world problems.",
+    "I am especially interested in opportunities where Data Engineering, automation, and Artificial Intelligence come together to build practical solutions that improve business processes and engineering productivity."
+  ]
+}

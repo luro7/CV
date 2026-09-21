@@ -1,0 +1,9 @@
+{
+  "name": "lucas-rosat-cv",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CV profesional de Lucas Rosat. Sitio estático sin dependencias externas.",
+  "engines": {"node": ">=20"},
+  "scripts": {"build": "node scripts/build.mjs", "start": "node scripts/serve.mjs", "check": "node scripts/check.mjs"}
+}
