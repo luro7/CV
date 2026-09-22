@@ -26,6 +26,7 @@ export function build() {
   writeFileSync(resolve(output, 'js/translations.js'), 'export default ' + JSON.stringify(translations) + ';\n');
   writeFileSync(resolve(output, 'js/site-data.js'), 'export default ' + JSON.stringify({
     expertise: site.expertise,
+    skillTypes: site.skillTypes,
     experience: site.experience,
     engineering: site.engineering,
     linkedin: site.linkedin

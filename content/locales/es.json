@@ -93,9 +93,6 @@
   "Automate": "Automatizar",
   "AI": "IA",
   "Report": "Reportar",
-  "Interactive technology map": "Mapa interactivo de tecnologías",
-  "Explore the technology map": "Explorá el mapa de tecnologías",
-  "Hover, focus or select a technology to trace where it appears in my experience.": "Pasá el mouse, enfocá o seleccioná una tecnología para ver dónde aparece en mi experiencia.",
   "Engineering mode": "Modo ingeniería",
   "Open command palette": "Abrir paleta de comandos",
   "Search the CV": "Buscar en el CV",
@@ -121,5 +118,14 @@
   "Toggle engineering mode": "Alternar modo ingeniería",
   "Open LinkedIn": "Abrir LinkedIn",
   "Data flow": "Flujo de datos",
-  "Select a technology to trace experience.": "Seleccioná una tecnología para rastrearla en mi experiencia."
+  "Skills, technologies": "Habilidades, tecnologías",
+  "Interactive expertise map": "Mapa interactivo de experiencia técnica",
+  "Explore the expertise map": "Explorá el mapa de experiencia técnica",
+  "Hover, focus or select a skill or technology to trace where it appears in my experience.": "Pasá el mouse, enfocá o seleccioná una habilidad o tecnología para ver dónde aparece en mi experiencia.",
+  "Select a skill or technology to trace experience.": "Seleccioná una habilidad o tecnología para rastrearla en mi experiencia.",
+  "Type a skill, technology or action": "Escribí una habilidad, tecnología o acción",
+  "Skill": "Habilidad",
+  "Language": "Lenguaje",
+  "Process": "Proceso",
+  "Domain": "Área"
 }

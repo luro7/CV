@@ -205,5 +205,35 @@
       "label": "Security",
       "value": "Strict CSP + security headers"
     }
-  ]
+  ],
+  "skillTypes": {
+    "SQL Development": "Skill",
+    "SQL Server": "Technology",
+    "T-SQL": "Language",
+    "ETL": "Process",
+    "Data Integration": "Skill",
+    "Query Optimization": "Skill",
+    "Database Systems": "Domain",
+    "SSIS": "Technology",
+    "Azure Data Factory": "Technology",
+    "Artificial Intelligence": "Domain",
+    "Generative AI": "Domain",
+    "AI Agents": "Skill",
+    "Microsoft Copilot": "Technology",
+    "ChatGPT": "Technology",
+    "OpenAI Codex": "Technology",
+    "AI Automation": "Skill",
+    "Power Automate": "Technology",
+    "Process Automation and Optimization": "Process",
+    "PowerShell": "Language",
+    "Data Analysis": "Skill",
+    "Power BI": "Technology",
+    "Reporting": "Skill",
+    "SSRS": "Technology",
+    "BMC Control-M": "Technology",
+    "Azure DevOps": "Technology",
+    "Technical Analysis": "Skill",
+    "Troubleshooting": "Skill",
+    "Enterprise Data and Business Processes": "Domain"
+  }
 }
