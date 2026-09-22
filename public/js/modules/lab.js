@@ -1,5 +1,6 @@
 import siteData from '../site-data.js';
 import translations from '../translations.js';
+import { progressToStage, rankCommandItems, skillMatchesExperience } from './interaction-model.js';
 
 const root = document.documentElement;
 const read = key => { try { return localStorage.getItem(key); } catch { return null; } };
@@ -37,6 +38,7 @@ function createSkillMap(container) {
   const describeMatches = (skill, matches) => {
     if (!status) return;
     const category = tr(siteData.skillTypes?.[skill] || 'Skill');
+
     if (!matches.length) {
       status.textContent = skill + ' · ' + category;
       return;
@@ -52,8 +54,8 @@ function createSkillMap(container) {
 
     const count = matches.length;
     const prefix = root.lang === 'es'
-      ? skill + ' · ' + count + (count === 1 ? ' rol relacionado: ' : ' roles relacionados: ')
-      : skill + ' · ' + count + (count === 1 ? ' related role: ' : ' related roles: ');
+      ? skill + ' · ' + category + ' · ' + count + (count === 1 ? ' rol relacionado: ' : ' roles relacionados: ')
+      : skill + ' · ' + category + ' · ' + count + (count === 1 ? ' related role: ' : ' related roles: ');
 
     status.textContent = prefix + roles.join(' · ');
   };
@@ -62,12 +64,9 @@ function createSkillMap(container) {
     clearVisual();
     activeSkill = skill;
     root.dataset.activeSkill = skill;
-    const normalized = skill.toLowerCase();
-    const linkedRoleIds = new Set(siteData.skillRoleIds?.[skill] || []);
-    const matches = experienceItems.filter(item => {
-      const tools = (item.dataset.tools || '').toLowerCase().split('|');
-      return tools.includes(normalized) || linkedRoleIds.has(item.dataset.experienceId);
-    });
+    const matches = experienceItems.filter(item =>
+      skillMatchesExperience(skill, item.dataset.tools, item.dataset.experienceId, siteData.skillRoleIds)
+    );
 
     experienceItems.forEach(item => {
       const matched = matches.includes(item);
@@ -87,11 +86,9 @@ function createSkillMap(container) {
   for (const group of siteData.expertise) {
     const cluster = document.createElement('section');
     cluster.className = 'skill-cluster';
-    cluster.dataset.group = group.title;
 
     const hub = document.createElement('div');
     hub.className = 'skill-hub';
-    hub.dataset.groupLabel = group.title;
     hub.textContent = tr(group.title);
     cluster.append(hub);
 
@@ -114,12 +111,11 @@ function createSkillMap(container) {
         if (!pinnedSkill) highlight(skill);
       });
       button.addEventListener('click', () => {
-        if (pinnedSkill === skill) {
-          clear();
-          return;
+        if (pinnedSkill === skill) clear();
+        else {
+          pinnedSkill = skill;
+          highlight(skill);
         }
-        pinnedSkill = skill;
-        highlight(skill);
       });
 
       nodes.append(button);
@@ -152,26 +148,29 @@ function createSkillMap(container) {
     if (event.key === 'Escape' && activeSkill) clear();
   });
 
-  const refreshLabels = () => {
-    container.querySelectorAll('[data-group-label]').forEach(node => {
-      node.textContent = tr(node.dataset.groupLabel);
-    });
-    container.querySelectorAll('[data-skill]').forEach(node => {
-      node.textContent = tr(node.dataset.skill);
-    });
-    if (activeSkill) highlight(activeSkill);
-    else defaultStatus();
-  };
-
   defaultStatus();
-  return { highlight, clear, refreshLabels, skills: [...allSkills] };
+  return { highlight, clear, skills: [...allSkills] };
 }
 
 function initEngineering() {
   const toggle = document.querySelector('.engineering-toggle');
   const panel = document.querySelector('.engineering-panel');
   const close = document.querySelector('[data-engineering-close]');
+  const current = document.querySelector('[data-engineering-current]');
+  const source = document.querySelector('[data-engineering-source]');
+  const render = document.querySelector('[data-engineering-render]');
+  const interaction = document.querySelector('[data-engineering-interaction]');
+
   if (!toggle || !panel) return () => {};
+
+  const applySection = id => {
+    const info = siteData.engineeringSections?.[id] || siteData.engineeringSections?.home;
+    if (!info) return;
+    if (current) current.textContent = tr(info.label);
+    if (source) source.textContent = info.source;
+    if (render) render.textContent = tr(info.render);
+    if (interaction) interaction.textContent = tr(info.interaction);
+  };
 
   const set = enabled => {
     root.classList.toggle('engineering-mode', enabled);
@@ -181,8 +180,21 @@ function initEngineering() {
   };
 
   toggle.addEventListener('click', () => set(!root.classList.contains('engineering-mode')));
-  if (close) close.addEventListener('click', () => set(false));
+  close?.addEventListener('click', () => set(false));
   if (read('cv-engineering') === '1') set(true);
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries
+        .filter(entry => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible?.target?.id) applySection(visible.target.id);
+    }, { rootMargin: '-20% 0px -55% 0px', threshold: [0.05, 0.2, 0.45] });
+
+    document.querySelectorAll('main > section[id]').forEach(section => observer.observe(section));
+  } else {
+    applySection('home');
+  }
 
   return () => set(!root.classList.contains('engineering-mode'));
 }
@@ -197,11 +209,9 @@ function initCommandPalette(skillApi, toggleEngineering) {
   const go = selector => {
     dialog.close();
     const target = document.querySelector(selector);
-    if (target) {
-      target.scrollIntoView({
-        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
-      });
-    }
+    target?.scrollIntoView({
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+    });
   };
 
   const actions = [
@@ -211,6 +221,8 @@ function initCommandPalette(skillApi, toggleEngineering) {
     { label: 'Go to education', group: 'Navigate', keywords: 'education certifications languages', run: () => go('#education') },
     { label: 'Toggle dark mode', group: 'System', keywords: 'theme light dark', run: () => { dialog.close(); document.querySelector('.theme-toggle')?.click(); } },
     { label: 'Toggle engineering mode', group: 'System', keywords: 'engineering technical system code', run: () => { dialog.close(); toggleEngineering(); } },
+    { label: 'Switch language', group: 'System', keywords: 'english spanish español idioma language', run: () => { dialog.close(); document.querySelector('.language-toggle')?.click(); } },
+    { label: 'Save PDF', group: 'System', keywords: 'pdf print download cv resume', run: () => { dialog.close(); print(); } },
     { label: 'Open LinkedIn', group: 'System', keywords: 'linkedin contact profile', run: () => { dialog.close(); open(siteData.linkedin, '_blank', 'noopener,noreferrer'); } }
   ];
 
@@ -227,33 +239,10 @@ function initCommandPalette(skillApi, toggleEngineering) {
 
   let visible = [];
 
-  const render = () => {
-    const query = input.value.trim().toLowerCase();
-    const source = [...actions, ...skillEntries];
-
-    const score = item => {
-      if (!query) return item.group === 'Navigate' ? 30 : item.group === 'System' ? 20 : 10;
-      const label = item.label.toLowerCase();
-      const translated = tr(item.label).toLowerCase();
-      const category = tr(item.group).toLowerCase();
-      const haystack = [label, translated, item.group.toLowerCase(), category, item.keywords.toLowerCase()].join(' ');
-      const parts = query.split(/\s+/).filter(Boolean);
-      if (!parts.every(part => haystack.includes(part))) return -1;
-      if (label === query || translated === query) return 100;
-      if (label.startsWith(query) || translated.startsWith(query)) return 80;
-      if (label.includes(query) || translated.includes(query)) return 60;
-      if (category.includes(query)) return 40;
-      return 20;
-    };
-
-    visible = source
-      .map((item, index) => ({ item, index, score: score(item) }))
-      .filter(entry => entry.score >= 0)
-      .sort((a, b) => b.score - a.score || a.index - b.index)
-      .slice(0, 9)
-      .map(entry => entry.item);
-
+  const renderResults = () => {
+    visible = rankCommandItems([...actions, ...skillEntries], input.value, tr).slice(0, 9);
     results.replaceChildren();
+
     visible.forEach(item => {
       const button = document.createElement('button');
       button.type = 'button';
@@ -276,15 +265,16 @@ function initCommandPalette(skillApi, toggleEngineering) {
     input.value = '';
     input.placeholder = tr('Type a skill, technology or action');
     dialog.querySelector('label').textContent = tr('Search the CV');
-    render();
+    renderResults();
     requestAnimationFrame(() => input.focus());
   };
 
   triggers.forEach(trigger => trigger.addEventListener('click', openPalette));
-  input.addEventListener('input', render);
+  input.addEventListener('input', renderResults);
   dialog.addEventListener('click', event => {
     if (event.target === dialog) dialog.close();
   });
+
   dialog.addEventListener('keydown', event => {
     if (event.key === 'Enter' && document.activeElement === input && visible[0]) {
       event.preventDefault();
@@ -295,6 +285,7 @@ function initCommandPalette(skillApi, toggleEngineering) {
       results.querySelector('button')?.focus();
     }
   });
+
   results.addEventListener('keydown', event => {
     const buttons = [...results.querySelectorAll('button')];
     const index = buttons.indexOf(document.activeElement);
@@ -316,8 +307,6 @@ function initCommandPalette(skillApi, toggleEngineering) {
       else openPalette();
     }
   });
-
-  addEventListener('cv:language', render);
 }
 
 function initScrollSystems() {
@@ -332,10 +321,9 @@ function initScrollSystems() {
 
   const update = () => {
     frame = 0;
-
     const pageRange = document.documentElement.scrollHeight - innerHeight;
     const pageProgress = Math.max(0, Math.min(1, pageRange > 0 ? scrollY / pageRange : 0));
-    const pageStage = Math.min(4, Math.floor(pageProgress * 5));
+    const pageStage = progressToStage(pageProgress);
 
     if (dockFill) dockFill.style.transform = 'scaleX(' + pageProgress + ')';
     dockStages.forEach((node, index) => {
@@ -348,7 +336,7 @@ function initScrollSystems() {
       const rect = hero.getBoundingClientRect();
       const heroRange = Math.max(1, rect.height - Math.min(innerHeight * 0.2, 160));
       const heroProgress = Math.max(0, Math.min(1, -rect.top / heroRange));
-      const heroStage = Math.min(4, Math.floor(heroProgress * 5));
+      const heroStage = progressToStage(heroProgress);
 
       hero.style.setProperty('--hero-pipeline-progress', heroProgress);
       heroStages.forEach((node, index) => {
@@ -356,10 +344,7 @@ function initScrollSystems() {
         node.classList.toggle('is-current', index === heroStage);
       });
 
-      if (dock) {
-        const visible = rect.bottom < 110 && pageProgress < 0.985;
-        dock.classList.toggle('is-visible', visible);
-      }
+      if (dock) dock.classList.toggle('is-visible', rect.bottom < 110 && pageProgress < 0.985);
     }
 
     if (timeline) {
@@ -378,22 +363,32 @@ function initScrollSystems() {
   addEventListener('scroll', schedule, { passive: true });
   addEventListener('resize', schedule);
   update();
+}
 
-  return update;
+function initPrint() {
+  const details = document.querySelector('.profile-details');
+  let restoreClosed = false;
+
+  addEventListener('beforeprint', () => {
+    restoreClosed = Boolean(details && !details.open);
+    if (details) details.open = true;
+  });
+
+  addEventListener('afterprint', () => {
+    if (details && restoreClosed) details.open = false;
+    restoreClosed = false;
+  });
+
+  document.querySelectorAll('[data-print-cv]').forEach(button => {
+    button.addEventListener('click', () => print());
+  });
 }
 
 export function initLab() {
   const container = document.querySelector('[data-skill-map]');
-  const skillApi = container
-    ? createSkillMap(container)
-    : { skills: [], highlight() {}, clear() {}, refreshLabels() {} };
-
+  const skillApi = container ? createSkillMap(container) : { skills: [], highlight() {}, clear() {} };
   const toggleEngineering = initEngineering();
   initCommandPalette(skillApi, toggleEngineering);
-  const refreshScrollSystems = initScrollSystems();
-
-  addEventListener('cv:language', () => {
-    skillApi.refreshLabels();
-    refreshScrollSystems();
-  });
+  initScrollSystems();
+  initPrint();
 }

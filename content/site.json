@@ -300,5 +300,31 @@
     "Enterprise Data and Business Processes": [
       "accenture-data-engineering"
     ]
+  },
+  "engineeringSections": {
+    "home": {
+      "label": "Profile",
+      "source": "content/site.json -> hero.html",
+      "render": "Static template",
+      "interaction": "Pointer motion + command palette"
+    },
+    "expertise": {
+      "label": "Expertise map",
+      "source": "site.json -> skill taxonomy",
+      "render": "Static section + generated nodes",
+      "interaction": "Hover, focus + role tracing"
+    },
+    "experience": {
+      "label": "Experience timeline",
+      "source": "site.json -> experience cards",
+      "render": "Static template",
+      "interaction": "Scroll trace + skill highlighting"
+    },
+    "education": {
+      "label": "Education & certifications",
+      "source": "site.json -> credentials",
+      "render": "Static template",
+      "interaction": "Credential verification links"
+    }
   }
 }
