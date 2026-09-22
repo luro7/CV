@@ -20,6 +20,8 @@ assert(html.includes('id="command-palette"'), 'Command palette is missing');
 assert(html.includes('class="engineering-toggle'), 'Engineering mode toggle is missing');
 assert(html.includes('data-skill-map'), 'Interactive skill map is missing');
 assert(html.includes('class="hero-pipeline"'), 'Data pipeline is missing');
+assert(html.includes('class="pipeline-dock"'), 'Persistent scroll pipeline is missing');
+assert(html.includes('data-skill-status'), 'Skill trace status is missing');
 
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 assert.equal(ids.length, new Set(ids).size, 'Duplicate IDs found');

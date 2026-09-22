@@ -5,38 +5,92 @@ const root = document.documentElement;
 const read = key => { try { return localStorage.getItem(key); } catch { return null; } };
 const store = (key, value) => { try { localStorage.setItem(key, value); } catch {} };
 const tr = text => root.lang === 'es' ? (translations[text] || text) : text;
+const stageLabels = ['Data', 'Transform', 'Automate', 'AI', 'Report'];
 
 function createSkillMap(container) {
   const experienceItems = [...document.querySelectorAll('.experience-item')];
+  const status = document.querySelector('[data-skill-status]');
   const allSkills = new Set();
+  let pinnedSkill = null;
+  let activeSkill = null;
+
+  const defaultStatus = () => {
+    if (status) status.textContent = tr('Select a technology to trace experience.');
+  };
+
+  const clearVisual = () => {
+    delete root.dataset.activeSkill;
+    activeSkill = null;
+    experienceItems.forEach(item => item.classList.remove('skill-match', 'skill-muted'));
+    container.querySelectorAll('[data-skill]').forEach(node => {
+      node.classList.remove('is-active');
+      node.setAttribute('aria-pressed', 'false');
+    });
+  };
 
   const clear = () => {
-    delete root.dataset.activeSkill;
-    experienceItems.forEach(item => item.classList.remove('skill-match', 'skill-muted'));
-    container.querySelectorAll('[data-skill]').forEach(node => node.classList.remove('is-active'));
+    pinnedSkill = null;
+    clearVisual();
+    defaultStatus();
+  };
+
+  const describeMatches = (skill, matches) => {
+    if (!status) return;
+    if (!matches.length) {
+      status.textContent = root.lang === 'es'
+        ? skill + ': sin roles vinculados en la experiencia publicada.'
+        : skill + ': no linked roles in the published experience.';
+      return;
+    }
+
+    const roles = matches.map(item => {
+      const company = item.querySelector('.company')?.textContent.trim() || '';
+      const role = item.querySelector('.experience-role')?.childNodes[0]?.textContent?.trim()
+        || item.querySelector('.experience-role')?.textContent.trim()
+        || '';
+      return company + ' · ' + role;
+    });
+
+    const count = matches.length;
+    const prefix = root.lang === 'es'
+      ? skill + ' · ' + count + (count === 1 ? ' rol relacionado: ' : ' roles relacionados: ')
+      : skill + ' · ' + count + (count === 1 ? ' related role: ' : ' related roles: ');
+
+    status.textContent = prefix + roles.join(' · ');
   };
 
   const highlight = skill => {
-    clear();
+    clearVisual();
+    activeSkill = skill;
     root.dataset.activeSkill = skill;
     const normalized = skill.toLowerCase();
+    const matches = [];
+
     experienceItems.forEach(item => {
       const tools = (item.dataset.tools || '').toLowerCase().split('|');
       const matched = tools.includes(normalized);
       item.classList.toggle('skill-match', matched);
       item.classList.toggle('skill-muted', !matched);
+      if (matched) matches.push(item);
     });
+
     container.querySelectorAll('[data-skill]').forEach(node => {
-      node.classList.toggle('is-active', node.dataset.skill === skill);
+      const active = node.dataset.skill === skill;
+      node.classList.toggle('is-active', active);
+      node.setAttribute('aria-pressed', String(active && pinnedSkill === skill));
     });
+
+    describeMatches(skill, matches);
   };
 
   for (const group of siteData.expertise) {
     const cluster = document.createElement('section');
     cluster.className = 'skill-cluster';
+    cluster.dataset.group = group.title;
 
     const hub = document.createElement('div');
     hub.className = 'skill-hub';
+    hub.dataset.groupLabel = group.title;
     hub.textContent = tr(group.title);
     cluster.append(hub);
 
@@ -49,14 +103,24 @@ function createSkillMap(container) {
       button.type = 'button';
       button.className = 'skill-node';
       button.dataset.skill = skill;
+      button.setAttribute('aria-pressed', 'false');
       button.textContent = tr(skill);
-      button.addEventListener('mouseenter', () => highlight(skill));
-      button.addEventListener('focus', () => highlight(skill));
-      button.addEventListener('click', () => {
-        const active = root.dataset.activeSkill === skill;
-        if (active) clear();
-        else highlight(skill);
+
+      button.addEventListener('mouseenter', () => {
+        if (!pinnedSkill) highlight(skill);
       });
+      button.addEventListener('focus', () => {
+        if (!pinnedSkill) highlight(skill);
+      });
+      button.addEventListener('click', () => {
+        if (pinnedSkill === skill) {
+          clear();
+          return;
+        }
+        pinnedSkill = skill;
+        highlight(skill);
+      });
+
       nodes.append(button);
     }
 
@@ -64,12 +128,42 @@ function createSkillMap(container) {
     container.append(cluster);
   }
 
-  container.addEventListener('mouseleave', () => clear());
-  addEventListener('keydown', event => {
-    if (event.key === 'Escape' && root.dataset.activeSkill) clear();
+  container.addEventListener('mouseleave', () => {
+    if (pinnedSkill) highlight(pinnedSkill);
+    else {
+      clearVisual();
+      defaultStatus();
+    }
   });
 
-  return { highlight, clear, skills: [...allSkills] };
+  container.addEventListener('focusout', () => {
+    requestAnimationFrame(() => {
+      if (container.contains(document.activeElement)) return;
+      if (pinnedSkill) highlight(pinnedSkill);
+      else {
+        clearVisual();
+        defaultStatus();
+      }
+    });
+  });
+
+  addEventListener('keydown', event => {
+    if (event.key === 'Escape' && activeSkill) clear();
+  });
+
+  const refreshLabels = () => {
+    container.querySelectorAll('[data-group-label]').forEach(node => {
+      node.textContent = tr(node.dataset.groupLabel);
+    });
+    container.querySelectorAll('[data-skill]').forEach(node => {
+      node.textContent = tr(node.dataset.skill);
+    });
+    if (activeSkill) highlight(activeSkill);
+    else defaultStatus();
+  };
+
+  defaultStatus();
+  return { highlight, clear, refreshLabels, skills: [...allSkills] };
 }
 
 function initEngineering() {
@@ -102,7 +196,11 @@ function initCommandPalette(skillApi, toggleEngineering) {
   const go = selector => {
     dialog.close();
     const target = document.querySelector(selector);
-    if (target) target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    if (target) {
+      target.scrollIntoView({
+        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+      });
+    }
   };
 
   const actions = [
@@ -199,24 +297,51 @@ function initCommandPalette(skillApi, toggleEngineering) {
       else openPalette();
     }
   });
+
   addEventListener('cv:language', render);
 }
 
 function initScrollSystems() {
-  const stages = [...document.querySelectorAll('.pipeline-rail-node')];
+  const dock = document.querySelector('.pipeline-dock');
+  const dockStages = [...document.querySelectorAll('.pipeline-dock-stage')];
+  const dockFill = document.querySelector('.pipeline-dock-fill');
+  const dockState = document.querySelector('[data-pipeline-state]');
+  const hero = document.querySelector('.hero');
   const heroStages = [...document.querySelectorAll('.hero-pipeline span')];
-  const fill = document.querySelector('.pipeline-rail-fill');
   const timeline = document.querySelector('.timeline');
   let frame = 0;
 
   const update = () => {
     frame = 0;
-    const range = document.documentElement.scrollHeight - innerHeight;
-    const page = Math.max(0, Math.min(1, range > 0 ? scrollY / range : 0));
-    const stage = Math.min(4, Math.floor(page * 5));
-    if (fill) fill.style.transform = 'scaleY(' + page + ')';
-    stages.forEach((node, index) => node.classList.toggle('is-active', index <= stage));
-    heroStages.forEach((node, index) => node.classList.toggle('is-active', index <= stage));
+
+    const pageRange = document.documentElement.scrollHeight - innerHeight;
+    const pageProgress = Math.max(0, Math.min(1, pageRange > 0 ? scrollY / pageRange : 0));
+    const pageStage = Math.min(4, Math.floor(pageProgress * 5));
+
+    if (dockFill) dockFill.style.transform = 'scaleX(' + pageProgress + ')';
+    dockStages.forEach((node, index) => {
+      node.classList.toggle('is-active', index <= pageStage);
+      node.classList.toggle('is-current', index === pageStage);
+    });
+    if (dockState) dockState.textContent = tr(stageLabels[pageStage]);
+
+    if (hero) {
+      const rect = hero.getBoundingClientRect();
+      const heroRange = Math.max(1, rect.height - Math.min(innerHeight * 0.2, 160));
+      const heroProgress = Math.max(0, Math.min(1, -rect.top / heroRange));
+      const heroStage = Math.min(4, Math.floor(heroProgress * 5));
+
+      hero.style.setProperty('--hero-pipeline-progress', heroProgress);
+      heroStages.forEach((node, index) => {
+        node.classList.toggle('is-active', index <= heroStage);
+        node.classList.toggle('is-current', index === heroStage);
+      });
+
+      if (dock) {
+        const visible = rect.bottom < 110 && pageProgress < 0.985;
+        dock.classList.toggle('is-visible', visible);
+      }
+    }
 
     if (timeline) {
       const rect = timeline.getBoundingClientRect();
@@ -234,18 +359,22 @@ function initScrollSystems() {
   addEventListener('scroll', schedule, { passive: true });
   addEventListener('resize', schedule);
   update();
+
+  return update;
 }
 
 export function initLab() {
   const container = document.querySelector('[data-skill-map]');
-  const skillApi = container ? createSkillMap(container) : { skills: [], highlight() {}, clear() {} };
+  const skillApi = container
+    ? createSkillMap(container)
+    : { skills: [], highlight() {}, clear() {}, refreshLabels() {} };
+
   const toggleEngineering = initEngineering();
   initCommandPalette(skillApi, toggleEngineering);
-  initScrollSystems();
+  const refreshScrollSystems = initScrollSystems();
 
   addEventListener('cv:language', () => {
-    if (!container) return;
-    container.replaceChildren();
-    createSkillMap(container);
+    skillApi.refreshLabels();
+    refreshScrollSystems();
   });
 }
