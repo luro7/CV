@@ -1,7 +1,10 @@
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+export function setRevealVisibility(element, visible) {
+  element.classList.toggle('is-visible', Boolean(visible));
+}
 
 export function initMotion() {
   const root = document.documentElement;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const progress = document.querySelector('.reading-progress');
   const hero = document.querySelector('.hero');
   let frame = 0;
@@ -39,9 +42,7 @@ export function initMotion() {
 
   const observer = new IntersectionObserver(entries => {
     for (const entry of entries) {
-      if (!entry.isIntersecting) continue;
-      observer.unobserve(entry.target);
-      entry.target.classList.add('is-visible');
+      setRevealVisibility(entry.target, reducedMotion.matches || entry.isIntersecting);
     }
   }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
 
@@ -53,8 +54,15 @@ export function initMotion() {
     });
 
   reducedMotion.addEventListener('change', () => {
-    if (reducedMotion.matches) {
-      document.querySelectorAll('.reveal').forEach(element => element.classList.add('is-visible'));
-    }
+    document.querySelectorAll('.reveal').forEach(element => {
+      if (reducedMotion.matches) {
+        setRevealVisibility(element, true);
+        return;
+      }
+
+      const rect = element.getBoundingClientRect();
+      const visible = rect.bottom > 32 && rect.top < innerHeight - 32;
+      setRevealVisibility(element, visible);
+    });
   });
 }
