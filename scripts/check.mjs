@@ -22,6 +22,16 @@ for (const item of expertiseItems) {
   assert(allowedSkillTypes.has(site.skillTypes[item]), 'Invalid skill type for: ' + item);
 }
 
+const experienceIds = new Set(site.experience.map(item => item.id));
+assert.equal(experienceIds.size, site.experience.length, 'Experience IDs must be unique');
+assert([...experienceIds].every(Boolean), 'Every experience item needs an ID');
+for (const [skill, roleIds] of Object.entries(site.skillRoleIds || {})) {
+  assert(expertiseItems.includes(skill), 'Unknown skillRoleIds key: ' + skill);
+  for (const roleId of roleIds) {
+    assert(experienceIds.has(roleId), 'Unknown experience ID in skillRoleIds: ' + roleId);
+  }
+}
+
 assert.equal((html.match(/<h1\b/g) || []).length, 1, 'Exactly one h1 is required');
 assert(!/\{\{\w+\}\}/.test(html), 'Unresolved template variables found');
 assert(html.includes('id="command-palette"'), 'Command palette is missing');
