@@ -36,14 +36,16 @@
   <a class="skip-link" href="#content">Skip to content</a>
   <div class="daylight-transition" aria-hidden="true"></div>
   <div class="reading-progress" aria-hidden="true"></div>
-  <div class="pipeline-rail" aria-hidden="true">
-    <span class="pipeline-rail-track"></span>
-    <span class="pipeline-rail-fill"></span>
-    <span class="pipeline-rail-node" data-stage="0"></span>
-    <span class="pipeline-rail-node" data-stage="1"></span>
-    <span class="pipeline-rail-node" data-stage="2"></span>
-    <span class="pipeline-rail-node" data-stage="3"></span>
-    <span class="pipeline-rail-node" data-stage="4"></span>
+  <div class="pipeline-dock" aria-hidden="true">
+    <div class="pipeline-dock-head"><span>Data flow</span><strong data-pipeline-state>Data</strong></div>
+    <div class="pipeline-dock-track">
+      <span class="pipeline-dock-fill"></span>
+      <span class="pipeline-dock-stage" data-stage="0"><i></i><b>Data</b></span>
+      <span class="pipeline-dock-stage" data-stage="1"><i></i><b>Transform</b></span>
+      <span class="pipeline-dock-stage" data-stage="2"><i></i><b>Automate</b></span>
+      <span class="pipeline-dock-stage" data-stage="3"><i></i><b>AI</b></span>
+      <span class="pipeline-dock-stage" data-stage="4"><i></i><b>Report</b></span>
+    </div>
   </div>
   {{header}}
   <main id="content">
