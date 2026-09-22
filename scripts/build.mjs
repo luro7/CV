@@ -21,6 +21,7 @@ export function build() {
 
   rmSync(output, { recursive: true, force: true });
   mkdirSync(output, { recursive: true });
+  mkdirSync(resolve(output, 'es'), { recursive: true });
   cpSync(resolve(root, 'public'), output, { recursive: true });
 
   writeFileSync(resolve(output, 'js/translations.js'), 'export default ' + JSON.stringify(translations) + ';\n');
@@ -28,15 +29,25 @@ export function build() {
     expertise: site.expertise,
     skillTypes: site.skillTypes,
     skillRoleIds: site.skillRoleIds,
+    engineeringSections: site.engineeringSections,
     experience: site.experience,
     engineering: site.engineering,
     linkedin: site.linkedin
   }) + ';\n');
-  writeFileSync(resolve(output, 'index.html'), render(site));
-  writeFileSync(resolve(output, 'robots.txt'), 'User-agent: *\nAllow: /\n\nSitemap: ' + siteUrl.origin + '/sitemap.xml\n');
-  writeFileSync(resolve(output, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>' + xml(siteUrl.origin + '/') + '</loc></url>\n</urlset>\n');
 
-  console.log('Web generated: dist/');
+  writeFileSync(resolve(output, 'index.html'), render(site, { language: 'en', translations }));
+  writeFileSync(resolve(output, 'es/index.html'), render(site, { language: 'es', translations }));
+
+  writeFileSync(resolve(output, 'robots.txt'), 'User-agent: *\nAllow: /\n\nSitemap: ' + siteUrl.origin + '/sitemap.xml\n');
+  writeFileSync(resolve(output, 'sitemap.xml'),
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' +
+    '  <url><loc>' + xml(siteUrl.origin + '/') + '</loc><xhtml:link rel="alternate" hreflang="en" href="' + xml(siteUrl.origin + '/') + '"/><xhtml:link rel="alternate" hreflang="es" href="' + xml(siteUrl.origin + '/es/') + '"/></url>\n' +
+    '  <url><loc>' + xml(siteUrl.origin + '/es/') + '</loc><xhtml:link rel="alternate" hreflang="en" href="' + xml(siteUrl.origin + '/') + '"/><xhtml:link rel="alternate" hreflang="es" href="' + xml(siteUrl.origin + '/es/') + '"/></url>\n' +
+    '</urlset>\n'
+  );
+
+  console.log('Web generated: dist/ (EN + ES)');
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) build();

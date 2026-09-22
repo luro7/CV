@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { localizeHtml } from '../scripts/localize.mjs';
 
 const templates = new URL('./templates/', import.meta.url);
 
@@ -23,44 +24,71 @@ const escaped = object => Object.fromEntries(
     .map(([key, value]) => [key, escapeHtml(value)])
 );
 
-const tags = values => values.map(value => '<li>' + escapeHtml(value) + '</li>').join('');
-const paragraphs = items => items.map(text => '<p>' + escapeHtml(text) + '</p>').join('');
+const localizedObject = (object, t) => Object.fromEntries(
+  Object.entries(object)
+    .filter(([, value]) => typeof value === 'string')
+    .map(([key, value]) => [key, escapeHtml(t(value))])
+);
 
-export function render(site) {
+const tags = (values, t) => values.map(value => '<li>' + escapeHtml(t(value)) + '</li>').join('');
+const paragraphs = (items, t) => items.map(text => '<p>' + escapeHtml(t(text)) + '</p>').join('');
+
+export function render(site, { language = 'en', translations = {} } = {}) {
   const linkedIn = new URL(site.linkedin);
   const siteUrl = new URL(site.siteUrl);
+  const spanish = language === 'es';
+  const t = value => spanish ? (translations[value] || value) : value;
 
   if (linkedIn.protocol !== 'https:' || linkedIn.hostname !== 'www.linkedin.com') {
     throw new Error('Invalid LinkedIn URL');
   }
   if (siteUrl.protocol !== 'https:') throw new Error('siteUrl must use HTTPS');
 
+  const pagePath = spanish ? '/es/' : '/';
+  const pageUrl = siteUrl.origin + pagePath;
+  const pageTitle = spanish
+    ? 'Lucas Rosat - Ingeniería de Datos y Automatización con IA'
+    : 'Lucas Rosat — Data Engineering & AI Automation';
+  const pageDescription = spanish
+    ? (translations[site.description] || site.description)
+    : site.description;
+
   const base = {
     ...escaped(site),
+    htmlLang: language,
     siteUrl: escapeHtml(siteUrl.origin),
+    pageUrl: escapeHtml(pageUrl),
+    canonicalUrl: escapeHtml(pageUrl),
+    pageTitle: escapeHtml(pageTitle),
+    pageDescription: escapeHtml(pageDescription),
+    ogLocale: spanish ? 'es_AR' : 'en_US',
+    currentLanguage: spanish ? 'ES' : 'EN',
+    nextLanguage: spanish ? 'EN' : 'ES',
+    languageTarget: spanish ? '/' : '/es/',
+    languageLabel: spanish ? 'Switch to English' : 'Cambiar a español',
     year: new Date().getFullYear()
   };
 
   const expertiseCards = site.expertise.map(item =>
     template('cards/expertise', {
-      ...escaped(item),
-      tools: tags(item.tools)
+      ...localizedObject(item, t),
+      tools: tags(item.tools, t)
     })
   ).join('\n');
 
   const experienceCards = site.experience.map(item =>
     template('cards/experience', {
-      ...escaped(item),
-      tools: tags(item.tools),
-      points: tags(item.points),
+      ...localizedObject(item, t),
+      tools: tags(item.tools, t),
+      points: tags(item.points, t),
       toolData: escapeHtml(item.tools.join('|')),
       experienceId: escapeHtml(item.id),
-      currentBadge: item.current ? '<span class="current-badge">Current</span>' : ''
+      currentBadge: item.current ? '<span class="current-badge">' + escapeHtml(t('Current')) + '</span>' : ''
     })
   ).join('\n');
 
   const educationCards = site.education.map(item =>
-    template('cards/education', escaped(item))
+    template('cards/education', localizedObject(item, t))
   ).join('\n');
 
   const certificationCards = site.certifications.map(item => {
@@ -71,44 +99,53 @@ export function render(site) {
     if (!/^\/assets\/credentials\/[a-z0-9-]+\.png$/.test(item.image)) {
       throw new Error('Invalid credential image');
     }
-    return template('cards/certification', escaped(item));
+    return template('cards/certification', localizedObject(item, t));
   }).join('\n');
 
   const structuredData = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
-    '@id': siteUrl.origin + '/#profile',
-    url: siteUrl.origin + '/',
-    name: site.name + ' — Professional CV',
-    inLanguage: 'en',
+    '@id': pageUrl + '#profile',
+    url: pageUrl,
+    name: pageTitle,
+    inLanguage: language,
     mainEntity: {
       '@type': 'Person',
       '@id': siteUrl.origin + '/#person',
       name: site.name,
       url: siteUrl.origin + '/',
       sameAs: [site.linkedin],
-      jobTitle: site.title.split(' | '),
-      description: site.intro,
+      jobTitle: site.title.split(' | ').map(t),
+      description: t(site.intro),
       worksFor: {
         '@type': 'Organization',
         name: site.experience.find(item => item.current)?.company || ''
       },
-      knowsAbout: [...new Set(site.expertise.flatMap(item => [item.title, ...item.tools]))]
+      knowsAbout: [...new Set(site.expertise.flatMap(item => [t(item.title), ...item.tools.map(t)]))]
     }
   }).replace(/</g, '\\u003c');
 
   const engineeringItems = site.engineering.map(item =>
-    '<div class="engineering-stat"><dt>' + escapeHtml(item.label) + '</dt><dd>' + escapeHtml(item.value) + '</dd></div>'
+    '<div class="engineering-stat"><dt>' + escapeHtml(t(item.label)) + '</dt><dd>' + escapeHtml(t(item.value)) + '</dd></div>'
   ).join('');
+
+  const heroSummary = [site.intro, site.about.at(-1)];
+  const heroDetails = site.about.slice(1, -1);
+  const heroFocus = ['Data Engineering', 'AI Automation', 'Reporting & Operations'];
 
   const values = {
     ...base,
-    aboutContent: paragraphs(site.about),
+    heroSummaryContent: paragraphs(heroSummary, t),
+    aboutDetailContent: paragraphs(heroDetails, t),
+    heroFocus: tags(heroFocus, t),
     expertiseCards,
     experienceCards,
     educationCards,
     certificationCards,
-    engineeringItems
+    engineeringItems,
+    experienceCount: String(site.experience.length),
+    expertiseCount: String(new Set(site.expertise.flatMap(item => item.tools)).size),
+    certificationCount: String(site.certifications.length)
   };
 
   const sections = Object.fromEntries(
@@ -118,11 +155,14 @@ export function render(site) {
     ])
   );
 
-  return template('layout', {
+  let html = template('layout', {
     ...values,
     ...sections,
     structuredData,
     header: template('shared/header', values),
     footer: template('shared/footer', values)
   });
+
+  if (spanish) html = localizeHtml(html, translations);
+  return html;
 }
