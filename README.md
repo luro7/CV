@@ -1,98 +1,61 @@
 # Lucas Rosat — Professional CV
 
-Source code for my professional CV and portfolio, focused on Data Engineering, SQL development, reporting, automation, and AI-assisted engineering.
+Source code for the professional CV and technical portfolio published at **https://lucasrosat.pages.dev**.
 
-**Live site:** https://lucasrosat.pages.dev  
-**LinkedIn:** https://www.linkedin.com/in/rosat-lucas/
+The project is intentionally lightweight: static generation, progressive enhancement, no runtime framework and no external client-side dependencies. The interface itself is part of the portfolio, demonstrating accessibility, responsive design, browser APIs, secure deployment and interaction design without sacrificing readability.
 
-## Project overview
+## Highlights
 
-This is a bilingual static website built with HTML, CSS, JavaScript, and a small Node.js build pipeline.
+- Data Engineering, SQL, automation and AI-focused professional profile
+- English / Spanish UI with persisted preference
+- Light / dark theme with reduced-motion support
+- Interactive technology map that traces skills into professional experience
+- Scroll-driven data pipeline and experience timeline
+- Ctrl + K command palette for keyboard-first navigation
+- Optional Engineering Mode exposing implementation details
+- Structured data, Open Graph metadata, sitemap and Search Console verification
+- Strict Content Security Policy and security headers
+- Automated checks and tests through GitHub Actions
+- Automatic deployment to Cloudflare Pages from main
 
-The project keeps content, rendering, presentation, client-side behavior, validation, and generated output clearly separated. It has no runtime framework and no production package dependencies.
+## Architecture
 
-## Project structure
+content/ stores public CV data and translations. src/ contains the static renderer and semantic templates. public/ contains local assets plus the CSS and JavaScript enhancement layer. scripts/ owns build, validation and local preview. tests/ covers build cleanliness and preference behavior.
 
-```text
-content/
-  site.json                 CV content
-  locales/                  Translations
+The browser layer is split by responsibility:
 
-src/
-  render.mjs                Static rendering
-  templates/
-    sections/               Page sections
-    cards/                  Reusable content components
-    shared/                 Shared layout components
-
-public/
-  assets/                   Images, credential badges, and icons
-  css/                      Styles
-  js/                       Client-side behavior
-  _headers                  Security headers
-  robots.txt                Search engine directives
-  sitemap.xml               Sitemap
-
-scripts/
-  build.mjs                 Production build
-  check.mjs                 Structural and content validation
-  serve.mjs                 Local development server
-
-tests/
-  preferences.test.mjs      Language and theme behavior tests
-
-.github/workflows/
-  ci.yml                    Automated validation
-```
-
-Generated production files are written to `dist/` and are intentionally excluded from source control.
+- navigation.js: active-section navigation
+- preferences.js: language and theme state
+- motion.js: reveal, pointer and reading-progress effects
+- lab.js: command palette, skill map, scroll pipeline and Engineering Mode
 
 ## Development
 
-Requirements:
+Requires Node.js 20 or newer.
 
-- Node.js 20 or newer
-- No package installation required
+    npm run build
+    npm run check
+    npm test
+    npm start
 
-```bash
-npm run build
-npm run check
-npm test
-npm start
-```
-
-## Quality controls
-
-Automated validation covers:
-
-- unresolved template variables
-- duplicate HTML IDs
-- broken internal anchors
-- missing local assets
-- unexpected external links
-- canonical URL and structured data
-- sitemap and robots configuration
-- search-engine ownership verification file
-- language and theme preference behavior
-
-GitHub Actions runs the validation and test suite on pushes and pull requests to `main`.
+The generated website is written to dist/. The build always recreates that directory from scratch so removed source assets cannot survive as stale deployment files.
 
 ## Engineering principles
 
-- semantic and accessible HTML
-- progressive enhancement
-- responsive layout
-- light and dark themes
-- English and Spanish interface
-- minimal external dependencies
-- content separated from presentation
-- generated output separated from source
-- automated checks for critical site behavior
+The site uses native browser capabilities where they are the best fit: semantic HTML, CSS custom properties, IntersectionObserver, ResizeObserver, the dialog element and ES modules.
+
+React or another framework can be introduced if a future feature genuinely benefits from component state or hydration, but the current interactions deliberately avoid adding a framework only for visual effects. This keeps the shipped JavaScript small and makes the implementation itself a demonstration of progressive enhancement.
 
 ## Deployment
 
-The production site is deployed as a static application on Cloudflare Pages from the generated `dist/` output.
+Cloudflare Pages builds the repository from main with:
+
+- Build command: npm run build
+- Output directory: dist
+- Node.js: 20+
+
+Canonical, sitemap and robots URLs are generated from the single siteUrl value in content/site.json.
 
 ## Repository scope
 
-This repository contains only the source and public assets required to build the portfolio. Personal source documents, local-machine configuration, deployment account identifiers, and private contact data are intentionally excluded.
+Only information intended for the public CV belongs in this repository. Personal source documents, local-machine configuration, private contact information, deployment account identifiers, generated output and PDFs are excluded from version control.

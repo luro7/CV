@@ -178,5 +178,32 @@
     "I also use AI and automation technologies to improve development workflows, reduce repetitive work, accelerate problem solving, and create more efficient ways of interacting with technical and business processes.",
     "My background in Systems Analysis, programming, algorithms, databases, and software development allows me to quickly adapt to new technologies and programming languages and apply them to real-world problems.",
     "I am especially interested in opportunities where Data Engineering, automation, and Artificial Intelligence come together to build practical solutions that improve business processes and engineering productivity."
+  ],
+  "siteUrl": "https://lucasrosat.pages.dev",
+  "engineering": [
+    {
+      "label": "Rendering",
+      "value": "Static build"
+    },
+    {
+      "label": "Interaction",
+      "value": "Progressive enhancement"
+    },
+    {
+      "label": "Runtime",
+      "value": "Zero runtime dependencies"
+    },
+    {
+      "label": "Deployment",
+      "value": "Cloudflare Pages"
+    },
+    {
+      "label": "CI/CD",
+      "value": "GitHub Actions"
+    },
+    {
+      "label": "Security",
+      "value": "Strict CSP + security headers"
+    }
   ]
 }

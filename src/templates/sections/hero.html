@@ -1,8 +1,14 @@
-<section class="hero wrap" id="home" aria-labelledby="hero-title">
+<section class="hero wrap" id="home" aria-labelledby="hero-title" data-engineering-label="profile.render()">
+  <div class="hero-signal" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
   <div class="document-meta"><span>RÉSUMÉ</span><span>{{location}}</span></div>
   <h1 id="hero-title">Lucas Rosat<span>.</span></h1>
   <p class="hero-role">Data Engineering Analyst<br>AI Automation Engineer <span class="role-divider">/</span> SQL Developer</p>
   <div class="hero-intro">{{aboutContent}}</div>
-  <div class="actions"><a class="linkedin-button" href="{{linkedin}}" target="_blank" rel="noopener noreferrer"><img src="/assets/linkedin-in-white.png" width="26" height="26" alt="" aria-hidden="true"> LinkedIn <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></div>
+  <div class="actions">
+    <a class="linkedin-button" href="{{linkedin}}" target="_blank" rel="noopener noreferrer"><img src="/assets/linkedin-in-white.png" width="26" height="26" alt="" aria-hidden="true"> LinkedIn <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
+    <button class="command-hero" type="button" data-command-open>Explore profile <kbd>Ctrl K</kbd></button>
+  </div>
+  <div class="hero-pipeline" aria-label="Data pipeline">
+    <span>Data</span><span>Transform</span><span>Automate</span><span>AI</span><span>Report</span>
+  </div>
 </section>
-

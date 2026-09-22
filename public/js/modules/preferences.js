@@ -92,6 +92,7 @@ export function initPreferences() {
     languageButton.removeAttribute('aria-disabled');
     changingLanguage = false;
     status.textContent = next === 'es' ? 'Idioma cambiado a español.' : 'Language changed to English.';
+    dispatchEvent(new Event('cv:language'));
   }
 
   languageButton.addEventListener('click', switchLanguage);

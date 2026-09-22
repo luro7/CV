@@ -6,15 +6,15 @@
   <meta name="theme-color" content="#153b31">
   <title>{{name}} — Data Engineering & AI Automation</title>
   <meta name="description" content="{{description}}">
-  <link rel="canonical" href="https://lucasrosat.pages.dev/">
+  <link rel="canonical" href="{{siteUrl}}/">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <script type="application/ld+json">{{structuredData}}</script>
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{name}} — Data Engineering & AI Automation">
   <meta property="og:description" content="{{description}}">
   <meta property="og:locale" content="en_US">
-  <meta property="og:url" content="https://lucasrosat.pages.dev/">
-  <meta property="og:image" content="https://lucasrosat.pages.dev/linkedin-preview.png">
+  <meta property="og:url" content="{{siteUrl}}/">
+  <meta property="og:image" content="{{siteUrl}}/linkedin-preview.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -22,19 +22,29 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{name}} — Data Engineering & AI Automation">
   <meta name="twitter:description" content="{{description}}">
-  <meta name="twitter:image" content="https://lucasrosat.pages.dev/linkedin-preview.png">
+  <meta name="twitter:image" content="{{siteUrl}}/linkedin-preview.png">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/assets/favicon-48.png" type="image/png" sizes="48x48">
   <link rel="icon" href="/assets/favicon-192.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="/assets/favicon-180.png" sizes="180x180">
   <script src="/js/preferences-init.js"></script>
   <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/interactive.css">
   <script type="module" src="/js/main.js"></script>
-  <link rel="stylesheet" href="/css/experience.css">
 </head>
 <body>
   <a class="skip-link" href="#content">Skip to content</a>
   <div class="daylight-transition" aria-hidden="true"></div>
+  <div class="reading-progress" aria-hidden="true"></div>
+  <div class="pipeline-rail" aria-hidden="true">
+    <span class="pipeline-rail-track"></span>
+    <span class="pipeline-rail-fill"></span>
+    <span class="pipeline-rail-node" data-stage="0"></span>
+    <span class="pipeline-rail-node" data-stage="1"></span>
+    <span class="pipeline-rail-node" data-stage="2"></span>
+    <span class="pipeline-rail-node" data-stage="3"></span>
+    <span class="pipeline-rail-node" data-stage="4"></span>
+  </div>
   {{header}}
   <main id="content">
     {{hero}}
@@ -43,6 +53,26 @@
     {{education}}
     {{footer}}
   </main>
+
+  <aside class="engineering-panel" aria-hidden="true" aria-label="Engineering mode">
+    <div class="engineering-panel-head">
+      <span class="engineering-kicker">&lt;/&gt; SYSTEM</span>
+      <button type="button" class="engineering-close" data-engineering-close aria-label="Close">×</button>
+    </div>
+    <dl>{{engineeringItems}}</dl>
+  </aside>
+
+  <dialog class="command-palette" id="command-palette" aria-labelledby="command-title">
+    <form method="dialog" class="command-shell">
+      <div class="command-head">
+        <label id="command-title" for="command-input">Search the CV</label>
+        <button type="submit" class="command-close" aria-label="Close">Esc</button>
+      </div>
+      <input id="command-input" class="command-input" type="search" autocomplete="off" placeholder="Type a skill or action" aria-controls="command-results">
+      <div class="command-results" id="command-results" role="listbox"></div>
+    </form>
+  </dialog>
+
   <span class="sr-only" role="status" id="preference-status"></span>
 </body>
 </html>
