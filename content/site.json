@@ -80,7 +80,8 @@
         "PowerShell",
         "BMC Control-M",
         "Azure DevOps"
-      ]
+      ],
+      "id": "accenture-data-engineering"
     },
     {
       "company": "Accenture",
@@ -99,7 +100,8 @@
         "BMC Control-M",
         "Azure DevOps",
         "Visual Studio"
-      ]
+      ],
+      "id": "accenture-sql-developer"
     },
     {
       "company": "Grupo Aoniken",
@@ -113,7 +115,8 @@
       "tools": [
         "SQL",
         "Relational Databases"
-      ]
+      ],
+      "id": "aoniken-sql-support"
     },
     {
       "company": "Iddea Devs",
@@ -128,7 +131,8 @@
         "CSS",
         "PHP",
         "SQL"
-      ]
+      ],
+      "id": "iddea-web-developer"
     }
   ],
   "education": [
@@ -235,5 +239,66 @@
     "Technical Analysis": "Skill",
     "Troubleshooting": "Skill",
     "Enterprise Data and Business Processes": "Domain"
+  },
+  "skillRoleIds": {
+    "SQL Development": [
+      "accenture-data-engineering",
+      "accenture-sql-developer",
+      "aoniken-sql-support"
+    ],
+    "ETL": [
+      "accenture-data-engineering",
+      "accenture-sql-developer"
+    ],
+    "Data Integration": [
+      "accenture-data-engineering",
+      "accenture-sql-developer"
+    ],
+    "Query Optimization": [
+      "accenture-sql-developer"
+    ],
+    "Database Systems": [
+      "accenture-data-engineering",
+      "accenture-sql-developer",
+      "aoniken-sql-support",
+      "iddea-web-developer"
+    ],
+    "Artificial Intelligence": [
+      "accenture-data-engineering"
+    ],
+    "Generative AI": [
+      "accenture-data-engineering"
+    ],
+    "AI Agents": [
+      "accenture-data-engineering"
+    ],
+    "Microsoft Copilot": [
+      "accenture-data-engineering"
+    ],
+    "AI Automation": [
+      "accenture-data-engineering"
+    ],
+    "Process Automation and Optimization": [
+      "accenture-data-engineering",
+      "accenture-sql-developer"
+    ],
+    "Data Analysis": [
+      "accenture-data-engineering",
+      "aoniken-sql-support"
+    ],
+    "Reporting": [
+      "accenture-data-engineering",
+      "accenture-sql-developer"
+    ],
+    "Technical Analysis": [
+      "accenture-data-engineering"
+    ],
+    "Troubleshooting": [
+      "accenture-data-engineering",
+      "aoniken-sql-support"
+    ],
+    "Enterprise Data and Business Processes": [
+      "accenture-data-engineering"
+    ]
   }
 }

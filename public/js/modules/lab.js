@@ -36,10 +36,9 @@ function createSkillMap(container) {
 
   const describeMatches = (skill, matches) => {
     if (!status) return;
+    const category = tr(siteData.skillTypes?.[skill] || 'Skill');
     if (!matches.length) {
-      status.textContent = root.lang === 'es'
-        ? skill + ': sin roles vinculados en la experiencia publicada.'
-        : skill + ': no linked roles in the published experience.';
+      status.textContent = skill + ' · ' + category;
       return;
     }
 
@@ -64,14 +63,16 @@ function createSkillMap(container) {
     activeSkill = skill;
     root.dataset.activeSkill = skill;
     const normalized = skill.toLowerCase();
-    const matches = [];
+    const linkedRoleIds = new Set(siteData.skillRoleIds?.[skill] || []);
+    const matches = experienceItems.filter(item => {
+      const tools = (item.dataset.tools || '').toLowerCase().split('|');
+      return tools.includes(normalized) || linkedRoleIds.has(item.dataset.experienceId);
+    });
 
     experienceItems.forEach(item => {
-      const tools = (item.dataset.tools || '').toLowerCase().split('|');
-      const matched = tools.includes(normalized);
+      const matched = matches.includes(item);
       item.classList.toggle('skill-match', matched);
-      item.classList.toggle('skill-muted', !matched);
-      if (matched) matches.push(item);
+      item.classList.toggle('skill-muted', matches.length > 0 && !matched);
     });
 
     container.querySelectorAll('[data-skill]').forEach(node => {

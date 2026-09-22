@@ -54,6 +54,7 @@ export function render(site) {
       tools: tags(item.tools),
       points: tags(item.points),
       toolData: escapeHtml(item.tools.join('|')),
+      experienceId: escapeHtml(item.id),
       currentBadge: item.current ? '<span class="current-badge">Current</span>' : ''
     })
   ).join('\n');
