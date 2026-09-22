@@ -1,0 +1,6 @@
+/* Engineering Mode refinements. Loaded after the interactive layer. */
+@media (min-width:801px){
+  .engineering-mode [data-engineering-label]::after{
+    right:calc(340px + 2rem);
+  }
+}
