@@ -15,7 +15,7 @@ function createSkillMap(container) {
   let activeSkill = null;
 
   const defaultStatus = () => {
-    if (status) status.textContent = tr('Select a technology to trace experience.');
+    if (status) status.textContent = tr('Select a skill or technology to trace experience.');
   };
 
   const clearVisual = () => {
@@ -215,8 +215,8 @@ function initCommandPalette(skillApi, toggleEngineering) {
 
   const skillEntries = skillApi.skills.map(skill => ({
     label: skill,
-    group: 'Technology',
-    keywords: skill,
+    group: siteData.skillTypes?.[skill] || 'Skill',
+    keywords: skill + ' ' + (siteData.skillTypes?.[skill] || 'Skill'),
     run: () => {
       dialog.close();
       go('#expertise');
@@ -229,10 +229,28 @@ function initCommandPalette(skillApi, toggleEngineering) {
   const render = () => {
     const query = input.value.trim().toLowerCase();
     const source = [...actions, ...skillEntries];
-    visible = source.filter(item => {
-      const haystack = [item.label, tr(item.label), item.group, item.keywords].join(' ').toLowerCase();
-      return !query || query.split(/\s+/).every(part => haystack.includes(part));
-    }).slice(0, 9);
+
+    const score = item => {
+      if (!query) return item.group === 'Navigate' ? 30 : item.group === 'System' ? 20 : 10;
+      const label = item.label.toLowerCase();
+      const translated = tr(item.label).toLowerCase();
+      const category = tr(item.group).toLowerCase();
+      const haystack = [label, translated, item.group.toLowerCase(), category, item.keywords.toLowerCase()].join(' ');
+      const parts = query.split(/\s+/).filter(Boolean);
+      if (!parts.every(part => haystack.includes(part))) return -1;
+      if (label === query || translated === query) return 100;
+      if (label.startsWith(query) || translated.startsWith(query)) return 80;
+      if (label.includes(query) || translated.includes(query)) return 60;
+      if (category.includes(query)) return 40;
+      return 20;
+    };
+
+    visible = source
+      .map((item, index) => ({ item, index, score: score(item) }))
+      .filter(entry => entry.score >= 0)
+      .sort((a, b) => b.score - a.score || a.index - b.index)
+      .slice(0, 9)
+      .map(entry => entry.item);
 
     results.replaceChildren();
     visible.forEach(item => {
@@ -255,7 +273,7 @@ function initCommandPalette(skillApi, toggleEngineering) {
   const openPalette = () => {
     if (!dialog.open) dialog.showModal();
     input.value = '';
-    input.placeholder = tr('Type a skill or action');
+    input.placeholder = tr('Type a skill, technology or action');
     dialog.querySelector('label').textContent = tr('Search the CV');
     render();
     requestAnimationFrame(() => input.focus());

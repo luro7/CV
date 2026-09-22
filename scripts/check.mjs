@@ -14,6 +14,14 @@ const allowedHosts = new Set([
   ...site.certifications.map(item => new URL(item.credentialUrl).hostname)
 ]);
 
+const expertiseItems = site.expertise.flatMap(group => group.tools);
+const allowedSkillTypes = new Set(['Skill', 'Technology', 'Language', 'Process', 'Domain']);
+assert(site.skillTypes && typeof site.skillTypes === 'object', 'skillTypes taxonomy is required');
+for (const item of expertiseItems) {
+  assert(site.skillTypes[item], 'Missing skill type for: ' + item);
+  assert(allowedSkillTypes.has(site.skillTypes[item]), 'Invalid skill type for: ' + item);
+}
+
 assert.equal((html.match(/<h1\b/g) || []).length, 1, 'Exactly one h1 is required');
 assert(!/\{\{\w+\}\}/.test(html), 'Unresolved template variables found');
 assert(html.includes('id="command-palette"'), 'Command palette is missing');
@@ -22,6 +30,7 @@ assert(html.includes('data-skill-map'), 'Interactive skill map is missing');
 assert(html.includes('class="hero-pipeline"'), 'Data pipeline is missing');
 assert(html.includes('class="pipeline-dock"'), 'Persistent scroll pipeline is missing');
 assert(html.includes('data-skill-status'), 'Skill trace status is missing');
+assert(html.includes('Interactive expertise map'), 'Expertise map semantics are missing');
 
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 assert.equal(ids.length, new Set(ids).size, 'Duplicate IDs found');

@@ -111,7 +111,7 @@ button:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
 .command-results{padding:.5rem;max-height:420px;overflow:auto}
 .command-result{width:100%;border:0;background:transparent;color:var(--ink);border-radius:9px;padding:.75rem .85rem;display:flex;justify-content:space-between;gap:1rem;text-align:left}
 .command-result:hover,.command-result:focus-visible{background:#e8f0e9;color:#173c31;outline:0}
-.command-result small{color:var(--muted);font:500 .72rem Consolas,monospace}
+.command-result small{color:var(--muted);font:600 .68rem Consolas,monospace;text-transform:uppercase;letter-spacing:.04em;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:.18rem .5rem;white-space:nowrap}
 .reveal{opacity:0;transform:translateY(14px);transition:opacity .48s ease var(--reveal-delay,0ms),transform .48s cubic-bezier(.2,.7,.2,1) var(--reveal-delay,0ms)}
 .reveal.is-visible{opacity:1;transform:none}
 .daylight-transition{position:fixed;inset:0;z-index:20;pointer-events:none;opacity:0;background:linear-gradient(180deg,transparent 30%,#ba744629 72%,#f4af5645)}
