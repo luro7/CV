@@ -3,28 +3,8 @@ export function setRevealVisibility(element, visible) {
 }
 
 export function initMotion() {
-  const root = document.documentElement;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const progress = document.querySelector('.reading-progress');
   const hero = document.querySelector('.hero');
-  let frame = 0;
-
-  const update = () => {
-    frame = 0;
-    const range = root.scrollHeight - innerHeight;
-    const value = Math.max(0, Math.min(1, range > 0 ? scrollY / range : 0));
-    root.style.setProperty('--page-progress', value);
-    if (progress) progress.style.transform = 'scaleX(' + value + ')';
-  };
-
-  const schedule = () => {
-    if (!frame) frame = requestAnimationFrame(update);
-  };
-
-  addEventListener('scroll', schedule, { passive: true });
-  addEventListener('resize', schedule);
-  new ResizeObserver(schedule).observe(document.body);
-  update();
 
   if (hero && !reducedMotion.matches) {
     hero.addEventListener('pointermove', event => {
