@@ -1,7 +1,6 @@
 {
   "name": "Lucas Rosat",
   "linkedin": "https://www.linkedin.com/in/rosat-lucas/",
-  "location": "Bahía Blanca, Buenos Aires, Argentina",
   "title": "Data Engineering Analyst | AI Automation Engineer | SQL Developer",
   "description": "Lucas Rosat, Data Engineering Analyst, AI Automation Engineer and SQL Developer. Experience with SQL Server, Azure Data Factory, SSIS, Power BI and Power Automate.",
   "intro": "I am a Data Engineering Analyst and AI Automation Engineer with a strong background in SQL development, data integration, reporting, process automation, and enterprise solutions.",
@@ -138,7 +137,7 @@
   "education": [
     {
       "title": "Advanced Technician in Systems Analysis",
-      "institution": "Juan XXIII Institute · Bahía Blanca",
+      "institution": "Juan XXIII Institute",
       "detail": "4 years of study"
     },
     {

@@ -198,3 +198,59 @@ button:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
   .profile-details:not([open])>.profile-details-body{display:block!important}
   .hero-focus{margin:.7rem 0 1rem}
 }
+
+@page{size:A4;margin:13mm 16mm}
+@media print{
+  html,body{background:#fff!important;color:#17251f!important;font-size:9pt;line-height:1.38}
+  main{margin:0!important}
+  .sidebar,.document-meta,.footer,.skip-link,.daylight-transition,.reading-progress,.pipeline-dock,.engineering-panel,.command-palette,#preference-status{display:none!important}
+  .wrap{width:100%!important;max-width:none!important;margin-inline:0!important}
+  .hero,.section{padding-block:8pt!important}
+  h1{font-size:28pt!important;line-height:1.05!important;margin:.25rem 0 .45rem!important;color:#153b31!important}
+  .hero-role{font-size:12pt!important;line-height:1.25!important;color:#40574a!important}
+  .hero-summary,.hero-summary p{font-size:9pt!important;line-height:1.4!important;max-width:none!important}
+  .hero-summary{margin-top:.55rem!important}
+  .hero-summary p+p{margin-top:.35rem!important}
+  .actions{margin:.55rem 0!important;gap:.55rem!important}
+  .linkedin-button{display:inline-flex!important;width:auto!important;min-height:0!important;padding:.35rem .6rem!important;border:1px solid #b8c8be!important;border-radius:3px!important;background:#fff!important;color:#153b31!important;font-size:8.5pt!important}
+  .linkedin-button img,.linkedin-button>span[aria-hidden="true"]{display:none!important}
+  .linkedin-button::after{content:" | " attr(href);font-size:8pt;color:#40574a}
+  .download-button,.command-hero,.hero-pipeline,.hero-signal,.skill-map-panel,.back-to-top{display:none!important}
+  .profile-details{display:block!important;max-width:none!important;border:0!important;margin:0!important}
+  .profile-details summary{display:none!important}
+  .profile-details-body{padding:0!important;color:#40574a!important;font-size:8.5pt!important}
+  .profile-details-body p+p{margin-top:.3rem!important}
+  .section-heading{margin-bottom:7pt!important}
+  .section-heading .eyebrow{margin-bottom:3pt!important;font-size:7pt!important}
+  h2{font-size:16pt!important;line-height:1.1!important;color:#153b31!important}
+  h2 span{color:#40574a!important}
+  .expertise-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6pt!important;margin-top:8pt!important}
+  .expertise-card{padding:7pt!important;border:1px solid #d9e0dc!important;border-radius:3px!important;box-shadow:none!important;break-inside:avoid;page-break-inside:avoid}
+  .card-heading{gap:4pt!important}
+  .card-number{display:none!important}
+  .expertise-card h3{font-size:9pt!important}
+  .tags{gap:2pt!important}
+  .tags li{padding:1pt 3pt!important;background:#f3f6f4!important;border-color:#d9e0dc!important;color:#263c30!important;font-size:7pt!important;line-height:1.25!important}
+  .experience-section{background:#fff!important;border-block:0!important}
+  .experience-item{border-color:#d9e0dc!important;break-inside:avoid-page}
+  .experience-item .experience-heading{display:block!important;padding:7pt 0 3pt!important;cursor:default!important}
+  .experience-meta{display:inline-flex!important;flex-direction:row!important;gap:8pt!important}
+  .company{font-size:9.5pt!important}
+  .date{font-size:8pt!important}
+  .experience-role{font-size:9.5pt!important;font-weight:650!important}
+  .experience-body{display:block!important;margin:0!important;padding:0 0 6pt!important}
+  .responsibilities{margin:0 0 4pt!important;padding-left:12pt!important;font-size:8.5pt!important;line-height:1.3!important}
+  .responsibilities li{margin-bottom:2pt!important;padding-left:0!important}
+  .experience-body .tags{margin-bottom:3pt!important}
+  .education-list,.certification-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5pt 12pt!important}
+  .education-item,.certification-card{break-inside:avoid;page-break-inside:avoid}
+  .education-item{padding:5pt 0!important}
+  .certification-card{display:block!important;border:0!important;background:transparent!important;box-shadow:none!important}
+  .credential-art{display:none!important}
+  .credential-info{padding:4pt 0!important}
+  .credential-info h4{font-size:8.5pt!important}
+  .credential-issuer,.credential-info a{font-size:7.5pt!important}
+  .languages{margin-top:8pt!important;padding:7pt!important;background:#f3f6f4!important;border-color:#d9e0dc!important}
+  .section,#experience,#education{break-inside:auto}
+  a{color:#153b31!important;text-decoration:none!important}
+}

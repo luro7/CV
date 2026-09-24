@@ -95,7 +95,7 @@ function createSkillMap(container) {
     const nodes = document.createElement('div');
     nodes.className = 'skill-nodes';
 
-    for (const skill of group.tools.slice(0, 7)) {
+    for (const skill of group.tools) {
       allSkills.add(skill);
       const button = document.createElement('button');
       button.type = 'button';
@@ -176,11 +176,25 @@ function initEngineering() {
     root.classList.toggle('engineering-mode', enabled);
     toggle.setAttribute('aria-pressed', String(enabled));
     panel.setAttribute('aria-hidden', String(!enabled));
+    panel.inert = !enabled;
     store('cv-engineering', enabled ? '1' : '0');
   };
 
-  toggle.addEventListener('click', () => set(!root.classList.contains('engineering-mode')));
-  close?.addEventListener('click', () => set(false));
+  const togglePanel = () => {
+    const enabled = !root.classList.contains('engineering-mode');
+    set(enabled);
+    (enabled ? close : toggle)?.focus();
+  };
+  toggle.addEventListener('click', togglePanel);
+  close?.addEventListener('click', () => {
+    set(false);
+    toggle.focus();
+  });
+  panel.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    set(false);
+    toggle.focus();
+  });
   if (read('cv-engineering') === '1') set(true);
 
   if ('IntersectionObserver' in window) {
@@ -196,7 +210,7 @@ function initEngineering() {
     applySection('home');
   }
 
-  return () => set(!root.classList.contains('engineering-mode'));
+  return togglePanel;
 }
 
 function initCommandPalette(skillApi, toggleEngineering) {

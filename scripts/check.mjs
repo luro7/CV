@@ -6,6 +6,7 @@ import { build, output, root } from './build.mjs';
 build();
 
 const site = JSON.parse(readFileSync(resolve(root, 'content/site.json'), 'utf8'));
+const translations = JSON.parse(readFileSync(resolve(root, 'content/locales/es.json'), 'utf8'));
 const html = readFileSync(resolve(output, 'index.html'), 'utf8');
 const spanishHtml = readFileSync(resolve(output, 'es/index.html'), 'utf8');
 const siteUrl = new URL(site.siteUrl);
@@ -16,11 +17,62 @@ const allowedHosts = new Set([
 ]);
 
 const expertiseItems = site.expertise.flatMap(group => group.tools);
+assert(site.expertise.length > 0, 'At least one expertise group is required');
+assert.equal(new Set(expertiseItems).size, expertiseItems.length, 'Expertise items must be unique');
 const allowedSkillTypes = new Set(['Skill', 'Technology', 'Language', 'Process', 'Domain']);
 assert(site.skillTypes && typeof site.skillTypes === 'object', 'skillTypes taxonomy is required');
 for (const item of expertiseItems) {
   assert(site.skillTypes[item], 'Missing skill type for: ' + item);
   assert(allowedSkillTypes.has(site.skillTypes[item]), 'Invalid skill type for: ' + item);
+}
+for (const skill of Object.keys(site.skillTypes)) {
+  assert(expertiseItems.includes(skill), 'Unused skill type: ' + skill);
+}
+
+const nonTranslatedTerms = new Set([
+  'Lucas Rosat', 'SQL Server', 'T-SQL', 'ETL', 'SSIS', 'Azure Data Factory',
+  'Microsoft Copilot', 'ChatGPT', 'OpenAI Codex', 'PowerShell', 'Power BI', 'SSRS',
+  'BMC Control-M', 'Accenture', 'Microsoft Copilot Enterprise', 'Visual Studio',
+  'Grupo Aoniken', 'Iddea Devs',
+  'SQL', 'HTML', 'CSS', 'PHP', 'Git', 'Skillsoft', 'Universidad Nacional del Sur',
+  'Cloudflare Pages', 'CI/CD', 'GitHub Actions', '2017'
+]);
+const publicCopy = [
+  site.description, site.intro, ...site.about,
+  ...site.title.split(' | '),
+  ...site.expertise.flatMap(group => [group.title, ...group.tools]),
+  ...site.experience.flatMap(item => [item.company, item.role, item.date, ...item.points, ...item.tools]),
+  ...site.education.flatMap(item => [item.title, item.institution, item.detail]),
+  ...site.certifications.flatMap(item => [item.title, item.institution, item.date]),
+  ...site.engineering.flatMap(item => [item.label, item.value]),
+  ...Object.values(site.engineeringSections).flatMap(item => [item.label, item.render, item.interaction])
+];
+for (const phrase of new Set(publicCopy)) {
+  assert(translations[phrase] || nonTranslatedTerms.has(phrase), 'Missing Spanish translation or explicit exception: ' + phrase);
+}
+const requiredUiTranslations = [
+  'Select a skill or technology to trace experience.', 'Skill', 'Technology', 'Language', 'Process', 'Domain',
+  'Data', 'Transform', 'Automate', 'AI', 'Report', 'Type a skill, technology or action', 'Search the CV',
+  'Go to introduction', 'Go to expertise', 'Go to experience', 'Go to education', 'Toggle dark mode',
+  'Toggle engineering mode', 'Switch language', 'Save PDF', 'Open LinkedIn', 'Navigate', 'System', 'Current'
+];
+for (const phrase of requiredUiTranslations) {
+  assert(translations[phrase], 'Missing Spanish UI translation: ' + phrase);
+}
+
+for (const item of site.expertise) {
+  assert(item.number && item.title && Array.isArray(item.tools) && item.tools.length, 'Expertise groups need a number, title and tools');
+}
+for (const item of site.experience) {
+  for (const key of ['company', 'role', 'date', 'id']) assert(typeof item[key] === 'string' && item[key].trim(), 'Experience item missing ' + key);
+  assert(Array.isArray(item.points) && item.points.length, 'Experience item needs responsibility points: ' + item.id);
+  assert(Array.isArray(item.tools), 'Experience tools must be an array: ' + item.id);
+}
+for (const item of site.education) {
+  for (const key of ['title', 'institution', 'detail']) assert(typeof item[key] === 'string' && item[key].trim(), 'Education item missing ' + key);
+}
+for (const item of site.certifications) {
+  for (const key of ['title', 'institution', 'date', 'image', 'credentialUrl']) assert(typeof item[key] === 'string' && item[key].trim(), 'Certification item missing ' + key);
 }
 
 const experienceIds = new Set(site.experience.map(item => item.id));
@@ -41,6 +93,11 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('class="pipeline-dock"'), name + ': persistent scroll pipeline is missing');
   assert(documentHtml.includes('data-skill-status'), name + ': skill trace status is missing');
   assert(documentHtml.includes('data-print-cv'), name + ': PDF/print action is missing');
+  for (const privateValue of ['Bahía Blanca', 'rosatlucas@gmail.com', '2920 475794']) {
+    assert(!documentHtml.includes(privateValue), name + ': private contact/location data found');
+  }
+  assert(documentHtml.includes('id="engineering-panel" inert'), name + ': closed engineering panel must be inert');
+  assert(documentHtml.includes('aria-controls="engineering-panel"'), name + ': engineering toggle needs its controlled panel');
 
   const ids = [...documentHtml.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
   assert.equal(ids.length, new Set(ids).size, name + ': duplicate IDs found');
@@ -63,6 +120,10 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
     assert(existsSync(resolve(output, '.' + source)), name + ': missing asset ' + source);
   }
 }
+
+const printCss = readFileSync(resolve(output, 'css/interactive.css'), 'utf8');
+assert(printCss.includes('@page{size:A4'), 'Print output must use A4 paper');
+assert(printCss.includes('.linkedin-button::after'), 'Print output must expose the LinkedIn URL');
 
 assert(html.includes('<html lang="en">'), 'English page language is incorrect');
 assert(spanishHtml.includes('<html lang="es">'), 'Spanish page language is incorrect');

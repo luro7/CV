@@ -26,6 +26,8 @@ The project is intentionally lightweight: static generation, progressive enhance
 
 The language control navigates between real static locale routes instead of translating the page only in the browser. This keeps both versions indexable and shareable.
 
+The **Save PDF** action prints the currently rendered locale with a dedicated CV layout. It uses the same generated page as the website, so content edits appear in the next PDF saved from the updated deployment; there is no separate PDF content copy to maintain.
+
 ## Architecture
 
 content/ stores public CV data, the expertise taxonomy and translations. src/ contains the static renderer and semantic templates. public/ contains local assets plus the CSS and JavaScript enhancement layer. scripts/ owns build, localization, validation and local preview. tests/ covers clean builds, locale generation, preference behavior and pure interaction logic.
