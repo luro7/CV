@@ -10,6 +10,7 @@ const translations = JSON.parse(readFileSync(resolve(root, 'content/locales/es.j
 const html = readFileSync(resolve(output, 'index.html'), 'utf8');
 const spanishHtml = readFileSync(resolve(output, 'es/index.html'), 'utf8');
 const siteUrl = new URL(site.siteUrl);
+assert(existsSync(resolve(root, 'public', '.' + site.cvPortrait)), 'CV portrait asset is missing');
 const allowedHosts = new Set([
   siteUrl.hostname,
   new URL(site.linkedin).hostname,
@@ -43,6 +44,7 @@ const publicCopy = [
   ...site.expertise.flatMap(group => [group.title, ...group.tools]),
   ...site.experience.flatMap(item => [item.company, item.role, item.date, ...item.points, ...item.tools]),
   ...site.education.flatMap(item => [item.title, item.institution, item.detail]),
+  ...site.languages.flatMap(item => [item.name, item.level]),
   ...site.certifications.flatMap(item => [item.title, item.institution, item.date]),
   ...site.engineering.flatMap(item => [item.label, item.value]),
   ...Object.values(site.engineeringSections).flatMap(item => [item.label, item.render, item.interaction])
@@ -71,6 +73,10 @@ for (const item of site.experience) {
 for (const item of site.education) {
   for (const key of ['title', 'institution', 'detail']) assert(typeof item[key] === 'string' && item[key].trim(), 'Education item missing ' + key);
 }
+assert(Array.isArray(site.languages) && site.languages.length, 'At least one language is required');
+for (const item of site.languages) {
+  for (const key of ['name', 'level']) assert(typeof item[key] === 'string' && item[key].trim(), 'Language entry missing ' + key);
+}
 for (const item of site.certifications) {
   for (const key of ['title', 'institution', 'date', 'image', 'credentialUrl']) assert(typeof item[key] === 'string' && item[key].trim(), 'Certification item missing ' + key);
 }
@@ -93,6 +99,8 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('class="pipeline-dock"'), name + ': persistent scroll pipeline is missing');
   assert(documentHtml.includes('data-skill-status'), name + ': skill trace status is missing');
   assert(documentHtml.includes('data-print-cv'), name + ': PDF/print action is missing');
+  assert(documentHtml.includes('class="print-cv" hidden'), name + ': dedicated CV print content is missing');
+  assert(documentHtml.includes('src="' + site.cvPortrait + '"'), name + ': CV portrait is not connected to site data');
   for (const privateValue of ['Bahía Blanca', 'rosatlucas@gmail.com', '2920 475794']) {
     assert(!documentHtml.includes(privateValue), name + ': private contact/location data found');
   }
@@ -123,7 +131,8 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
 
 const printCss = readFileSync(resolve(output, 'css/interactive.css'), 'utf8');
 assert(printCss.includes('@page{size:A4'), 'Print output must use A4 paper');
-assert(printCss.includes('.linkedin-button::after'), 'Print output must expose the LinkedIn URL');
+assert(printCss.includes('.print-cv-portrait'), 'Print output must include the CV portrait');
+assert(printCss.includes('body>:not(.print-cv)'), 'Print output must use the CV document instead of page styling');
 
 assert(html.includes('<html lang="en">'), 'English page language is incorrect');
 assert(spanishHtml.includes('<html lang="es">'), 'Spanish page language is incorrect');

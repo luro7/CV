@@ -1,6 +1,7 @@
 {
   "name": "Lucas Rosat",
   "linkedin": "https://www.linkedin.com/in/rosat-lucas/",
+  "cvPortrait": "/assets/lucas-rosat-portrait.png",
   "title": "Data Engineering Analyst | AI Automation Engineer | SQL Developer",
   "description": "Lucas Rosat, Data Engineering Analyst, AI Automation Engineer and SQL Developer. Experience with SQL Server, Azure Data Factory, SSIS, Power BI and Power Automate.",
   "intro": "I am a Data Engineering Analyst and AI Automation Engineer with a strong background in SQL development, data integration, reporting, process automation, and enterprise solutions.",
@@ -150,6 +151,10 @@
       "institution": "Quantumm Institute",
       "detail": "2017"
     }
+  ],
+  "languages": [
+    { "name": "Spanish", "level": "Native" },
+    { "name": "English", "level": "C1 · CEFR" }
   ],
   "certifications": [
     {

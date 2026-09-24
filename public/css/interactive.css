@@ -254,3 +254,39 @@ button:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
   .section,#experience,#education{break-inside:auto}
   a{color:#153b31!important;text-decoration:none!important}
 }
+
+.print-cv{display:none}
+@page{size:A4;margin:14mm 17mm}
+@media print{
+  html,body{background:#fff!important;color:#161616!important;font:8.6pt/1.3 Arial,Helvetica,sans-serif!important}
+  body{margin:0!important}
+  body>:not(.print-cv){display:none!important}
+  .print-cv[hidden]{display:block!important}
+  .print-cv{display:block!important;width:100%;max-width:none;margin:0;color:#161616;font:9pt/1.35 Arial,Helvetica,sans-serif}
+  .print-cv-header{display:flex;align-items:center;gap:6mm;padding-bottom:4mm;border-bottom:1px solid #777}
+  .print-cv-portrait{display:block;width:25mm;height:25mm;object-fit:cover;border-radius:50%;border:1px solid #444}
+  .print-cv-identity{min-width:0}
+  .print-cv-name{margin:0 0 1mm!important;color:#111!important;font-size:22pt!important;line-height:1.05!important;font-weight:700}
+  .print-cv-headline{margin:0 0 1.5mm;font-size:10pt;color:#333!important}
+  .print-cv-link{margin:0;font-size:8.5pt}
+  .print-cv a{color:#111!important;text-decoration:underline!important}
+  .print-cv-section{margin-top:4mm;break-inside:auto}
+  .print-cv-section>h2,.print-cv-bottom h2{margin:0 0 1.5mm!important;padding-bottom:.7mm;border-bottom:1px solid #aaa;color:#161616!important;font-size:10pt!important;line-height:1.2!important;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
+  .print-cv-section p{margin:0}
+  .print-cv-skill-group{margin:0 0 1mm;break-inside:avoid}
+  .print-cv-skill-group h3{display:inline;margin:0;font-size:8.6pt;font-weight:700}
+  .print-cv-skill-group h3::after{content:": "}
+  .print-cv-skill-group p{display:inline;font-size:8.6pt}
+  .print-cv-role{margin:0 0 1.5mm;break-inside:avoid-page}
+  .print-cv-role-heading{display:flex;align-items:baseline;justify-content:space-between;gap:4mm;margin-bottom:.3mm}
+  .print-cv-role h3{margin:0;font-size:9pt;font-weight:700}
+  .print-cv-role-heading p{font-size:8pt;text-align:right;color:#333}
+  .print-cv-role ul{margin:0;padding-left:4mm}
+  .print-cv-role li{margin:0 0 .4mm;padding-left:1mm}
+  .print-cv-bottom{display:grid;grid-template-columns:1fr 1fr;gap:4mm 8mm}
+  .print-cv-bottom>div:last-child{grid-column:1/-1}
+  .print-cv-bottom h2{margin-bottom:1.5mm}
+  .print-cv-item{margin:0 0 1mm!important;font-size:8.2pt}
+  .print-cv-item strong{font-size:8.4pt}
+  .print-cv-bottom p{font-size:8.2pt}
+}

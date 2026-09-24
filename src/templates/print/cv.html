@@ -1,0 +1,36 @@
+<article class="print-cv" hidden aria-label="Curriculum vitae">
+  <header class="print-cv-header">
+    <img class="print-cv-portrait" src="{{portraitUrl}}" width="120" height="120" alt="">
+    <div class="print-cv-identity">
+      <h2 class="print-cv-name">{{name}}</h2>
+      <p class="print-cv-headline">{{headline}}</p>
+      <p class="print-cv-link"><a href="{{linkedinUrl}}">{{linkedin}}</a></p>
+    </div>
+  </header>
+  <section class="print-cv-section">
+    <h2>Professional summary</h2>
+    {{summary}}
+  </section>
+  <section class="print-cv-section">
+    <h2>Technical skills</h2>
+    <div class="print-cv-skill-groups">{{printExpertise}}</div>
+  </section>
+  <section class="print-cv-section">
+    <h2>Experience</h2>
+    <div class="print-cv-experience">{{printExperience}}</div>
+  </section>
+  <section class="print-cv-section print-cv-bottom">
+    <div>
+      <h2>Education</h2>
+      <div class="print-cv-list">{{printEducation}}</div>
+    </div>
+    <div>
+      <h2>Certifications</h2>
+      <div class="print-cv-list">{{printCertifications}}</div>
+    </div>
+    <div>
+      <h2>Languages</h2>
+      {{printLanguages}}
+    </div>
+  </section>
+</article>

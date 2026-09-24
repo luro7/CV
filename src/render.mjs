@@ -43,6 +43,9 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     throw new Error('Invalid LinkedIn URL');
   }
   if (siteUrl.protocol !== 'https:') throw new Error('siteUrl must use HTTPS');
+  if (!/^\/assets\/[a-z0-9-]+\.png$/.test(site.cvPortrait || '')) {
+    throw new Error('Invalid CV portrait path');
+  }
 
   const pagePath = spanish ? '/es/' : '/';
   const pageUrl = siteUrl.origin + pagePath;
@@ -102,6 +105,25 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     return template('cards/certification', localizedObject(item, t));
   }).join('\n');
 
+  const printExpertise = site.expertise.map(item => template('print/skill-group', {
+    title: escapeHtml(t(item.title)),
+    tools: item.tools.map(tool => escapeHtml(t(tool))).join(', ')
+  })).join('\n');
+
+  const printExperience = site.experience.map(item => template('print/experience', {
+    company: escapeHtml(t(item.company)),
+    role: escapeHtml(t(item.role)),
+    date: escapeHtml(t(item.date)),
+    points: item.points.map(point => '<li>' + escapeHtml(t(point)) + '</li>').join('')
+  })).join('\n');
+
+  const printEducation = site.education.map(item => template('print/education', localizedObject(item, t))).join('\n');
+  const printCertifications = site.certifications.map(item => template('print/certification', localizedObject(item, t))).join('\n');
+  const printLanguages = site.languages.map(item => template('print/language', {
+    name: escapeHtml(t(item.name)),
+    level: escapeHtml(t(item.level))
+  })).join('\n');
+
   const structuredData = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
@@ -143,6 +165,19 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     educationCards,
     certificationCards,
     engineeringItems,
+    printCv: template('print/cv', {
+      portraitUrl: escapeHtml(site.cvPortrait),
+      name: escapeHtml(site.name),
+      headline: escapeHtml(site.title.split(' | ').map(t).join(' | ')),
+      linkedin: escapeHtml(site.linkedin.replace(/^https:\/\/(www\.)?/, '')),
+      linkedinUrl: escapeHtml(site.linkedin),
+      summary: paragraphs([site.intro], t),
+      printExpertise,
+      printExperience,
+      printEducation,
+      printCertifications,
+      printLanguages
+    }),
     experienceCount: String(site.experience.length),
     expertiseCount: String(new Set(site.expertise.flatMap(item => item.tools)).size),
     certificationCount: String(site.certifications.length)
