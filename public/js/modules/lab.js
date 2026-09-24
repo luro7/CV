@@ -382,8 +382,11 @@ function initScrollSystems() {
 function initPrint() {
   const details = document.querySelector('.profile-details');
   let restoreClosed = false;
+  let previousScrollY = 0;
 
   addEventListener('beforeprint', () => {
+    previousScrollY = window.scrollY;
+    window.scrollTo(0, 0);
     restoreClosed = Boolean(details && !details.open);
     if (details) details.open = true;
   });
@@ -391,6 +394,7 @@ function initPrint() {
   addEventListener('afterprint', () => {
     if (details && restoreClosed) details.open = false;
     restoreClosed = false;
+    window.scrollTo(0, previousScrollY);
   });
 
   document.querySelectorAll('[data-print-cv]').forEach(button => {
