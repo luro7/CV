@@ -81,6 +81,8 @@
   font: .78rem/1.55 Consolas, monospace;
 }
 .project-card-action { align-self: flex-start; margin-top: auto; color: #315e46; font-size: .84rem; font-weight: 650; }
+[data-theme="dark"] .project-card-action,
+[data-theme="dark"] .project-card-live-link { color: var(--lime, #bfe58c); }
 .project-card-live-link {
   position: absolute;
   right: 1.3rem;
