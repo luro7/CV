@@ -76,11 +76,11 @@
 @media(prefers-reduced-motion:reduce){.project-gallery-arrow,.project-gallery-thumb{transition:none}}
 @media(min-width:1100px){
  .project-gallery-dialog{width:min(1560px,calc(100vw - 3rem));height:min(96dvh,1080px);max-height:96dvh;overflow:hidden}
- .project-dialog-shell{height:100%;box-sizing:border-box;display:grid;grid-template-columns:minmax(18rem,.78fr) minmax(0,1.22fr);grid-template-rows:auto auto auto minmax(0,1fr);column-gap:clamp(1rem,2vw,2.2rem);overflow:auto}
+ .project-dialog-shell{height:100%;box-sizing:border-box;display:grid;grid-template-columns:minmax(18rem,.78fr) minmax(0,1.22fr);grid-template-rows:auto minmax(0,1fr);column-gap:clamp(1rem,2vw,2.2rem);overflow:auto}
  .project-dialog-header{grid-column:1/-1}
- .project-gallery-dialog .project-dialog-technologies,.project-dialog-links,.project-gallery-dialog .project-detail-note{grid-column:1}
- .project-gallery-dialog .project-detail-note{align-self:start}
- .project-gallery-dialog .project-gallery{grid-column:2;grid-row:2/5;display:flex;flex-direction:column;min-height:0;margin-top:0}
+ .project-dialog-sidebar{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:flex-start;gap:1rem;min-width:0;padding-top:1rem}
+ .project-gallery-dialog .project-dialog-technologies,.project-dialog-links,.project-gallery-dialog .project-detail-note{margin:0}
+ .project-gallery-dialog .project-gallery{grid-column:2;grid-row:2;display:flex;flex-direction:column;min-height:0;margin-top:0}
  .project-gallery-dialog .project-gallery-main{height:auto;min-height:0;flex:1}
  .project-gallery-dialog .project-gallery-slide{min-height:0}
 }

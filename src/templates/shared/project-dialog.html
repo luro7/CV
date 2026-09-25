@@ -8,9 +8,11 @@
       </div>
       <button class="project-dialog-close" type="button" data-close-project aria-label="{{closeLabel}}">×</button>
     </header>
-    <p class="project-dialog-technologies"><span>{{technologiesLabel}}</span>{{technologies}}</p>
-    {{projectLinks}}
-    {{screenshotsNote}}
+    <aside class="project-dialog-sidebar">
+      <p class="project-dialog-technologies"><span>{{technologiesLabel}}</span>{{technologies}}</p>
+      {{projectLinks}}
+      {{screenshotsNote}}
+    </aside>
     {{screenshots}}
   </div>
 </dialog>
