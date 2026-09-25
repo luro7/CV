@@ -159,12 +159,26 @@
       "category": "android",
       "description": "A native Android flight companion for on-demand flight lookup, recent ADS-B positions and traces, aircraft details, and map-based viewing. API credentials are protected with Android Keystore.",
       "technologies": "Kotlin, Jetpack Compose, MapLibre",
-      "screenshots": [{
-        "image": "/assets/projects/my-flight-android.png",
-        "orientation": "portrait",
-        "alt": "My Flight Android sample flight detail and estimated route map.",
-        "caption": "Fictional sample flight · estimated position clearly labeled"
-      }]
+      "screenshots": [
+        {
+          "image": "/assets/projects/my-flight-android.png",
+          "orientation": "portrait",
+          "alt": "My Flight Android sample flight detail and estimated route map.",
+          "caption": "Fictional sample flight · estimated position clearly labeled"
+        },
+        {
+          "image": "/assets/projects/my-flight-search.png",
+          "orientation": "portrait",
+          "alt": "My Flight search screen with a fictional sample position and flight lookup field.",
+          "caption": "Flight lookup and sample position · fictional data"
+        },
+        {
+          "image": "/assets/projects/my-flight-settings.png",
+          "orientation": "portrait",
+          "alt": "My Flight preferences for language, appearance, altitude, and speed units.",
+          "caption": "Preferences · language, appearance, and measurement units"
+        }
+      ]
     },
     {
       "name": "DisplayConductor",

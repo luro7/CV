@@ -1,11 +1,11 @@
 <article class="project-card" data-project-category="{{category}}" data-project-slug="{{slug}}">
-  <a class="project-card-link" href="{{projectUrl}}">
+  <button class="project-card-link" type="button" data-open-project="{{slug}}" aria-haspopup="dialog" aria-controls="project-dialog-{{slug}}">
     {{screenshot}}
     <span class="project-card-content">
-      <h3 class="project-card-title">{{name}} <span aria-hidden="true">↗</span></h3>
+      <span class="project-card-title" role="heading" aria-level="3">{{name}} <span aria-hidden="true">↗</span></span>
       <span class="project-card-description">{{description}}</span>
       <span class="project-technologies">{{technologies}}</span>
       <span class="project-card-action">{{openProjectLabel}}</span>
     </span>
-  </a>
+  </button>
 </article>

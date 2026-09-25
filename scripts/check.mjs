@@ -9,8 +9,6 @@ const site = JSON.parse(readFileSync(resolve(root, 'content/site.json'), 'utf8')
 const translations = JSON.parse(readFileSync(resolve(root, 'content/locales/es.json'), 'utf8'));
 const html = readFileSync(resolve(output, 'index.html'), 'utf8');
 const spanishHtml = readFileSync(resolve(output, 'es/index.html'), 'utf8');
-const galleryHtml = readFileSync(resolve(output, 'projects/index.html'), 'utf8');
-const spanishGalleryHtml = readFileSync(resolve(output, 'es/projects/index.html'), 'utf8');
 const siteUrl = new URL(site.siteUrl);
 assert(existsSync(resolve(root, 'public', '.' + site.cvPortrait)), 'CV portrait asset is missing');
 const allowedHosts = new Set([
@@ -119,8 +117,12 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('class="pipeline-dock"'), name + ': persistent scroll pipeline is missing');
   assert(documentHtml.includes('data-skill-status'), name + ': skill trace status is missing');
   assert(documentHtml.includes('data-print-cv'), name + ': PDF/print action is missing');
-  assert(documentHtml.includes('href="' + (name === 'es' ? '/es/projects/' : '/projects/') + '"'), name + ': project gallery action is missing');
-  assert(!documentHtml.includes('href="#projects"'), name + ': projects must stay out of the main navigation');
+  assert(documentHtml.includes('class="project-gallery-link" href="#projects"'), name + ': project action must scroll to the cards without leaving the page');
+  const primaryNavigation = documentHtml.match(/<nav aria-label="[^"]+">([\s\S]*?)<\/nav>/)?.[1] || '';
+  assert(!primaryNavigation.includes('#projects'), name + ': projects must stay out of the main navigation');
+  assert(documentHtml.includes('class="project-gallery-dialog"'), name + ': in-page project gallery dialog is missing');
+  assert(documentHtml.includes('<button class="project-card-link"'), name + ': project cards must open the dialog without navigating');
+  assert(!documentHtml.includes('href="/projects/') && !documentHtml.includes('href="/es/projects/'), name + ': gallery must not create project URLs');
   assert(documentHtml.includes('AI-assisted projects'), name + ': projects are missing from the generated CV');
   assert(!/github\.com\/luro7\/(manosalaobra|DisplayConductor|my-flight-android|sound-mixer)/i.test(documentHtml), name + ': private repository URL exposed');
   assert(documentHtml.includes('class="print-cv" hidden'), name + ': dedicated CV print content is missing');
@@ -156,33 +158,21 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   }
 }
 
-for (const [name, documentHtml] of [['en', galleryHtml], ['es', spanishGalleryHtml]]) {
-  assert.equal((documentHtml.match(/<h1\b/g) || []).length, 1, name + ': project gallery needs one h1');
-  assert(!/\{\{\w+\}\}/.test(documentHtml), name + ': unresolved project gallery template variables found');
-  assert.equal((documentHtml.match(/class="project-card"/g) || []).length, site.projects.length, name + ': every independent project must appear in the gallery');
-  for (const project of site.projects) {
-    assert(documentHtml.includes('href="' + (name === 'es' ? '/es/projects/' : '/projects/') + project.slug + '/"'), name + ': project card link is missing for ' + project.slug);
-  }
-  assert(documentHtml.includes('data-project-filter="android"'), name + ': platform filters are missing');
-  assert(!/github\.com\/luro7\/(manosalaobra|DisplayConductor|my-flight-android|sound-mixer)/i.test(documentHtml), name + ': private repository URL exposed');
-}
 for (const project of site.projects) {
   for (const language of ['en', 'es']) {
-    const projectPath = language === 'es'
-      ? resolve(output, 'es', 'projects', project.slug, 'index.html')
-      : resolve(output, 'projects', project.slug, 'index.html');
-    const projectHtml = readFileSync(projectPath, 'utf8');
-    assert.equal((projectHtml.match(/<h1\b/g) || []).length, 1, project.slug + ' ' + language + ': exactly one h1 is required');
-    assert(!/\{\{\w+\}\}/.test(projectHtml), project.slug + ' ' + language + ': unresolved template variables found');
-    if (project.screenshots?.length) assert(projectHtml.includes('data-gallery-image'), project.slug + ' ' + language + ': image viewer triggers are missing');
-    for (const screenshot of project.screenshots || []) assert(projectHtml.includes(screenshot.image), project.slug + ' ' + language + ': screenshot missing ' + screenshot.image);
+    const documentHtml = language === 'es' ? spanishHtml : html;
+    assert(documentHtml.includes('data-open-project="' + project.slug + '"'), project.slug + ' ' + language + ': project card trigger is missing');
+    assert(documentHtml.includes('id="project-dialog-' + project.slug + '"'), project.slug + ' ' + language + ': in-page project gallery is missing');
+    assert(documentHtml.includes('id="project-dialog-title-' + project.slug + '"'), project.slug + ' ' + language + ': project gallery title is missing');
+    for (const screenshot of project.screenshots || []) assert(documentHtml.includes('src="' + screenshot.image + '"'), project.slug + ' ' + language + ': screenshot missing ' + screenshot.image);
   }
 }
-const soundMixerDetail = readFileSync(resolve(output, 'projects', 'sound-mixer', 'index.html'), 'utf8');
-assert(soundMixerDetail.includes('/assets/projects/sound-mixer-main.png'), 'Sound Mixer main screenshot is missing');
-assert(soundMixerDetail.includes('/assets/projects/sound-mixer-compact.png'), 'Sound Mixer compact screenshot is missing');
+assert(!existsSync(resolve(output, 'projects')), 'Separate project URLs should not be generated');
 
 const printCss = readFileSync(resolve(output, 'css/interactive.css'), 'utf8');
+const projectCss = readFileSync(resolve(output, 'css/project-gallery.css'), 'utf8');
+assert(projectCss.includes('backdrop-filter:blur('), 'Project gallery must blur the page behind its modal');
+assert(projectCss.includes('overscroll-behavior:contain'), 'Project gallery must keep scrolling inside the modal');
 assert(printCss.includes('@page{size:A4'), 'Print output must use A4 paper');
 assert(printCss.includes('.print-cv-portrait'), 'Print output must include the CV portrait');
 assert(printCss.includes('body>:not(.print-cv)'), 'Print output must use the CV document instead of page styling');
@@ -213,6 +203,7 @@ const sitemap = readFileSync(resolve(output, 'sitemap.xml'), 'utf8');
 const robots = readFileSync(resolve(output, 'robots.txt'), 'utf8');
 assert(sitemap.includes('<loc>' + siteUrl.origin + '/</loc>'), 'English sitemap URL missing');
 assert(sitemap.includes('<loc>' + siteUrl.origin + '/es/</loc>'), 'Spanish sitemap URL missing');
+assert(!sitemap.includes('/projects/'), 'Project dialogs should not be listed as separate URLs');
 assert(robots.includes('Sitemap: ' + siteUrl.origin + '/sitemap.xml'), 'Robots sitemap URL is not centralized');
 assert(existsSync(resolve(output, 'js/site-data.js')), 'Generated site data module is missing');
 assert(readFileSync(resolve(output, 'google6cc6f994cc0e992b.html'), 'utf8').trim() === 'google-site-verification: google6cc6f994cc0e992b.html');

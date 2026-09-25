@@ -40,11 +40,6 @@ const screenshotsFor = item => {
   }
   return screenshots;
 };
-const projectPath = (item, language) => {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(item.slug || '')) throw new Error('Invalid project slug: ' + item.name);
-  return (language === 'es' ? '/es/projects/' : '/projects/') + item.slug + '/';
-};
-
 export function render(site, { language = 'en', translations = {} } = {}) {
   const linkedIn = new URL(site.linkedin);
   const siteUrl = new URL(site.siteUrl);
@@ -140,19 +135,42 @@ export function render(site, { language = 'en', translations = {} } = {}) {
   const projectCards = site.projects.map(item => {
     const category = item.category || 'web';
     if (!['web', 'android', 'windows'].includes(category)) throw new Error('Invalid project category: ' + item.name);
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(item.slug || '')) throw new Error('Invalid project slug: ' + item.name);
     const shot = screenshotsFor(item)[0];
     const screenshot = shot
-      ? '<span class="project-card-cover"><img src="' + escapeHtml(shot.image) + '" alt="' + escapeHtml(t(shot.alt || item.name)) + '" loading="lazy" decoding="async"></span>'
+      ? '<span class="project-card-cover"><img src="' + escapeHtml(shot.image) + '" alt="" loading="lazy" decoding="async"></span>'
       : '<span class="project-card-cover project-preview-pending" role="img" aria-label="' + escapeHtml(t('Screenshot capture pending')) + '"><span>' + escapeHtml(t('Screenshot capture pending')) + '</span></span>';
     return template('cards/project', {
       category,
       slug: escapeHtml(item.slug),
       screenshot,
-      projectUrl: escapeHtml(projectPath(item, language)),
       openProjectLabel: escapeHtml(t('Open project gallery')),
       name: escapeHtml(t(item.name)),
       description: escapeHtml(t(item.description)),
       technologies: escapeHtml(item.technologies)
+    });
+  }).join('\n');
+
+  const projectDialogs = site.projects.map(item => {
+    const category = item.category || 'web';
+    if (!['web', 'android', 'windows'].includes(category)) throw new Error('Invalid project category: ' + item.name);
+    const screenshots = screenshotsFor(item).map(shot =>
+      '<figure class="project-dialog-shot' + (shot.orientation === 'portrait' ? ' is-portrait' : '') + '"><img src="' + escapeHtml(shot.image) + '" alt="' + escapeHtml(t(shot.alt || item.name)) + '" loading="lazy" decoding="async"><figcaption>' + escapeHtml(t(shot.caption || item.name)) + '</figcaption></figure>'
+    ).join('\n') || '<p class="project-gallery-empty">' + escapeHtml(t('Screenshots for this project are being prepared.')) + '</p>';
+    const screenshotsNote = item.screenshotsNote
+      ? '<p class="project-detail-note">' + escapeHtml(t(item.screenshotsNote)) + '</p>'
+      : '';
+    return template('shared/project-dialog', {
+      slug: escapeHtml(item.slug),
+      categoryLabel: escapeHtml(t(category === 'windows' ? 'Windows application' : category === 'android' ? 'Android application' : 'Web application')),
+      galleryEyebrow: escapeHtml(t('Project screenshots')),
+      projectName: escapeHtml(t(item.name)),
+      projectDescription: escapeHtml(t(item.description)),
+      technologiesLabel: escapeHtml(t('Technologies')),
+      technologies: escapeHtml(item.technologies),
+      screenshotsNote,
+      screenshots,
+      closeLabel: escapeHtml(t('Close gallery'))
     });
   }).join('\n');
 
@@ -218,8 +236,8 @@ export function render(site, { language = 'en', translations = {} } = {}) {
       printLanguages
     }),
     projectCards,
+    projectDialogs,
     projectsIntro: escapeHtml(t(site.projectsIntro)),
-    projectsUrl: spanish ? '/es/projects/' : '/projects/',
     projectGalleryLabel: escapeHtml(t('View project gallery')),
     experienceCount: String(site.experience.length),
     expertiseCount: String(new Set(site.expertise.flatMap(item => item.tools)).size),
@@ -243,109 +261,4 @@ export function render(site, { language = 'en', translations = {} } = {}) {
 
   if (spanish) html = localizeHtml(html, translations);
   return html;
-}
-
-export function renderProjectGallery(site, { language = 'en', translations = {} } = {}) {
-  const spanish = language === 'es';
-  const t = value => spanish ? (translations[value] || value) : value;
-  const siteUrl = new URL(site.siteUrl);
-  const homeUrl = spanish ? '/es/' : '/';
-  const galleryUrl = spanish ? '/es/projects/' : '/projects/';
-  const otherGalleryUrl = spanish ? '/projects/' : '/es/projects/';
-  const cards = site.projects.map(item => {
-    const category = item.category || 'web';
-    if (!['web', 'android', 'windows'].includes(category)) throw new Error('Invalid project category: ' + item.name);
-    const shot = screenshotsFor(item)[0];
-    const screenshot = shot
-      ? '<span class="project-card-cover"><img src="' + escapeHtml(shot.image) + '" alt="' + escapeHtml(t(shot.alt || item.name)) + '" loading="lazy" decoding="async"></span>'
-      : '<span class="project-card-cover project-preview-pending" role="img" aria-label="' + escapeHtml(t('Screenshot capture pending')) + '"><span>' + escapeHtml(t('Screenshot capture pending')) + '</span></span>';
-    return template('cards/project', {
-      category,
-      slug: escapeHtml(item.slug),
-      screenshot,
-      projectUrl: escapeHtml(projectPath(item, language)),
-      openProjectLabel: escapeHtml(t('Open project gallery')),
-      name: escapeHtml(t(item.name)),
-      description: escapeHtml(t(item.description)),
-      technologies: escapeHtml(item.technologies)
-    });
-  }).join('\n');
-  const title = spanish ? 'Proyectos con IA · Lucas Rosat' : 'AI-assisted projects · Lucas Rosat';
-  const description = t(site.projectsIntro);
-  const page = template('pages/projects', {
-    htmlLang: language,
-    title: escapeHtml(title),
-    description: escapeHtml(description),
-    canonicalUrl: escapeHtml(siteUrl.origin + galleryUrl),
-    homeUrl,
-    otherGalleryUrl,
-    otherLanguage: spanish ? 'EN' : 'ES',
-    pageHeading: escapeHtml(t('Projects in practice')),
-    introLabel: escapeHtml(t('AI-assisted development')),
-    projectsIntro: escapeHtml(description),
-    backLabel: escapeHtml(t('Back to CV')),
-    openProjectLabel: escapeHtml(t('Open project gallery')),
-    allLabel: escapeHtml(t('All')),
-    webLabel: escapeHtml(t('Web')),
-    androidLabel: escapeHtml(t('Android')),
-    windowsLabel: escapeHtml(t('Windows')),
-    filtersLabel: escapeHtml(t('Filter projects')),
-    lightboxClose: escapeHtml(t('Close image')),
-    lightboxCaption: escapeHtml(t('Project screenshot')),
-    footerLabel: escapeHtml(t('Independent projects with AI assistance')),
-    projectCards: cards
-  });
-  return spanish ? localizeHtml(page, translations) : page;
-}
-
-export function renderProjectDetail(site, item, { language = 'en', translations = {} } = {}) {
-  const spanish = language === 'es';
-  const t = value => spanish ? (translations[value] || value) : value;
-  const siteUrl = new URL(site.siteUrl);
-  const galleryUrl = spanish ? '/es/projects/' : '/projects/';
-  const currentPath = projectPath(item, language);
-  const screenshots = screenshotsFor(item).map((shot, index) => {
-    const image = escapeHtml(shot.image);
-    const alt = escapeHtml(t(shot.alt || item.name));
-    const caption = escapeHtml(t(shot.caption || item.name));
-    return '<figure class="project-detail-shot' + (shot.orientation === 'portrait' ? ' is-portrait' : '') + '"><button class="project-detail-image" type="button" data-gallery-image data-image-src="' + image + '" data-image-alt="' + alt + '" data-image-caption="' + caption + '" aria-label="' + escapeHtml(t('Enlarge project screenshot')) + '"><img src="' + image + '" alt="' + alt + '" loading="' + (index < 2 ? 'eager' : 'lazy') + '" decoding="async"><span class="preview-hint" aria-hidden="true">↗</span></button><figcaption>' + caption + '</figcaption></figure>';
-  }).join('\n') || '<p class="project-gallery-empty">' + escapeHtml(t('Screenshots for this project are being prepared.')) + '</p>';
-  let externalLink = '';
-  if (item.url) {
-    const url = new URL(item.url);
-    if (url.protocol !== 'https:' || url.hostname !== 'manosalaobra.pages.dev') throw new Error('Invalid project URL');
-    externalLink = '<a class="project-detail-live-link" href="' + escapeHtml(url.href) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(t(item.urlLabel || 'Live website')) + ' ↗</a>';
-  }
-  const screenshotsNote = item.screenshotsNote
-    ? '<p class="project-detail-note">' + escapeHtml(t(item.screenshotsNote)) + '</p>'
-    : '';
-  const title = t(item.name) + ' · ' + (spanish ? 'Proyectos' : 'Projects') + ' · Lucas Rosat';
-  const page = template('pages/project', {
-    htmlLang: language,
-    title: escapeHtml(title),
-    description: escapeHtml(t(item.description)),
-    canonicalUrl: escapeHtml(siteUrl.origin + currentPath),
-    englishUrl: escapeHtml(siteUrl.origin + projectPath(item, 'en')),
-    spanishUrl: escapeHtml(siteUrl.origin + projectPath(item, 'es')),
-    homeUrl: spanish ? '/es/' : '/',
-    galleryUrl,
-    otherLanguageUrl: projectPath(item, spanish ? 'en' : 'es'),
-    otherLanguage: spanish ? 'EN' : 'ES',
-    pageNavigationLabel: escapeHtml(t('Project navigation')),
-    allProjectsLabel: escapeHtml(t('All projects')),
-    categoryLabel: escapeHtml(t(item.category === 'windows' ? 'Windows application' : item.category === 'android' ? 'Android application' : 'Web application')),
-    projectName: escapeHtml(t(item.name)),
-    projectDescription: escapeHtml(t(item.description)),
-    technologiesLabel: escapeHtml(t('Technologies')),
-    technologies: escapeHtml(item.technologies),
-    screenshotsNote,
-    externalLink,
-    galleryEyebrow: escapeHtml(t('Application screens')),
-    galleryTitle: escapeHtml(t('Explore the interface')),
-    screenshots,
-    footerLabel: escapeHtml(t('Independent projects with AI assistance')),
-    lightboxClose: escapeHtml(t('Close image')),
-    lightboxCaption: escapeHtml(t('Project screenshot'))
-  });
-  return spanish ? localizeHtml(page, translations) : page;
 }

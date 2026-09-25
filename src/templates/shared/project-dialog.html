@@ -1,0 +1,15 @@
+<dialog class="project-gallery-dialog" id="project-dialog-{{slug}}" aria-labelledby="project-dialog-title-{{slug}}" data-project-dialog>
+  <div class="project-dialog-shell">
+    <header class="project-dialog-header">
+      <div>
+        <p class="eyebrow">{{categoryLabel}} · {{galleryEyebrow}}</p>
+        <h2 id="project-dialog-title-{{slug}}">{{projectName}}</h2>
+        <p class="project-dialog-description">{{projectDescription}}</p>
+      </div>
+      <button class="project-dialog-close" type="button" data-close-project aria-label="{{closeLabel}}">×</button>
+    </header>
+    <p class="project-dialog-technologies"><span>{{technologiesLabel}}</span>{{technologies}}</p>
+    {{screenshotsNote}}
+    <div class="project-dialog-gallery">{{screenshots}}</div>
+  </div>
+</dialog>
