@@ -10,6 +10,8 @@ const createCarousel = dialog => {
   const count = root.querySelector('[data-carousel-count]');
   const thumbnailRail = root.querySelector('[data-carousel-thumbnails]');
   const thumbnails = [...root.querySelectorAll('[data-carousel-to]')];
+  const listeners = new AbortController();
+  const listenerOptions = { signal: listeners.signal };
 
   const update = () => {
     const selected = api.selectedScrollSnap();
@@ -28,9 +30,9 @@ const createCarousel = dialog => {
     });
   };
 
-  previous?.addEventListener('click', () => api.scrollPrev());
-  next?.addEventListener('click', () => api.scrollNext());
-  thumbnails.forEach(button => button.addEventListener('click', () => api.scrollTo(Number(button.dataset.carouselTo))));
+  previous?.addEventListener('click', () => api.scrollPrev(), listenerOptions);
+  next?.addEventListener('click', () => api.scrollNext(), listenerOptions);
+  thumbnails.forEach(button => button.addEventListener('click', () => api.scrollTo(Number(button.dataset.carouselTo)), listenerOptions));
   viewport.addEventListener('keydown', event => {
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
@@ -39,12 +41,19 @@ const createCarousel = dialog => {
       event.preventDefault();
       api.scrollNext();
     }
-  });
+  }, listenerOptions);
   api.on('select', update);
   api.on('reInit', update);
   if (thumbnails.length < 2) root.classList.add('is-single-image');
   update();
-  return api;
+  return {
+    destroy() {
+      listeners.abort();
+      api.off('select', update);
+      api.off('reInit', update);
+      api.destroy();
+    }
+  };
 };
 
 const projectOpeners = [...document.querySelectorAll('[data-open-project]')];
