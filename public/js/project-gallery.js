@@ -1,57 +1,47 @@
 let activeProjectOpener;
-const createCarousel = dialog => {
-  const root = dialog.querySelector('[data-project-carousel]');
-  const viewport = root?.querySelector('[data-carousel-viewport]');
-  if (!root || !viewport || typeof window.EmblaCarousel !== 'function') return;
 
-  const api = window.EmblaCarousel(viewport, { loop: false, dragFree: false, watchDrag: true, dragThreshold: 8 });
-  const previous = root.querySelector('[data-carousel-prev]');
-  const next = root.querySelector('[data-carousel-next]');
-  const count = root.querySelector('[data-carousel-count]');
-  const thumbnailRail = root.querySelector('[data-carousel-thumbnails]');
-  const thumbnails = [...root.querySelectorAll('[data-carousel-to]')];
-  const listeners = new AbortController();
-  const listenerOptions = { signal: listeners.signal };
+const createGallery = dialog => {
+  const root = dialog.querySelector('[data-project-gallery]');
+  const mainElement = root?.querySelector('[data-gallery-main]');
+  const thumbsElement = root?.querySelector('[data-gallery-thumbs]');
+  if (!root || !mainElement || typeof window.Swiper !== 'function') return;
 
-  const update = () => {
-    const selected = api.selectedScrollSnap();
-    if (count) count.textContent = (selected + 1) + ' / ' + api.scrollSnapList().length;
-    if (previous) previous.disabled = !api.canScrollPrev();
-    if (next) next.disabled = !api.canScrollNext();
-    thumbnails.forEach((button, index) => {
-      const active = index === selected;
-      button.setAttribute('aria-pressed', String(active));
-      if (active && thumbnailRail) {
-        const railBounds = thumbnailRail.getBoundingClientRect();
-        const buttonBounds = button.getBoundingClientRect();
-        if (buttonBounds.left < railBounds.left) thumbnailRail.scrollTo({ left: thumbnailRail.scrollLeft + buttonBounds.left - railBounds.left, behavior: 'smooth' });
-        if (buttonBounds.right > railBounds.right) thumbnailRail.scrollTo({ left: thumbnailRail.scrollLeft + buttonBounds.right - railBounds.right, behavior: 'smooth' });
-      }
-    });
+  const thumbs = thumbsElement && !thumbsElement.classList.contains('is-single-image')
+    ? new window.Swiper(thumbsElement, {
+        slidesPerView: 'auto',
+        spaceBetween: 8,
+        freeMode: true,
+        watchSlidesProgress: true,
+        slideToClickedSlide: true,
+        grabCursor: true
+      })
+    : undefined;
+  const gallery = new window.Swiper(mainElement, {
+    slidesPerView: 1,
+    spaceBetween: 16,
+    speed: 360,
+    simulateTouch: true,
+    grabCursor: true,
+    watchOverflow: true,
+    keyboard: { enabled: true, onlyInViewport: true },
+    navigation: {
+      prevEl: root.querySelector('[data-gallery-prev]'),
+      nextEl: root.querySelector('[data-gallery-next]')
+    },
+    thumbs: thumbs ? { swiper: thumbs } : undefined
+  });
+  const count = root.querySelector('[data-gallery-count]');
+  const updateCount = () => {
+    if (count) count.textContent = `${gallery.realIndex + 1} / ${gallery.slides.length}`;
   };
+  gallery.on('slideChange', updateCount);
+  updateCount();
+  gallery.update();
 
-  previous?.addEventListener('click', () => api.scrollPrev(), listenerOptions);
-  next?.addEventListener('click', () => api.scrollNext(), listenerOptions);
-  thumbnails.forEach(button => button.addEventListener('click', () => api.scrollTo(Number(button.dataset.carouselTo)), listenerOptions));
-  viewport.addEventListener('keydown', event => {
-    if (event.key === 'ArrowLeft') {
-      event.preventDefault();
-      api.scrollPrev();
-    } else if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      api.scrollNext();
-    }
-  }, listenerOptions);
-  api.on('select', update);
-  api.on('reInit', update);
-  if (thumbnails.length < 2) root.classList.add('is-single-image');
-  update();
   return {
     destroy() {
-      listeners.abort();
-      api.off('select', update);
-      api.off('reInit', update);
-      api.destroy();
+      gallery.destroy(true, true);
+      thumbs?.destroy(true, true);
     }
   };
 };
@@ -62,7 +52,7 @@ projectOpeners.forEach(button => button.addEventListener('click', () => {
   if (!dialog || dialog.open) return;
   activeProjectOpener = button;
   dialog.showModal();
-  dialog._projectCarousel = createCarousel(dialog);
+  dialog._projectGallery = createGallery(dialog);
   dialog.querySelector('[data-close-project]')?.focus();
 }));
 
@@ -72,8 +62,8 @@ document.querySelectorAll('[data-project-dialog]').forEach(dialog => {
     if (event.target === dialog) dialog.close();
   });
   dialog.addEventListener('close', () => {
-    dialog._projectCarousel?.destroy();
-    dialog._projectCarousel = undefined;
+    dialog._projectGallery?.destroy();
+    dialog._projectGallery = undefined;
     activeProjectOpener?.focus();
     activeProjectOpener = undefined;
   });

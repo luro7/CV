@@ -1,4 +1,0 @@
-Embla Carousel v8.6.0
-Copyright (c) 2018 David Jerleke
-Licensed under the MIT License.
-Source and license: https://github.com/davidjerleke/embla-carousel
