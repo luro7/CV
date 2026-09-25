@@ -202,6 +202,41 @@
       "date": "Mar 2024",
       "image": "/assets/credentials/skillsoft-ai-machine-learning.png",
       "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/c736b38b-c866-49f1-82ed-57cdf5887686"
+    },
+    {
+      "title": "ChatGPT Prompt Engineering Examples & Use Cases",
+      "institution": "Skillsoft",
+      "date": "May 2024",
+      "badgeLabel": "AI",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/46214cad-397c-464e-ba48-fe46368e78d0"
+    },
+    {
+      "title": "Application Security Awareness & Validation",
+      "institution": "Skillsoft",
+      "date": "May 2021",
+      "badgeLabel": "AppSec",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/9885d253-7eaa-4e93-8d5e-7dd872fd6d48"
+    },
+    {
+      "title": "API Security",
+      "institution": "Skillsoft",
+      "date": "May 2021",
+      "badgeLabel": "API",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/414e9a71-cc0c-409c-9d07-7bb33aa22a04"
+    },
+    {
+      "title": "Secure Application Architecture & IAM",
+      "institution": "Skillsoft",
+      "date": "May 2021",
+      "badgeLabel": "IAM",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/e3e76a9b-95af-4da6-be4a-c6563d7993fe"
+    },
+    {
+      "title": "Top 10 List Items",
+      "institution": "Skillsoft",
+      "date": "May 2021",
+      "badgeLabel": "OWASP",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/e76f6824-61cc-43d2-9624-b6799e3620d2"
     }
   ],
   "about": [

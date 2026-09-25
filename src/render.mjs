@@ -92,10 +92,18 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     if (url.protocol !== 'https:' || !['www.credly.com', 'skillsoft.digitalbadges.skillsoft.com'].includes(url.hostname)) {
       throw new Error('Invalid credential URL');
     }
-    if (!/^\/assets\/credentials\/[a-z0-9-]+\.png$/.test(item.image)) {
-      throw new Error('Invalid credential image');
+    let credentialArt;
+    if (item.image) {
+      if (!/^\/assets\/credentials\/[a-z0-9-]+\.png$/.test(item.image)) throw new Error('Invalid credential image');
+      credentialArt = '<div class="credential-art"><img src="' + escapeHtml(item.image) + '" alt="" width="400" height="400" loading="lazy" decoding="async"></div>';
+    } else {
+      if (!/^[A-Za-z0-9]{2,8}$/.test(item.badgeLabel || '')) throw new Error('Invalid credential badge label');
+      credentialArt = '<div class="credential-art credential-art-label" aria-hidden="true"><span>' + escapeHtml(item.badgeLabel) + '</span></div>';
     }
-    return template('cards/certification', localizedObject(item, t));
+    return template('cards/certification', {
+      ...localizedObject(item, t),
+      credentialArt
+    });
   }).join('\n');
 
   const printExpertise = site.expertise.map(item => template('print/skill-group', {

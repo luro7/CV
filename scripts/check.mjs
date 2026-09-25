@@ -89,8 +89,11 @@ for (const item of site.languages) {
   for (const key of ['name', 'level']) assert(typeof item[key] === 'string' && item[key].trim(), 'Language entry missing ' + key);
 }
 for (const item of site.certifications) {
-  for (const key of ['title', 'institution', 'date', 'image', 'credentialUrl']) assert(typeof item[key] === 'string' && item[key].trim(), 'Certification item missing ' + key);
+  for (const key of ['title', 'institution', 'date', 'credentialUrl']) assert(typeof item[key] === 'string' && item[key].trim(), 'Certification item missing ' + key);
+  if (item.image) assert(/^\/assets\/credentials\/[a-z0-9-]+\.png$/.test(item.image), 'Invalid credential image: ' + item.title);
+  else assert(/^[A-Za-z0-9]{2,8}$/.test(item.badgeLabel || ''), 'Credential without an image needs a short label: ' + item.title);
 }
+assert.equal(site.certifications.length, 8, 'All public credentials should be listed');
 
 const experienceIds = new Set(site.experience.map(item => item.id));
 assert.equal(experienceIds.size, site.experience.length, 'Experience IDs must be unique');
@@ -114,6 +117,7 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('AI-assisted projects'), name + ': projects are missing from the generated CV');
   assert(!/github\.com\/luro7\/(manosalaobra|DisplayConductor|my-flight-android|sound-mixer)/i.test(documentHtml), name + ': private repository URL exposed');
   assert(documentHtml.includes('class="print-cv" hidden'), name + ': dedicated CV print content is missing');
+  assert.equal((documentHtml.match(/class="certification-card"/g) || []).length, site.certifications.length, name + ': all credentials should appear on the page');
   assert(!documentHtml.includes('class="expertise-grid"'), name + ': skills should not be repeated below the interactive map');
   assert(documentHtml.includes('src="' + site.cvPortrait + '"'), name + ': CV portrait is not connected to site data');
   const visibleText = documentHtml.replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ');
