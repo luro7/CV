@@ -135,6 +135,31 @@
       "id": "iddea-web-developer"
     }
   ],
+  "projectsIntro": "Independent projects built with Codex. I defined the goals and requirements, guided each iteration, and reviewed the generated results. Codex generated and revised the source code.",
+  "projects": [
+    {
+      "name": "Manos a la Obra",
+      "description": "A public home renovation and maintenance website with a private content editor, review and publishing workflow, and persistent content and media management. Designed around a zero-cost operating constraint.",
+      "technologies": "Astro, React, TypeScript, Hono, Cloudflare Pages, D1, KV",
+      "url": "https://manosalaobra.pages.dev",
+      "urlLabel": "Live website"
+    },
+    {
+      "name": "My Flight",
+      "description": "A native Android flight companion for on-demand flight lookup, recent ADS-B positions and traces, aircraft details, and map-based viewing. API credentials are protected with Android Keystore.",
+      "technologies": "Kotlin, Jetpack Compose, MapLibre"
+    },
+    {
+      "name": "DisplayConductor",
+      "description": "A Windows desktop application for monitor profiles and display control, with window grouping, startup rules, recovery tools, and diagnostic reporting. Physical display behavior still needs validation on target hardware.",
+      "technologies": "C# 14, .NET 10, WinUI 3"
+    },
+    {
+      "name": "Sound Mixer",
+      "description": "A Windows audio mixer for per-application sessions, with browser-tab volume control through a Chromium extension and Native Messaging integration.",
+      "technologies": "C# 14, .NET 10, WinUI 3, WASAPI, Chromium extension"
+    }
+  ],
   "education": [
     {
       "title": "Advanced Technician in Systems Analysis",

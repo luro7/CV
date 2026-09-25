@@ -290,3 +290,11 @@ button:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
   .print-cv-item strong{font-size:8.4pt}
   .print-cv-bottom p{font-size:8.2pt}
 }
+@media print{
+  .print-cv-projects-intro{font-size:8pt;margin:0 0 2mm}
+  .print-cv-projects{display:grid;grid-template-columns:1fr 1fr;gap:2mm 5mm}
+  .print-cv-project{break-inside:avoid;margin:0 0 1mm}
+  .print-cv-project h3{font-size:8.5pt;margin:0}
+  .print-cv-project p{font-size:7.5pt;margin:0;line-height:1.25}
+  .print-cv-project .print-cv-project-tech{font-size:7pt;color:#475569}
+}

@@ -72,13 +72,6 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     year: new Date().getFullYear()
   };
 
-  const expertiseCards = site.expertise.map(item =>
-    template('cards/expertise', {
-      ...localizedObject(item, t),
-      tools: tags(item.tools, t)
-    })
-  ).join('\n');
-
   const experienceCards = site.experience.map(item =>
     template('cards/experience', {
       ...localizedObject(item, t),
@@ -124,6 +117,26 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     level: escapeHtml(t(item.level))
   })).join('\n');
 
+  const projectCards = site.projects.map(item => {
+    const link = item.url ? (() => {
+      const url = new URL(item.url);
+      if (url.protocol !== 'https:' || url.hostname !== 'manosalaobra.pages.dev') throw new Error('Invalid project URL');
+      return '<a class="project-link" href="' + escapeHtml(url.href) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(t(item.urlLabel)) + ' ↗</a>';
+    })() : '';
+    return template('cards/project', {
+      name: escapeHtml(t(item.name)),
+      description: escapeHtml(t(item.description)),
+      technologies: escapeHtml(item.technologies),
+      link
+    });
+  }).join('\n');
+
+  const printProjects = site.projects.map(item => template('print/project', {
+    name: escapeHtml(t(item.name)),
+    description: escapeHtml(t(item.description)),
+    technologies: escapeHtml(item.technologies)
+  })).join('\n');
+
   const structuredData = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
@@ -160,7 +173,6 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     heroSummaryContent: paragraphs(heroSummary, t),
     aboutDetailContent: paragraphs(heroDetails, t),
     heroFocus: tags(heroFocus, t),
-    expertiseCards,
     experienceCards,
     educationCards,
     certificationCards,
@@ -174,17 +186,21 @@ export function render(site, { language = 'en', translations = {} } = {}) {
       summary: paragraphs([site.intro], t),
       printExpertise,
       printExperience,
+      projectsIntro: escapeHtml(t(site.projectsIntro)),
+      printProjects,
       printEducation,
       printCertifications,
       printLanguages
     }),
+    projectCards,
+    projectsIntro: escapeHtml(t(site.projectsIntro)),
     experienceCount: String(site.experience.length),
     expertiseCount: String(new Set(site.expertise.flatMap(item => item.tools)).size),
     certificationCount: String(site.certifications.length)
   };
 
   const sections = Object.fromEntries(
-    ['hero', 'profile', 'experience', 'education'].map(name => [
+    ['hero', 'profile', 'experience', 'projects', 'education'].map(name => [
       name,
       template('sections/' + name, values)
     ])

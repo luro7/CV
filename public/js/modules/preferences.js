@@ -3,6 +3,7 @@ import translations from '../translations.js';
 const root = document.documentElement;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const store = (key, value) => { try { localStorage.setItem(key, value); } catch {} };
+const languageScrollKey = 'cv-language-scroll';
 const reverseTranslations = Object.fromEntries(
   Object.entries(translations).map(([english, spanish]) => [spanish, english])
 );
@@ -15,6 +16,19 @@ export function initPreferences() {
   const language = root.lang === 'es' ? 'es' : 'en';
   let themeTimer;
   let changingLanguage = false;
+
+  function saveLanguageScroll(target) {
+    try {
+      sessionStorage.setItem(languageScrollKey, JSON.stringify({
+        path: new URL(target, location.href).pathname,
+        y: window.scrollY,
+        savedAt: Date.now()
+      }));
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   function updateControls() {
     const dark = root.dataset.theme === 'dark';
@@ -84,7 +98,9 @@ export function initPreferences() {
     if (changingLanguage) return;
 
     const target = languageButton.dataset.languageTarget || (language === 'es' ? '/' : '/es/');
-    const hash = location.hash || '';
+    const activeSection = document.querySelector('.sidebar nav a[aria-current="location"]')?.hash || '';
+    const hash = location.hash || activeSection;
+    saveLanguageScroll(target);
 
     if (reducedMotion.matches) {
       location.assign(target + hash);

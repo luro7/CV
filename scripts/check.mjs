@@ -15,6 +15,7 @@ const allowedHosts = new Set([
   siteUrl.hostname,
   new URL(site.linkedin).hostname,
   ...site.certifications.map(item => new URL(item.credentialUrl).hostname)
+  , ...site.projects.filter(item => item.url).map(item => new URL(item.url).hostname)
 ]);
 
 const expertiseItems = site.expertise.flatMap(group => group.tools);
@@ -36,13 +37,18 @@ const nonTranslatedTerms = new Set([
   'BMC Control-M', 'Accenture', 'Microsoft Copilot Enterprise', 'Visual Studio',
   'Grupo Aoniken', 'Iddea Devs',
   'SQL', 'HTML', 'CSS', 'PHP', 'Git', 'Skillsoft', 'Universidad Nacional del Sur',
-  'Cloudflare Pages', 'CI/CD', 'GitHub Actions', '2017'
+  'Cloudflare Pages', 'CI/CD', 'GitHub Actions', '2017',
+  'Astro, React, TypeScript, Hono, Cloudflare Pages, D1, KV',
+  'Kotlin, Jetpack Compose, MapLibre',
+  'C# 14, .NET 10, WinUI 3',
+  'C# 14, .NET 10, WinUI 3, WASAPI, Chromium extension'
 ]);
 const publicCopy = [
   site.description, site.intro, ...site.about,
   ...site.title.split(' | '),
   ...site.expertise.flatMap(group => [group.title, ...group.tools]),
   ...site.experience.flatMap(item => [item.company, item.role, item.date, ...item.points, ...item.tools]),
+  site.projectsIntro, ...site.projects.flatMap(item => [item.name, item.description, item.technologies, item.urlLabel].filter(Boolean)),
   ...site.education.flatMap(item => [item.title, item.institution, item.detail]),
   ...site.languages.flatMap(item => [item.name, item.level]),
   ...site.certifications.flatMap(item => [item.title, item.institution, item.date]),
@@ -55,7 +61,7 @@ for (const phrase of new Set(publicCopy)) {
 const requiredUiTranslations = [
   'Select a skill or technology to trace experience.', 'Skill', 'Technology', 'Language', 'Process', 'Domain',
   'Data', 'Transform', 'Automate', 'AI', 'Report', 'Type a skill, technology or action', 'Search the CV',
-  'Go to introduction', 'Go to expertise', 'Go to experience', 'Go to education', 'Toggle dark mode',
+  'Go to introduction', 'Go to expertise', 'Go to experience', 'Go to education', 'Toggle dark mode', 'Projects',
   'Toggle engineering mode', 'Switch language', 'Save PDF', 'Open LinkedIn', 'Navigate', 'System', 'Current'
 ];
 for (const phrase of requiredUiTranslations) {
@@ -69,6 +75,11 @@ for (const item of site.experience) {
   for (const key of ['company', 'role', 'date', 'id']) assert(typeof item[key] === 'string' && item[key].trim(), 'Experience item missing ' + key);
   assert(Array.isArray(item.points) && item.points.length, 'Experience item needs responsibility points: ' + item.id);
   assert(Array.isArray(item.tools), 'Experience tools must be an array: ' + item.id);
+}
+assert.equal(site.projects.length, 4, 'Four independently developed projects should be listed');
+for (const item of site.projects) {
+  for (const key of ['name', 'description', 'technologies']) assert(typeof item[key] === 'string' && item[key].trim(), 'Project missing ' + key);
+  if (item.url) assert.equal(new URL(item.url).hostname, 'manosalaobra.pages.dev', 'Only the public project website may be linked');
 }
 for (const item of site.education) {
   for (const key of ['title', 'institution', 'detail']) assert(typeof item[key] === 'string' && item[key].trim(), 'Education item missing ' + key);
@@ -99,11 +110,16 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('class="pipeline-dock"'), name + ': persistent scroll pipeline is missing');
   assert(documentHtml.includes('data-skill-status'), name + ': skill trace status is missing');
   assert(documentHtml.includes('data-print-cv'), name + ': PDF/print action is missing');
+  assert(documentHtml.includes('id="projects"'), name + ': projects section is missing');
+  assert(documentHtml.includes('AI-assisted projects'), name + ': projects are missing from the generated CV');
+  assert(!/github\.com\/luro7\/(manosalaobra|DisplayConductor|my-flight-android|sound-mixer)/i.test(documentHtml), name + ': private repository URL exposed');
   assert(documentHtml.includes('class="print-cv" hidden'), name + ': dedicated CV print content is missing');
+  assert(!documentHtml.includes('class="expertise-grid"'), name + ': skills should not be repeated below the interactive map');
   assert(documentHtml.includes('src="' + site.cvPortrait + '"'), name + ': CV portrait is not connected to site data');
-  for (const privateValue of ['Bahía Blanca', 'rosatlucas@gmail.com', '2920 475794']) {
-    assert(!documentHtml.includes(privateValue), name + ': private contact/location data found');
-  }
+  const visibleText = documentHtml.replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ');
+  assert(!/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(visibleText), name + ': email address exposed');
+  assert(!/(?<!\d)\+?\d[\d ()-]{7,}\d(?!\d)/.test(visibleText), name + ': phone number exposed');
+  assert(!/<address\b/i.test(documentHtml), name + ': postal address exposed');
   assert(documentHtml.includes('id="engineering-panel" inert'), name + ': closed engineering panel must be inert');
   assert(documentHtml.includes('aria-controls="engineering-panel"'), name + ': engineering toggle needs its controlled panel');
 

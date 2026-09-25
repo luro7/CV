@@ -6,9 +6,10 @@ import { readFileSync } from 'node:fs';
 const source = readFileSync(new URL('../public/js/modules/preferences.js', import.meta.url), 'utf8')
   .replace("import translations from '../translations.js';", '')
   .replace('export function initPreferences', 'function initPreferences');
+const earlySource = readFileSync(new URL('../public/js/preferences-init.js', import.meta.url), 'utf8');
 const translations = JSON.parse(readFileSync(new URL('../content/locales/es.json', import.meta.url), 'utf8'));
 
-function setup({ lang = 'en', stored = {}, blocked = false, hash = '#experience', reduced = true } = {}) {
+function setup({ lang = 'en', stored = {}, blocked = false, hash = '#experience', reduced = true, scrollY = 0, currentSection = '#experience' } = {}) {
   const make = () => ({
     attributes:{}, dataset:{}, events:{}, hidden:true, title:'', style:{minHeight:''},
     setAttribute(k,v){this.attributes[k]=v;},
@@ -49,13 +50,15 @@ function setup({ lang = 'en', stored = {}, blocked = false, hash = '#experience'
   };
 
   const assigned = [];
+  const session = {};
   let clock = 0;
   const document = {
     documentElement: root,
     body: make(),
     createTreeWalker:()=>walker,
-    querySelector(selector) {
-      return {
+      querySelector(selector) {
+        if (selector === '.sidebar nav a[aria-current="location"]') return {hash:currentSection};
+        return {
         '.language-toggle': language,
         '.theme-toggle': theme,
         '.preferences': preferences,
@@ -68,9 +71,13 @@ function setup({ lang = 'en', stored = {}, blocked = false, hash = '#experience'
 
   const context = vm.createContext({
     document,
+    window:{scrollY},
+    URL,
+    Date:{now:()=>clock},
+    sessionStorage:{setItem(k,v){session[k]=v;}},
     translations,
     NodeFilter:{SHOW_TEXT:4,FILTER_ACCEPT:1,FILTER_REJECT:2},
-    location:{hash,assign(value){assigned.push(value);}},
+    location:{hash,href:lang === 'es' ? 'https://example.test/es/' : 'https://example.test/',assign(value){assigned.push(value);}},
     localStorage:{
       setItem(k,v){if(blocked)throw Error('blocked');stored[k]=v;}
     },
@@ -81,7 +88,7 @@ function setup({ lang = 'en', stored = {}, blocked = false, hash = '#experience'
   });
 
   vm.runInContext(source + '\ninitPreferences();', context);
-  return {root,language,theme,preferences,main,stored,assigned,textNode};
+  return {root,language,theme,preferences,main,stored,session,assigned,textNode};
 }
 
 test('reduced-motion language control navigates directly between indexable locale routes',async()=>{
@@ -92,6 +99,39 @@ test('reduced-motion language control navigates directly between indexable local
   const es=setup({lang:'es'});
   await es.language.events.click();
   assert.deepEqual(es.assigned,['/#experience']);
+});
+
+test('language control keeps the visible section and saves the exact scroll position',async()=>{
+  const app=setup({lang:'en',hash:'',scrollY:642,currentSection:'#experience'});
+  await app.language.events.click();
+  assert.deepEqual(app.assigned,['/es/#experience']);
+  assert.deepEqual(JSON.parse(app.session['cv-language-scroll']),{path:'/es/',y:642,savedAt:0});
+});
+
+test('language route restores saved scroll before revealing the page',()=>{
+  const classes=new Set();
+  const session={'cv-language-scroll':JSON.stringify({path:'/es/',y:642,savedAt:1000})};
+  const events={};
+  const calls=[];
+  const context=vm.createContext({
+    document:{documentElement:{dataset:{},classList:{add:value=>classes.add(value),remove:value=>classes.delete(value)}}},
+    localStorage:{getItem:()=>null},
+    sessionStorage:{getItem:key=>session[key]||null,removeItem:key=>delete session[key]},
+    matchMedia:()=>({matches:false}),
+    location:{pathname:'/es/'},
+    history:{scrollRestoration:'auto'},
+    addEventListener:(name,callback)=>{events[name]=callback;},
+    requestAnimationFrame:callback=>callback(),
+    window:{scrollTo:(x,y)=>calls.push([x,y])},
+    Date:{now:()=>1100}
+  });
+  vm.runInContext(earlySource,context);
+  assert(classes.has('language-scroll-restoring'));
+  events.pageshow();
+  assert.deepEqual(calls,[[0,642],[0,642]]);
+  assert(!classes.has('language-scroll-restoring'));
+  assert.equal(context.history.scrollRestoration,'auto');
+  assert.equal(session['cv-language-scroll'],undefined);
 });
 
 test('language change erases and types the target language before route navigation',async()=>{
