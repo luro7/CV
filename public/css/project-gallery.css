@@ -1,4 +1,6 @@
 .project-card {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   padding: 0;
   overflow: hidden;
@@ -10,7 +12,9 @@
   box-shadow: 0 16px 34px rgba(16, 39, 27, .14);
 }
 .project-card-link {
-  display: block;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   width: 100%;
   min-width: 0;
   padding: 0;
@@ -50,7 +54,9 @@
 }
 .project-card:hover .project-card-cover img { transform: scale(1.025); }
 .project-card-content {
-  display: grid;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   gap: .55rem;
   width: 100%;
   min-width: 0;
@@ -73,7 +79,7 @@
   color: #456652;
   font: .78rem/1.55 Consolas, monospace;
 }
-.project-card-action { color: #315e46; font-size: .84rem; font-weight: 650; }
+.project-card-action { align-self: flex-start; margin-top: auto; color: #315e46; font-size: .84rem; font-weight: 650; }
 .project-card-live-link {
   display: inline-flex;
   align-items: center;
