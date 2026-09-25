@@ -170,7 +170,7 @@ for (const project of site.projects) {
 assert(!existsSync(resolve(output, 'projects')), 'Separate project URLs should not be generated');
 
 const printCss = readFileSync(resolve(output, 'css/interactive.css'), 'utf8');
-const projectCss = readFileSync(resolve(output, 'css/project-gallery.css'), 'utf8');
+const projectCss = readFileSync(resolve(output, 'css/project-dialog.css'), 'utf8');
 assert(projectCss.includes('backdrop-filter:blur('), 'Project gallery must blur the page behind its modal');
 assert(projectCss.includes('overscroll-behavior:contain'), 'Project gallery must keep scrolling inside the modal');
 assert(projectCss.lastIndexOf('@media(max-width:680px)') > projectCss.lastIndexOf('.project-dialog-gallery{display:grid'), 'Mobile gallery layout must override the desktop grid');
