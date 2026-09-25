@@ -21,6 +21,7 @@ if (typeof openGallery === 'function') {
   });
 
   let navigationFrame = 0;
+  let dragPositionFrame = 0;
   let observedImage = null;
   let dragStartX = null;
   let dragTimer = 0;
@@ -29,63 +30,65 @@ if (typeof openGallery === 'function') {
     ? new ResizeObserver(() => positionNavigation())
     : null;
 
+  function updateNavigationPosition() {
+    const container = document.querySelector('.glightbox-container .gcontainer');
+    const image = document.querySelector('.glightbox-container .gslide.current .gslide-image img');
+    const previous = document.querySelector('.glightbox-container .gprev');
+    const next = document.querySelector('.glightbox-container .gnext');
+    if (!container || !image || !previous || !next) return;
+
+    if (observedImage !== image) {
+      if (observedImage) imageObserver?.unobserve(observedImage);
+      observedImage = image;
+      imageObserver?.observe(image);
+      image.addEventListener('load', positionNavigation, { once: true });
+    }
+
+    const frame = container.getBoundingClientRect();
+    const picture = image.getBoundingClientRect();
+    const previousWidth = previous.getBoundingClientRect().width || 40;
+    const nextWidth = next.getBoundingClientRect().width || 40;
+    const gap = 18;
+    const safe = 12;
+    const centerY = picture.top - frame.top + picture.height / 2;
+    const top = Math.min(frame.height - safe - 50, Math.max(safe, centerY - 25));
+    const previousLeft = picture.left - frame.left - gap - previousWidth;
+    const nextLeft = picture.right - frame.left + gap;
+    const hasPreviousSpace = previousLeft >= safe;
+    const hasNextSpace = nextLeft + nextWidth <= frame.width - safe;
+
+    previous.style.visibility = hasPreviousSpace ? 'visible' : 'hidden';
+    previous.style.pointerEvents = hasPreviousSpace ? '' : 'none';
+    previous.setAttribute('aria-hidden', String(!hasPreviousSpace));
+    next.style.visibility = hasNextSpace ? 'visible' : 'hidden';
+    next.style.pointerEvents = hasNextSpace ? '' : 'none';
+    next.setAttribute('aria-hidden', String(!hasNextSpace));
+
+    if (hasPreviousSpace) previous.style.left = `${previousLeft}px`;
+    if (hasNextSpace) next.style.left = `${nextLeft}px`;
+    previous.style.right = 'auto';
+    previous.style.top = `${top}px`;
+    next.style.right = 'auto';
+    next.style.top = `${top}px`;
+  }
+
   function positionNavigation() {
     if (navigationFrame) cancelAnimationFrame(navigationFrame);
     navigationFrame = requestAnimationFrame(() => {
       navigationFrame = requestAnimationFrame(() => {
-        const container = document.querySelector('.glightbox-container .gcontainer');
-        const image = document.querySelector('.glightbox-container .gslide.current .gslide-image img');
-        const previous = document.querySelector('.glightbox-container .gprev');
-        const next = document.querySelector('.glightbox-container .gnext');
-        if (!container || !image || !previous || !next) return;
-
-        if (observedImage !== image) {
-          if (observedImage) imageObserver?.unobserve(observedImage);
-          observedImage = image;
-          imageObserver?.observe(image);
-          image.addEventListener('load', positionNavigation, { once: true });
-        }
-
-        const frame = container.getBoundingClientRect();
-        const picture = image.getBoundingClientRect();
-        const previousWidth = previous.getBoundingClientRect().width || 40;
-        const nextWidth = next.getBoundingClientRect().width || 40;
-        const gap = 18;
-        const safe = 12;
-        const centerY = picture.top - frame.top + picture.height / 2;
-        const leftLimit = safe;
-        const rightLimit = Math.max(safe, frame.width - safe);
-        const previousLeft = Math.min(rightLimit - previousWidth, Math.max(leftLimit, picture.left - frame.left - gap - previousWidth));
-        const nextLeft = Math.min(rightLimit - nextWidth, Math.max(leftLimit, picture.right - frame.left + gap));
-        const top = Math.min(frame.height - safe - 50, Math.max(safe, centerY - 25));
-
-        previous.style.left = `${previousLeft}px`;
-        previous.style.right = 'auto';
-        previous.style.top = `${top}px`;
-        next.style.left = `${nextLeft}px`;
-        next.style.right = 'auto';
-        next.style.top = `${top}px`;
+        navigationFrame = 0;
+        updateNavigationPosition();
       });
     });
   }
 
-  function finishNavigationDrag(waitForSlide = false) {
+  function finishNavigationDrag() {
     if (!dragContainer) return;
     window.clearTimeout(dragTimer);
     const container = dragContainer;
-    const reset = () => {
-      container.classList.remove('gallery-is-dragging');
-      container.style.removeProperty('--gallery-arrow-drag-x');
-      dragContainer = null;
-      dragStartX = null;
-    };
-    if (waitForSlide) {
-      positionNavigation();
-      requestAnimationFrame(() => requestAnimationFrame(reset));
-      dragTimer = window.setTimeout(reset, 650);
-    } else {
-      reset();
-    }
+    container.classList.remove('gallery-is-dragging');
+    dragContainer = null;
+    dragStartX = null;
   }
 
   function onPointerDown(event) {
@@ -102,16 +105,22 @@ if (typeof openGallery === 'function') {
 
   function onPointerMove(event) {
     if (dragStartX === null || !dragContainer) return;
-    const delta = Math.max(-64, Math.min(64, (event.clientX - dragStartX) * .42));
-    dragContainer.style.setProperty('--gallery-arrow-drag-x', `${delta}px`);
+    if (dragPositionFrame) cancelAnimationFrame(dragPositionFrame);
+    dragPositionFrame = requestAnimationFrame(() => {
+      dragPositionFrame = 0;
+      updateNavigationPosition();
+    });
   }
 
   function onPointerUp() {
     if (dragStartX === null) return;
-    // Let GLightbox complete its slide gesture first. slide_changed clears the drag
-    // state on success; this timeout also restores the arrows after a short drag.
+    // Let GLightbox complete its slide gesture first; otherwise restore the arrows
+    // after a short drag that did not change the active image.
     window.clearTimeout(dragTimer);
-    dragTimer = window.setTimeout(() => finishNavigationDrag(true), 420);
+    dragTimer = window.setTimeout(() => {
+      finishNavigationDrag();
+      positionNavigation();
+    }, 420);
   }
 
   gallery.on('open', () => {
@@ -136,8 +145,10 @@ if (typeof openGallery === 'function') {
     document.addEventListener('pointercancel', onPointerUp, true);
   });
 
-  gallery.on('slide_changed', () => finishNavigationDrag(true));
-  gallery.on('slide_changed', positionNavigation);
+  gallery.on('slide_changed', () => {
+    finishNavigationDrag();
+    positionNavigation();
+  });
   gallery.on('slide_after_load', positionNavigation);
   gallery.on('close', () => {
     window.removeEventListener('resize', positionNavigation);
@@ -146,6 +157,8 @@ if (typeof openGallery === 'function') {
     document.removeEventListener('pointerup', onPointerUp, true);
     document.removeEventListener('pointercancel', onPointerUp, true);
     finishNavigationDrag();
+    if (navigationFrame) cancelAnimationFrame(navigationFrame);
+    if (dragPositionFrame) cancelAnimationFrame(dragPositionFrame);
     imageObserver?.disconnect();
     observedImage = null;
   });
