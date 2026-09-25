@@ -135,11 +135,45 @@ test('language route restores saved scroll before revealing the page',()=>{
   assert.equal(session['cv-language-scroll'],undefined);
 });
 
+test('language control keeps the visible section and saves the exact scroll position',async()=>{
+  const app=setup({lang:'en',hash:'',scrollY:642,currentSection:'#experience'});
+  await app.language.events.click();
+  assert.equal(app.textNode.textContent,'Experiencia');
+  assert.deepEqual(app.assigned,['/es/']);
+  assert.equal(app.main.getAttribute('aria-busy'),null);
+});
+
+test('language route restores saved scroll before revealing the page',()=>{
+  const classes=new Set();
+  const session={'cv-language-scroll':JSON.stringify({path:'/es/',y:642,savedAt:1000})};
+  const events={};
+  const calls=[];
+  const context=vm.createContext({
+    document:{documentElement:{dataset:{},classList:{add:value=>classes.add(value),remove:value=>classes.delete(value)}}},
+    localStorage:{getItem:()=>null},
+    sessionStorage:{getItem:key=>session[key]||null,removeItem:key=>delete session[key]},
+    matchMedia:()=>({matches:false}),
+    location:{pathname:'/es/'},
+    history:{scrollRestoration:'auto'},
+    addEventListener:(name,callback)=>{events[name]=callback;},
+    requestAnimationFrame:callback=>callback(),
+    window:{scrollTo:(x,y)=>calls.push([x,y])},
+    Date:{now:()=>1100}
+  });
+  vm.runInContext(earlySource,context);
+  assert(classes.has('language-scroll-restoring'));
+  events.pageshow();
+  assert.deepEqual(calls,[[0,642],[0,642]]);
+  assert(!classes.has('language-scroll-restoring'));
+  assert.equal(context.history.scrollRestoration,'auto');
+  assert.equal(session['cv-language-scroll'],undefined);
+});
+
 test('language change erases and types the target language before route navigation',async()=>{
   const app=setup({lang:'en',reduced:false});
   await app.language.events.click();
   assert.equal(app.textNode.textContent,'Experiencia');
-  assert.deepEqual(app.assigned,['/es/']);
+  assert.deepEqual(app.assigned,['/es/#experience']);
   assert.equal(app.main.getAttribute('aria-busy'),null);
 });
 
