@@ -9,7 +9,7 @@ if (typeof openGallery === 'function') {
     touchNavigation: true,
     touchFollowAxis: true,
     keyboardNavigation: true,
-    zoomable: true,
+    zoomable: false,
     draggable: true,
     loop: true,
     preload: true,
@@ -200,6 +200,27 @@ if (typeof openGallery === 'function') {
     }, 420);
   }
 
+  function onGlobalMouseUp(event) {
+    const image = document.querySelector('.glightbox-container .gslide.current .gslide-image img.dragging');
+    if (!image) return;
+
+    // GLightbox listens for mouseup on the image itself. If the pointer is released
+    // outside it, forward one cleanup event so its drag state and grabbing cursor reset.
+    if (event.target !== image && !image.contains(event.target)) {
+      image.dispatchEvent(new MouseEvent('mouseup', {
+        bubbles: false,
+        cancelable: true,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        button: event.button,
+        buttons: 0
+      }));
+    }
+
+    image.classList.remove('dragging');
+    image.closest('.gslide')?.classList.remove('dragging-nav');
+  }
+
   gallery.on('open', () => {
     const translate = text => document.documentElement.lang === 'es' ? translations[text] || text : text;
     const labels = {
@@ -220,6 +241,7 @@ if (typeof openGallery === 'function') {
     document.addEventListener('pointermove', onPointerMove, { capture: true, passive: true });
     document.addEventListener('pointerup', onPointerUp, true);
     document.addEventListener('pointercancel', onPointerUp, true);
+    document.addEventListener('mouseup', onGlobalMouseUp, true);
   });
 
   gallery.on('slide_changed', () => {
@@ -233,6 +255,7 @@ if (typeof openGallery === 'function') {
     document.removeEventListener('pointermove', onPointerMove, true);
     document.removeEventListener('pointerup', onPointerUp, true);
     document.removeEventListener('pointercancel', onPointerUp, true);
+    document.removeEventListener('mouseup', onGlobalMouseUp, true);
     finishNavigationDrag();
     if (navigationFrame) cancelAnimationFrame(navigationFrame);
     if (dragPositionFrame) cancelAnimationFrame(dragPositionFrame);
