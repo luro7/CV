@@ -144,7 +144,8 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
       assert(ids.includes(href.slice(1)), name + ': missing anchor target ' + href);
     } else if (href.startsWith('/')) {
       if (href === '/es/' || href === '/') continue;
-      assert(existsSync(resolve(output, '.' + href)), name + ': missing local file ' + href);
+      const localPath = href.split(/[?#]/, 1)[0];
+      assert(existsSync(resolve(output, '.' + localPath)), name + ': missing local file ' + href);
     } else {
       const url = new URL(href);
       assert.equal(url.protocol, 'https:', name + ': external link must use HTTPS ' + href);
@@ -154,7 +155,8 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
 
   for (const [, source] of documentHtml.matchAll(/\bsrc="([^"]+)"/g)) {
     assert(source.startsWith('/'), name + ': asset must be local ' + source);
-    assert(existsSync(resolve(output, '.' + source)), name + ': missing asset ' + source);
+    const localPath = source.split(/[?#]/, 1)[0];
+    assert(existsSync(resolve(output, '.' + localPath)), name + ': missing asset ' + source);
   }
 }
 
