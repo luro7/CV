@@ -9,12 +9,15 @@ const site = JSON.parse(readFileSync(resolve(root, 'content/site.json'), 'utf8')
 const translations = JSON.parse(readFileSync(resolve(root, 'content/locales/es.json'), 'utf8'));
 const html = readFileSync(resolve(output, 'index.html'), 'utf8');
 const spanishHtml = readFileSync(resolve(output, 'es/index.html'), 'utf8');
+const galleryHtml = readFileSync(resolve(output, 'projects/index.html'), 'utf8');
+const spanishGalleryHtml = readFileSync(resolve(output, 'es/projects/index.html'), 'utf8');
 const siteUrl = new URL(site.siteUrl);
 assert(existsSync(resolve(root, 'public', '.' + site.cvPortrait)), 'CV portrait asset is missing');
 const allowedHosts = new Set([
   siteUrl.hostname,
   new URL(site.linkedin).hostname,
   ...site.certifications.map(item => new URL(item.credentialUrl).hostname)
+  , ...site.projects.filter(item => item.url).map(item => new URL(item.url).hostname)
 ]);
 
 const expertiseItems = site.expertise.flatMap(group => group.tools);
@@ -36,13 +39,18 @@ const nonTranslatedTerms = new Set([
   'BMC Control-M', 'Accenture', 'Microsoft Copilot Enterprise', 'Visual Studio',
   'Grupo Aoniken', 'Iddea Devs',
   'SQL', 'HTML', 'CSS', 'PHP', 'Git', 'Skillsoft', 'Universidad Nacional del Sur',
-  'Cloudflare Pages', 'CI/CD', 'GitHub Actions', '2017'
+  'Cloudflare Pages', 'CI/CD', 'GitHub Actions', '2017',
+  'Astro, React, TypeScript, Hono, Cloudflare Pages, D1, KV',
+  'Kotlin, Jetpack Compose, MapLibre',
+  'C# 14, .NET 10, WinUI 3',
+  'C# 14, .NET 10, WinUI 3, WASAPI, Chromium extension'
 ]);
 const publicCopy = [
   site.description, site.intro, ...site.about,
   ...site.title.split(' | '),
   ...site.expertise.flatMap(group => [group.title, ...group.tools]),
   ...site.experience.flatMap(item => [item.company, item.role, item.date, ...item.points, ...item.tools]),
+  site.projectsIntro, ...site.projects.flatMap(item => [item.name, item.description, item.technologies, item.urlLabel, item.screenshotsNote, ...(item.screenshots || []).flatMap(shot => [shot.alt, shot.caption])].filter(Boolean)),
   ...site.education.flatMap(item => [item.title, item.institution, item.detail]),
   ...site.languages.flatMap(item => [item.name, item.level]),
   ...site.certifications.flatMap(item => [item.title, item.institution, item.date]),
@@ -55,7 +63,7 @@ for (const phrase of new Set(publicCopy)) {
 const requiredUiTranslations = [
   'Select a skill or technology to trace experience.', 'Skill', 'Technology', 'Language', 'Process', 'Domain',
   'Data', 'Transform', 'Automate', 'AI', 'Report', 'Type a skill, technology or action', 'Search the CV',
-  'Go to introduction', 'Go to expertise', 'Go to experience', 'Go to education', 'Toggle dark mode',
+  'Go to introduction', 'Go to expertise', 'Go to experience', 'Go to education', 'Toggle dark mode', 'Projects',
   'Toggle engineering mode', 'Switch language', 'Save PDF', 'Open LinkedIn', 'Navigate', 'System', 'Current'
 ];
 for (const phrase of requiredUiTranslations) {
@@ -70,6 +78,15 @@ for (const item of site.experience) {
   assert(Array.isArray(item.points) && item.points.length, 'Experience item needs responsibility points: ' + item.id);
   assert(Array.isArray(item.tools), 'Experience tools must be an array: ' + item.id);
 }
+assert.equal(site.projects.length, 4, 'Four independently developed projects should be listed');
+for (const item of site.projects) {
+  for (const key of ['name', 'description', 'technologies']) assert(typeof item[key] === 'string' && item[key].trim(), 'Project missing ' + key);
+  assert(['web', 'android', 'windows'].includes(item.category), 'Project category missing or invalid: ' + item.name);
+  for (const screenshot of (item.screenshots || [])) {
+    assert(existsSync(resolve(root, 'public', '.' + screenshot.image)), 'Project screenshot asset is missing: ' + item.name);
+  }
+  if (item.url) assert.equal(new URL(item.url).hostname, 'manosalaobra.pages.dev', 'Only the public project website may be linked');
+}
 for (const item of site.education) {
   for (const key of ['title', 'institution', 'detail']) assert(typeof item[key] === 'string' && item[key].trim(), 'Education item missing ' + key);
 }
@@ -78,8 +95,11 @@ for (const item of site.languages) {
   for (const key of ['name', 'level']) assert(typeof item[key] === 'string' && item[key].trim(), 'Language entry missing ' + key);
 }
 for (const item of site.certifications) {
-  for (const key of ['title', 'institution', 'date', 'image', 'credentialUrl']) assert(typeof item[key] === 'string' && item[key].trim(), 'Certification item missing ' + key);
+  for (const key of ['title', 'institution', 'date', 'credentialUrl']) assert(typeof item[key] === 'string' && item[key].trim(), 'Certification item missing ' + key);
+  if (item.image) assert(/^\/assets\/credentials\/[a-z0-9-]+\.png$/.test(item.image), 'Invalid credential image: ' + item.title);
+  else assert(/^[A-Za-z0-9]{2,8}$/.test(item.badgeLabel || ''), 'Credential without an image needs a short label: ' + item.title);
 }
+assert.equal(site.certifications.length, 8, 'All public credentials should be listed');
 
 const experienceIds = new Set(site.experience.map(item => item.id));
 assert.equal(experienceIds.size, site.experience.length, 'Experience IDs must be unique');
@@ -99,11 +119,18 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('class="pipeline-dock"'), name + ': persistent scroll pipeline is missing');
   assert(documentHtml.includes('data-skill-status'), name + ': skill trace status is missing');
   assert(documentHtml.includes('data-print-cv'), name + ': PDF/print action is missing');
+  assert(documentHtml.includes('href="' + (name === 'es' ? '/es/projects/' : '/projects/') + '"'), name + ': project gallery action is missing');
+  assert(!documentHtml.includes('href="#projects"'), name + ': projects must stay out of the main navigation');
+  assert(documentHtml.includes('AI-assisted projects'), name + ': projects are missing from the generated CV');
+  assert(!/github\.com\/luro7\/(manosalaobra|DisplayConductor|my-flight-android|sound-mixer)/i.test(documentHtml), name + ': private repository URL exposed');
   assert(documentHtml.includes('class="print-cv" hidden'), name + ': dedicated CV print content is missing');
+  assert.equal((documentHtml.match(/class="certification-card"/g) || []).length, site.certifications.length, name + ': all credentials should appear on the page');
+  assert(!documentHtml.includes('class="expertise-grid"'), name + ': skills should not be repeated below the interactive map');
   assert(documentHtml.includes('src="' + site.cvPortrait + '"'), name + ': CV portrait is not connected to site data');
-  for (const privateValue of ['Bahía Blanca', 'rosatlucas@gmail.com', '2920 475794']) {
-    assert(!documentHtml.includes(privateValue), name + ': private contact/location data found');
-  }
+  const visibleText = documentHtml.replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ');
+  assert(!/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(visibleText), name + ': email address exposed');
+  assert(!/(?<!\d)\+?\d[\d ()-]{7,}\d(?!\d)/.test(visibleText), name + ': phone number exposed');
+  assert(!/<address\b/i.test(documentHtml), name + ': postal address exposed');
   assert(documentHtml.includes('id="engineering-panel" inert'), name + ': closed engineering panel must be inert');
   assert(documentHtml.includes('aria-controls="engineering-panel"'), name + ': engineering toggle needs its controlled panel');
 
@@ -128,6 +155,32 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
     assert(existsSync(resolve(output, '.' + source)), name + ': missing asset ' + source);
   }
 }
+
+for (const [name, documentHtml] of [['en', galleryHtml], ['es', spanishGalleryHtml]]) {
+  assert.equal((documentHtml.match(/<h1\b/g) || []).length, 1, name + ': project gallery needs one h1');
+  assert(!/\{\{\w+\}\}/.test(documentHtml), name + ': unresolved project gallery template variables found');
+  assert.equal((documentHtml.match(/class="project-card"/g) || []).length, site.projects.length, name + ': every independent project must appear in the gallery');
+  for (const project of site.projects) {
+    assert(documentHtml.includes('href="' + (name === 'es' ? '/es/projects/' : '/projects/') + project.slug + '/"'), name + ': project card link is missing for ' + project.slug);
+  }
+  assert(documentHtml.includes('data-project-filter="android"'), name + ': platform filters are missing');
+  assert(!/github\.com\/luro7\/(manosalaobra|DisplayConductor|my-flight-android|sound-mixer)/i.test(documentHtml), name + ': private repository URL exposed');
+}
+for (const project of site.projects) {
+  for (const language of ['en', 'es']) {
+    const projectPath = language === 'es'
+      ? resolve(output, 'es', 'projects', project.slug, 'index.html')
+      : resolve(output, 'projects', project.slug, 'index.html');
+    const projectHtml = readFileSync(projectPath, 'utf8');
+    assert.equal((projectHtml.match(/<h1\b/g) || []).length, 1, project.slug + ' ' + language + ': exactly one h1 is required');
+    assert(!/\{\{\w+\}\}/.test(projectHtml), project.slug + ' ' + language + ': unresolved template variables found');
+    if (project.screenshots?.length) assert(projectHtml.includes('data-gallery-image'), project.slug + ' ' + language + ': image viewer triggers are missing');
+    for (const screenshot of project.screenshots || []) assert(projectHtml.includes(screenshot.image), project.slug + ' ' + language + ': screenshot missing ' + screenshot.image);
+  }
+}
+const soundMixerDetail = readFileSync(resolve(output, 'projects', 'sound-mixer', 'index.html'), 'utf8');
+assert(soundMixerDetail.includes('/assets/projects/sound-mixer-main.png'), 'Sound Mixer main screenshot is missing');
+assert(soundMixerDetail.includes('/assets/projects/sound-mixer-compact.png'), 'Sound Mixer compact screenshot is missing');
 
 const printCss = readFileSync(resolve(output, 'css/interactive.css'), 'utf8');
 assert(printCss.includes('@page{size:A4'), 'Print output must use A4 paper');

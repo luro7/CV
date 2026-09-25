@@ -135,6 +135,91 @@
       "id": "iddea-web-developer"
     }
   ],
+  "projectsIntro": "Independent applications and websites built with Codex to explore practical uses of AI-assisted development.",
+  "projects": [
+    {
+      "name": "Manos a la Obra",
+      "slug": "manos-a-la-obra",
+      "category": "web",
+      "description": "A public home renovation and maintenance website with a private content editor, review and publishing workflow, and persistent content and media management. Designed around a zero-cost operating constraint.",
+      "technologies": "Astro, React, TypeScript, Hono, Cloudflare Pages, D1, KV",
+      "url": "https://manosalaobra.pages.dev",
+      "urlLabel": "Live website",
+      "screenshotsNote": "Management view with sample records; no customer details are shown.",
+      "screenshots": [{
+        "image": "/assets/projects/manos-management-overview.png",
+        "orientation": "portrait",
+        "alt": "Manos a la Obra private content manager with anonymized sample work groups and a review-before-publishing flow.",
+        "caption": "Content management · grouped media, pending changes, and a review-before-publishing workflow"
+      }]
+    },
+    {
+      "name": "My Flight",
+      "slug": "my-flight",
+      "category": "android",
+      "description": "A native Android flight companion for on-demand flight lookup, recent ADS-B positions and traces, aircraft details, and map-based viewing. API credentials are protected with Android Keystore.",
+      "technologies": "Kotlin, Jetpack Compose, MapLibre",
+      "screenshots": [{
+        "image": "/assets/projects/my-flight-android.png",
+        "orientation": "portrait",
+        "alt": "My Flight Android sample flight detail and estimated route map.",
+        "caption": "Fictional sample flight · estimated position clearly labeled"
+      }]
+    },
+    {
+      "name": "DisplayConductor",
+      "slug": "display-conductor",
+      "category": "windows",
+      "description": "A Windows desktop application for monitor profiles and display control, with window grouping, startup rules, recovery tools, and diagnostic reporting. Physical display behavior still needs validation on target hardware.",
+      "technologies": "C# 14, .NET 10, WinUI 3",
+      "screenshotsNote": "Screens are anonymized examples; device names and hardware values are generic.",
+      "screenshots": [
+        {
+          "image": "/assets/projects/display-conductor-monitors.png",
+          "alt": "DisplayConductor monitor settings with generic screen labels and refresh controls.",
+          "caption": "Anonymized example · per-screen refresh settings"
+        },
+        {
+          "image": "/assets/projects/display-conductor-modes.png",
+          "alt": "DisplayConductor display profiles with generic screen labels.",
+          "caption": "Anonymized example · choose active screens and a primary display"
+        },
+        {
+          "image": "/assets/projects/display-conductor-audio.png",
+          "alt": "DisplayConductor audio output settings for display profiles.",
+          "caption": "Audio outputs can follow the selected display profile"
+        },
+        {
+          "image": "/assets/projects/display-conductor-startup.png",
+          "alt": "DisplayConductor startup behavior and display detection timing settings.",
+          "caption": "Startup behavior and monitor detection timing"
+        },
+        {
+          "image": "/assets/projects/display-conductor-diagnostics.png",
+          "alt": "DisplayConductor diagnostics tools and recovery options.",
+          "caption": "Diagnostics, saved preferences, hardware detection, and recovery"
+        }
+      ]
+    },
+    {
+      "name": "Sound Mixer",
+      "slug": "sound-mixer",
+      "category": "windows",
+      "description": "A Windows audio mixer for per-application sessions, with browser-tab volume control through a Chromium extension and Native Messaging integration.",
+      "technologies": "C# 14, .NET 10, WinUI 3, WASAPI, Chromium extension",
+      "screenshots": [{
+        "image": "/assets/projects/sound-mixer-main.png",
+        "alt": "Sound Mixer main window controlling separate browser tabs and Windows audio sessions.",
+        "caption": "Main window · browser tabs and Windows audio sessions"
+      },
+        {
+          "image": "/assets/projects/sound-mixer-compact.png",
+          "alt": "Sound Mixer compact view with quick volume and mute controls for browser tabs and Windows audio.",
+          "caption": "Compact mode · quick volume and mute controls"
+        }
+      ]
+    }
+  ],
   "education": [
     {
       "title": "Advanced Technician in Systems Analysis",
@@ -177,6 +262,41 @@
       "date": "Mar 2024",
       "image": "/assets/credentials/skillsoft-ai-machine-learning.png",
       "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/c736b38b-c866-49f1-82ed-57cdf5887686"
+    },
+    {
+      "title": "ChatGPT Prompt Engineering Examples & Use Cases",
+      "institution": "Skillsoft",
+      "date": "May 2024",
+      "badgeLabel": "AI",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/46214cad-397c-464e-ba48-fe46368e78d0"
+    },
+    {
+      "title": "Application Security Awareness & Validation",
+      "institution": "Skillsoft",
+      "date": "May 2021",
+      "badgeLabel": "AppSec",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/9885d253-7eaa-4e93-8d5e-7dd872fd6d48"
+    },
+    {
+      "title": "API Security",
+      "institution": "Skillsoft",
+      "date": "May 2021",
+      "badgeLabel": "API",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/414e9a71-cc0c-409c-9d07-7bb33aa22a04"
+    },
+    {
+      "title": "Secure Application Architecture & IAM",
+      "institution": "Skillsoft",
+      "date": "May 2021",
+      "badgeLabel": "IAM",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/e3e76a9b-95af-4da6-be4a-c6563d7993fe"
+    },
+    {
+      "title": "Top 10 List Items",
+      "institution": "Skillsoft",
+      "date": "May 2021",
+      "badgeLabel": "OWASP",
+      "credentialUrl": "https://skillsoft.digitalbadges.skillsoft.com/e76f6824-61cc-43d2-9624-b6799e3620d2"
     }
   ],
   "about": [

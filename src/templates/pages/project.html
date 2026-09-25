@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#153b31">
+  <title>{{title}}</title>
+  <meta name="description" content="{{description}}">
+  <link rel="canonical" href="{{canonicalUrl}}">
+  <link rel="alternate" hreflang="en" href="{{englishUrl}}">
+  <link rel="alternate" hreflang="es" href="{{spanishUrl}}">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/project-gallery.css">
+  <script type="module" src="/js/project-gallery.js"></script>
+</head>
+<body class="project-gallery-page project-detail-page">
+  <header class="project-gallery-header">
+    <a class="project-gallery-brand" href="{{homeUrl}}" aria-label="Lucas Rosat, CV">LR<span>.</span></a>
+    <nav aria-label="{{pageNavigationLabel}}">
+      <a href="{{otherLanguageUrl}}">{{otherLanguage}}</a>
+      <a class="back-to-cv" href="{{galleryUrl}}">← {{allProjectsLabel}}</a>
+    </nav>
+  </header>
+  <main>
+    <section class="project-detail-intro">
+      <a class="project-breadcrumb" href="{{galleryUrl}}">← {{allProjectsLabel}}</a>
+      <p class="eyebrow">{{categoryLabel}}</p>
+      <h1>{{projectName}}</h1>
+      <p class="project-detail-description">{{projectDescription}}</p>
+      <p class="project-detail-technologies"><span>{{technologiesLabel}}</span> {{technologies}}</p>
+      {{screenshotsNote}}
+      {{externalLink}}
+    </section>
+    <section class="project-detail-gallery" aria-labelledby="gallery-title">
+      <div class="project-detail-gallery-heading">
+        <p class="eyebrow">{{galleryEyebrow}}</p>
+        <h2 id="gallery-title">{{galleryTitle}}</h2>
+      </div>
+      <div class="project-detail-screenshots">{{screenshots}}</div>
+    </section>
+  </main>
+  <footer class="project-gallery-footer"><a href="{{galleryUrl}}">← {{allProjectsLabel}}</a><span>Lucas Rosat · {{footerLabel}}</span></footer>
+  <dialog class="project-image-viewer" id="project-image-viewer" aria-labelledby="project-image-caption">
+    <button class="project-image-close" type="button" data-close-image aria-label="{{lightboxClose}}">×</button>
+    <img src="" alt="" data-viewer-image>
+    <p id="project-image-caption" data-viewer-caption>{{lightboxCaption}}</p>
+  </dialog>
+</body>
+</html>
