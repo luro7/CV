@@ -173,6 +173,7 @@ const printCss = readFileSync(resolve(output, 'css/interactive.css'), 'utf8');
 const projectCss = readFileSync(resolve(output, 'css/project-gallery.css'), 'utf8');
 assert(projectCss.includes('backdrop-filter:blur('), 'Project gallery must blur the page behind its modal');
 assert(projectCss.includes('overscroll-behavior:contain'), 'Project gallery must keep scrolling inside the modal');
+assert(projectCss.lastIndexOf('@media(max-width:680px)') > projectCss.lastIndexOf('.project-dialog-gallery{display:grid'), 'Mobile gallery layout must override the desktop grid');
 assert(printCss.includes('@page{size:A4'), 'Print output must use A4 paper');
 assert(printCss.includes('.print-cv-portrait'), 'Print output must include the CV portrait');
 assert(printCss.includes('body>:not(.print-cv)'), 'Print output must use the CV document instead of page styling');
