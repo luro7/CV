@@ -26,6 +26,7 @@ if (typeof openGallery === 'function') {
   let dragStartX = null;
   let dragTimer = 0;
   let dragContainer = null;
+  let dragBaseline = null;
   const imageObserver = typeof ResizeObserver === 'function'
     ? new ResizeObserver(() => positionNavigation())
     : null;
@@ -89,6 +90,7 @@ if (typeof openGallery === 'function') {
     container.classList.remove('gallery-is-dragging');
     dragContainer = null;
     dragStartX = null;
+    dragBaseline = null;
   }
 
   function onPointerDown(event) {
@@ -97,18 +99,93 @@ if (typeof openGallery === 'function') {
     const container = event.target.closest('.glightbox-container .gcontainer');
     if (!image || !container || image.closest('.gslide')?.classList.contains('zoomed')) return;
     finishNavigationDrag();
+    const frame = container.getBoundingClientRect();
+    const previous = document.querySelector('.glightbox-container .gprev');
+    const next = document.querySelector('.glightbox-container .gnext');
+    if (!previous || !next) return;
+    const previousRect = previous.getBoundingClientRect();
+    const nextRect = next.getBoundingClientRect();
     dragContainer = container;
     dragStartX = event.clientX;
+    dragBaseline = {
+      frameLeft: frame.left,
+      frameWidth: frame.width,
+      previousLeft: previousRect.left - frame.left,
+      previousTop: previousRect.top - frame.top,
+      previousWidth: previousRect.width,
+      previousVisible: getComputedStyle(previous).visibility === 'visible',
+      nextLeft: nextRect.left - frame.left,
+      nextTop: nextRect.top - frame.top,
+      nextWidth: nextRect.width,
+      nextVisible: getComputedStyle(next).visibility === 'visible'
+    };
     container.classList.add('gallery-is-dragging');
-    container.style.setProperty('--gallery-arrow-drag-x', '0px');
   }
 
   function onPointerMove(event) {
     if (dragStartX === null || !dragContainer) return;
+    const delta = event.clientX - dragStartX;
     if (dragPositionFrame) cancelAnimationFrame(dragPositionFrame);
     dragPositionFrame = requestAnimationFrame(() => {
       dragPositionFrame = 0;
-      updateNavigationPosition();
+      const image = document.querySelector('.glightbox-container .gslide.current .gslide-image img');
+      if (!image || !dragBaseline) return;
+      const picture = image.getBoundingClientRect();
+      const gap = 18;
+      const safe = 12;
+      const previous = document.querySelector('.glightbox-container .gprev');
+      const next = document.querySelector('.glightbox-container .gnext');
+
+      if (delta < 0 && dragBaseline.previousVisible) {
+        if (!previous) return;
+        next.style.left = `${dragBaseline.nextLeft}px`;
+        next.style.top = `${dragBaseline.nextTop}px`;
+        next.style.visibility = dragBaseline.nextVisible ? 'visible' : 'hidden';
+        next.style.pointerEvents = dragBaseline.nextVisible ? '' : 'none';
+        next.setAttribute('aria-hidden', String(!dragBaseline.nextVisible));
+        const left = Math.min(dragBaseline.previousLeft, picture.left - dragBaseline.frameLeft - gap - dragBaseline.previousWidth);
+        const hasSpace = left >= safe;
+        previous.style.visibility = hasSpace ? 'visible' : 'hidden';
+        previous.style.pointerEvents = hasSpace ? '' : 'none';
+        previous.setAttribute('aria-hidden', String(!hasSpace));
+        if (hasSpace) previous.style.left = `${left}px`;
+      } else if (delta < 0) {
+        next.style.left = `${dragBaseline.nextLeft}px`;
+        next.style.top = `${dragBaseline.nextTop}px`;
+        next.style.visibility = dragBaseline.nextVisible ? 'visible' : 'hidden';
+        next.style.pointerEvents = dragBaseline.nextVisible ? '' : 'none';
+        next.setAttribute('aria-hidden', String(!dragBaseline.nextVisible));
+      } else if (delta > 0 && dragBaseline.nextVisible) {
+        if (!next) return;
+        previous.style.left = `${dragBaseline.previousLeft}px`;
+        previous.style.top = `${dragBaseline.previousTop}px`;
+        previous.style.visibility = dragBaseline.previousVisible ? 'visible' : 'hidden';
+        previous.style.pointerEvents = dragBaseline.previousVisible ? '' : 'none';
+        previous.setAttribute('aria-hidden', String(!dragBaseline.previousVisible));
+        const left = Math.max(dragBaseline.nextLeft, picture.right - dragBaseline.frameLeft + gap);
+        const hasSpace = left + dragBaseline.nextWidth <= dragBaseline.frameWidth - safe;
+        next.style.visibility = hasSpace ? 'visible' : 'hidden';
+        next.style.pointerEvents = hasSpace ? '' : 'none';
+        next.setAttribute('aria-hidden', String(!hasSpace));
+        if (hasSpace) next.style.left = `${left}px`;
+      } else if (delta > 0) {
+        previous.style.left = `${dragBaseline.previousLeft}px`;
+        previous.style.top = `${dragBaseline.previousTop}px`;
+        previous.style.visibility = dragBaseline.previousVisible ? 'visible' : 'hidden';
+        previous.style.pointerEvents = dragBaseline.previousVisible ? '' : 'none';
+        previous.setAttribute('aria-hidden', String(!dragBaseline.previousVisible));
+      } else if (delta === 0) {
+        previous.style.left = `${dragBaseline.previousLeft}px`;
+        previous.style.top = `${dragBaseline.previousTop}px`;
+        previous.style.visibility = dragBaseline.previousVisible ? 'visible' : 'hidden';
+        previous.style.pointerEvents = dragBaseline.previousVisible ? '' : 'none';
+        previous.setAttribute('aria-hidden', String(!dragBaseline.previousVisible));
+        next.style.left = `${dragBaseline.nextLeft}px`;
+        next.style.top = `${dragBaseline.nextTop}px`;
+        next.style.visibility = dragBaseline.nextVisible ? 'visible' : 'hidden';
+        next.style.pointerEvents = dragBaseline.nextVisible ? '' : 'none';
+        next.setAttribute('aria-hidden', String(!dragBaseline.nextVisible));
+      }
     });
   }
 

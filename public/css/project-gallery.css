@@ -153,9 +153,8 @@
 }
 .glightbox-container .gprev,
 .glightbox-container .gnext {
-  transform: translateX(var(--gallery-arrow-drag-x, 0px));
-  transition: transform .48s cubic-bezier(.2, 1.55, .45, 1), color .18s ease, background .18s ease, border-color .18s ease;
-  will-change: transform;
+  transition: left .48s cubic-bezier(.2, 1.55, .45, 1), top .48s cubic-bezier(.2, 1.55, .45, 1), color .18s ease, background .18s ease, border-color .18s ease;
+  will-change: left, top;
 }
 .glightbox-container .gcontainer.gallery-is-dragging .gprev,
 .glightbox-container .gcontainer.gallery-is-dragging .gnext {
