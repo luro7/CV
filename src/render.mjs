@@ -154,9 +154,23 @@ export function render(site, { language = 'en', translations = {} } = {}) {
   const projectDialogs = site.projects.map(item => {
     const category = item.category || 'web';
     if (!['web', 'android', 'windows'].includes(category)) throw new Error('Invalid project category: ' + item.name);
-    const screenshots = screenshotsFor(item).map(shot =>
-      '<figure class="project-dialog-shot' + (shot.orientation === 'portrait' ? ' is-portrait' : '') + '"><img src="' + escapeHtml(shot.image) + '" alt="' + escapeHtml(t(shot.alt || item.name)) + '" loading="lazy" decoding="async"><figcaption>' + escapeHtml(t(shot.caption || item.name)) + '</figcaption></figure>'
-    ).join('\n') || '<p class="project-gallery-empty">' + escapeHtml(t('Screenshots for this project are being prepared.')) + '</p>';
+    const projectShots = screenshotsFor(item);
+    const screenshots = projectShots.length
+      ? '<section class="project-dialog-carousel" data-project-carousel role="region" aria-roledescription="carousel" aria-label="' + escapeHtml(t('Project image gallery')) + '">' +
+        '<div class="project-carousel-stage">' +
+          '<button class="project-carousel-arrow project-carousel-prev" type="button" data-carousel-prev aria-label="' + escapeHtml(t('Previous image')) + '"><span aria-hidden="true">←</span></button>' +
+          '<div class="project-carousel-viewport" data-carousel-viewport tabindex="0" aria-label="' + escapeHtml(t('Drag with the left mouse button or swipe to browse images. Use the arrow keys while focused.')) + '"><div class="project-carousel-track" data-carousel-track">' +
+            projectShots.map((shot, index) =>
+              '<figure class="project-dialog-shot' + (shot.orientation === 'portrait' ? ' is-portrait' : '') + '" role="group" aria-roledescription="slide" aria-label="' + escapeHtml((index + 1) + ' ' + t('of') + ' ' + projectShots.length) + '"><img src="' + escapeHtml(shot.image) + '" alt="' + escapeHtml(t(shot.alt || item.name)) + '" loading="lazy" decoding="async" draggable="false"><figcaption>' + escapeHtml(t(shot.caption || item.name)) + '</figcaption></figure>'
+            ).join('\n') +
+          '</div></div>' +
+          '<button class="project-carousel-arrow project-carousel-next" type="button" data-carousel-next aria-label="' + escapeHtml(t('Next image')) + '"><span aria-hidden="true">→</span></button>' +
+        '</div>' +
+        '<div class="project-carousel-footer"><p class="project-carousel-instructions">' + escapeHtml(t('Drag with the left mouse button or swipe to browse images.')) + '</p><p class="project-carousel-count" data-carousel-count aria-live="polite">1 / ' + projectShots.length + '</p></div>' +
+        '<div class="project-carousel-thumbnails" role="group" aria-label="' + escapeHtml(t('Choose an image')) + '" data-carousel-thumbnails>' +
+          projectShots.map((shot, index) => '<button class="project-carousel-thumbnail" type="button" data-carousel-to="' + index + '" aria-label="' + escapeHtml(t('Show image') + ' ' + (index + 1) + ': ' + t(shot.caption || item.name)) + '" aria-pressed="' + (index === 0 ? 'true' : 'false') + '"><img src="' + escapeHtml(shot.image) + '" alt="" loading="lazy" decoding="async"></button>').join('') +
+        '</div></section>'
+      : '<p class="project-gallery-empty">' + escapeHtml(t('Screenshots for this project are being prepared.')) + '</p>';
     const screenshotsNote = item.screenshotsNote
       ? '<p class="project-detail-note">' + escapeHtml(t(item.screenshotsNote)) + '</p>'
       : '';

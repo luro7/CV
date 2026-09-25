@@ -231,5 +231,13 @@
   "certifications": "certificaciones",
   "Switch language": "Cambiar idioma",
   "Open printable CV": "Abrir CV imprimible",
-  "Open command palette (Ctrl+K)": "Abrir paleta de comandos (Ctrl+K)"
+  "Open command palette (Ctrl+K)": "Abrir paleta de comandos (Ctrl+K)",
+  "Project image gallery": "Galería de imágenes del proyecto",
+  "Previous image": "Imagen anterior",
+  "Next image": "Imagen siguiente",
+  "Drag with the left mouse button or swipe to browse images. Use the arrow keys while focused.": "Arrastrá con el botón izquierdo o deslizá para recorrer las imágenes. Usá las flechas del teclado cuando el visor tenga el foco.",
+  "Drag with the left mouse button or swipe to browse images.": "Arrastrá con el botón izquierdo o deslizá para recorrer las imágenes.",
+  "of": "de",
+  "Choose an image": "Elegir una imagen",
+  "Show image": "Mostrar imagen"
 }
