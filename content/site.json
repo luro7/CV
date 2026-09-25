@@ -145,16 +145,39 @@
       "technologies": "Astro, React, TypeScript, Hono, Cloudflare Pages, D1, KV",
       "url": "https://manosalaobra.pages.dev",
       "urlLabel": "Live website",
-      "links": [
-        { "url": "https://manosalaobra.pages.dev/#trabajos", "label": "View completed work" }
-      ],
-      "screenshotsNote": "Management view with sample records; no customer details are shown.",
-      "screenshots": [{
-        "image": "/assets/projects/manos-management-overview.png",
-        "orientation": "portrait",
-        "alt": "Manos a la Obra private content manager with anonymized sample work groups and a review-before-publishing flow.",
-        "caption": "Content management · grouped media, pending changes, and a review-before-publishing workflow"
-      }]
+      "screenshotsNote": "Desktop captures show the public website and content-management workflow; no account contact details are visible.",
+      "screenshots": [
+        {
+          "image": "/assets/projects/manos-landing-desktop.png",
+          "orientation": "landscape",
+          "alt": "Manos a la Obra public home page in desktop view with its service introduction and a renovation photo.",
+          "caption": "Landing page · services, contact option, and completed work"
+        },
+        {
+          "image": "/assets/projects/manos-management-desktop.png",
+          "orientation": "landscape",
+          "alt": "Private content manager in desktop view, listing work groups and the publication review workflow.",
+          "caption": "Content management · work groups and review before publishing"
+        },
+        {
+          "image": "/assets/projects/manos-edit-work-desktop.png",
+          "orientation": "landscape",
+          "alt": "Work editor with editable details and a grid of project photos, including controls to reorder and update descriptions.",
+          "caption": "Work editor · description, media, and photo ordering"
+        },
+        {
+          "image": "/assets/projects/manos-review-changes-desktop.png",
+          "orientation": "landscape",
+          "alt": "Review changes dialog showing a pending work-group edit before publication.",
+          "caption": "Change review · inspect pending updates before publishing"
+        },
+        {
+          "image": "/assets/projects/manos-publish-confirmation-desktop.png",
+          "orientation": "landscape",
+          "alt": "Final confirmation step for publishing pending content changes.",
+          "caption": "Publication confirmation · explicit final step"
+        }
+      ]
     },
     {
       "name": "My Flight",

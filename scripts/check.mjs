@@ -171,11 +171,12 @@ assert(!existsSync(resolve(output, 'projects')), 'Separate project URLs should n
 
 const printCss = readFileSync(resolve(output, 'css/interactive.css'), 'utf8');
 const projectCss = readFileSync(resolve(output, 'css/project-dialog.css'), 'utf8');
-assert(projectCss.includes('backdrop-filter:blur('), 'Project gallery must blur the page behind its modal');
-assert(projectCss.includes('overscroll-behavior:contain'), 'Project gallery must keep scrolling inside the modal');
-assert(projectCss.includes('.project-gallery-main{') && projectCss.includes('cursor:grab'), 'Project gallery must support mouse dragging');
+const compactProjectCss = projectCss.replace(/\s+/g, '');
+assert(compactProjectCss.includes('backdrop-filter:blur('), 'Project gallery must blur the page behind its modal');
+assert(compactProjectCss.includes('overscroll-behavior:contain'), 'Project gallery must keep scrolling inside the modal');
+assert(compactProjectCss.includes('.project-gallery-main{') && compactProjectCss.includes('cursor:grab'), 'Project gallery must support mouse dragging');
 assert(projectCss.includes('.project-gallery-thumb.swiper-slide-thumb-active'), 'Project gallery must show the selected thumbnail');
-assert(projectCss.includes('@media(max-width:760px)'), 'Project gallery must have a tablet and mobile layout');
+assert(compactProjectCss.includes('@media(max-width:720px)'), 'Project gallery must have a tablet and mobile layout');
 assert(spanishHtml.includes('data-gallery-main') && spanishHtml.includes('data-gallery-thumbs'), 'Project gallery must render the Swiper viewer and thumbnail navigation');
 assert(existsSync(resolve(output, 'js/vendor/swiper-bundle.min.js')) && existsSync(resolve(output, 'css/swiper-bundle.min.css')), 'Swiper assets must be included in the build');
 assert(!spanishHtml.includes('embla-carousel'), 'The previous gallery engine must be removed from the page');

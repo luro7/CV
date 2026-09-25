@@ -9,20 +9,20 @@ const createGallery = dialog => {
   const thumbs = thumbsElement && !thumbsElement.classList.contains('is-single-image')
     ? new window.Swiper(thumbsElement, {
         slidesPerView: 'auto',
-        spaceBetween: 8,
+        spaceBetween: 10,
         freeMode: true,
         watchSlidesProgress: true,
-        slideToClickedSlide: true,
         grabCursor: true
       })
     : undefined;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const gallery = new window.Swiper(mainElement, {
     slidesPerView: 1,
-    spaceBetween: 16,
-    speed: 360,
+    speed: reducedMotion ? 0 : 420,
     simulateTouch: true,
     grabCursor: true,
     watchOverflow: true,
+    rewind: true,
     keyboard: { enabled: true, onlyInViewport: true },
     navigation: {
       prevEl: root.querySelector('[data-gallery-prev]'),
@@ -32,7 +32,7 @@ const createGallery = dialog => {
   });
   const count = root.querySelector('[data-gallery-count]');
   const updateCount = () => {
-    if (count) count.textContent = `${gallery.realIndex + 1} / ${gallery.slides.length}`;
+    if (count) count.textContent = `${String(gallery.realIndex + 1).padStart(2, '0')} / ${String(gallery.slides.length).padStart(2, '0')}`;
   };
   gallery.on('slideChange', updateCount);
   updateCount();

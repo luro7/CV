@@ -21,8 +21,15 @@ test('build starts clean and generates English and Spanish indexable pages', () 
   assert.match(es, /<html lang="es">/);
   assert.match(es, /Ingeniería de Datos/);
   assert.match(es, /href="https:\/\/manosalaobra\.pages\.dev"[^>]*>Sitio web/);
-  assert.match(es, /href="https:\/\/manosalaobra\.pages\.dev\/#trabajos"[^>]*>Ver trabajos realizados/);
-  assert.ok(es.indexOf('class="project-dialog-links"') < es.indexOf('class="project-gallery"'));
+  assert.doesNotMatch(es, /View completed work|Ver trabajos realizados/);
+  assert.ok(es.indexOf('class="project-dialog-live-link"') < es.indexOf('class="project-gallery"'));
+  assert.match(es, /class="project-gallery-main swiper"/);
+  assert.match(es, /class="project-gallery-thumbs swiper"/);
+  assert.match(es, /manos-edit-work-desktop\.png/);
+  assert.match(es, /manos-landing-desktop\.png/);
+  assert.match(es, /manos-publish-confirmation-desktop\.png/);
+  assert.match(es, /ARRASTRÁ · DESLIZÁ · EXPLORÁ/);
+  assert.match(es, /Mantené apretado el botón izquierdo/);
   assert.match(en, /hreflang="es"/);
   assert.match(es, /rel="canonical" href="https:\/\/lucasrosat\.pages\.dev\/es\/"/);
   assert.match(sitemap, /lucasrosat\.pages\.dev\/es\//);
