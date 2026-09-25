@@ -1,70 +1,38 @@
-let activeProjectOpener;
+import translations from './translations.js';
 
-const createGallery = dialog => {
-  const root = dialog.querySelector('[data-project-gallery]');
-  const mainElement = root?.querySelector('[data-gallery-main]');
-  const thumbsElement = root?.querySelector('[data-gallery-thumbs]');
-  if (!root || !mainElement || typeof window.Swiper !== 'function') return;
+const openGallery = window.GLightbox;
 
-  const thumbs = thumbsElement && !thumbsElement.classList.contains('is-single-image')
-    ? new window.Swiper(thumbsElement, {
-        slidesPerView: 'auto',
-        spaceBetween: 10,
-        freeMode: true,
-        watchSlidesProgress: true,
-        grabCursor: true
-      })
-    : undefined;
+if (typeof openGallery === 'function') {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const gallery = new window.Swiper(mainElement, {
-    slidesPerView: 1,
-    speed: reducedMotion ? 0 : 420,
-    simulateTouch: true,
-    grabCursor: true,
-    watchOverflow: true,
-    rewind: true,
-    keyboard: { enabled: true, onlyInViewport: true },
-    navigation: {
-      prevEl: root.querySelector('[data-gallery-prev]'),
-      nextEl: root.querySelector('[data-gallery-next]')
-    },
-    thumbs: thumbs ? { swiper: thumbs } : undefined
+  const gallery = openGallery({
+    selector: '.project-lightbox-link',
+    touchNavigation: true,
+    touchFollowAxis: true,
+    keyboardNavigation: true,
+    zoomable: true,
+    draggable: true,
+    loop: true,
+    preload: true,
+    moreLength: 0,
+    openEffect: reducedMotion ? 'none' : 'fade',
+    closeEffect: reducedMotion ? 'none' : 'fade',
+    slideEffect: reducedMotion ? 'none' : 'slide',
+    closeOnOutsideClick: true
   });
-  const count = root.querySelector('[data-gallery-count]');
-  const updateCount = () => {
-    if (count) count.textContent = `${String(gallery.realIndex + 1).padStart(2, '0')} / ${String(gallery.slides.length).padStart(2, '0')}`;
-  };
-  gallery.on('slideChange', updateCount);
-  updateCount();
-  gallery.update();
 
-  return {
-    destroy() {
-      gallery.destroy(true, true);
-      thumbs?.destroy(true, true);
+  gallery.on('open', () => {
+    const translate = text => document.documentElement.lang === 'es' ? translations[text] || text : text;
+    const labels = {
+      '.gclose': 'Close gallery',
+      '.gprev': 'Previous image',
+      '.gnext': 'Next image'
+    };
+    for (const [selector, label] of Object.entries(labels)) {
+      const control = document.querySelector(selector);
+      if (control) {
+        control.setAttribute('aria-label', translate(label));
+        control.setAttribute('title', translate(label));
+      }
     }
-  };
-};
-
-const projectOpeners = [...document.querySelectorAll('[data-open-project]')];
-projectOpeners.forEach(button => button.addEventListener('click', () => {
-  const dialog = document.getElementById('project-dialog-' + button.dataset.openProject);
-  if (!dialog || dialog.open) return;
-  activeProjectOpener = button;
-  dialog.showModal();
-  dialog._projectGallery = createGallery(dialog);
-  dialog.querySelector('[data-close-project]')?.focus();
-}));
-
-document.querySelectorAll('[data-project-dialog]').forEach(dialog => {
-  dialog.querySelector('[data-close-project]')?.addEventListener('click', () => dialog.close());
-  dialog.addEventListener('click', event => {
-    if (event.target === dialog) dialog.close();
   });
-  dialog.addEventListener('close', () => {
-    dialog._projectGallery?.destroy();
-    dialog._projectGallery = undefined;
-    activeProjectOpener?.focus();
-    activeProjectOpener = undefined;
-  });
-});
+}

@@ -120,8 +120,8 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('class="project-gallery-link" href="#projects"'), name + ': project action must scroll to the cards without leaving the page');
   const primaryNavigation = documentHtml.match(/<nav aria-label="[^"]+">([\s\S]*?)<\/nav>/)?.[1] || '';
   assert(!primaryNavigation.includes('#projects'), name + ': projects must stay out of the main navigation');
-  assert(documentHtml.includes('class="project-gallery-dialog"'), name + ': in-page project gallery dialog is missing');
-  assert(documentHtml.includes('<button class="project-card-link"'), name + ': project cards must open the dialog without navigating');
+  assert(documentHtml.includes('class="project-lightbox-link"'), name + ': project gallery library triggers are missing');
+  assert(documentHtml.includes('data-gallery="manos-a-la-obra"'), name + ': project gallery images must be grouped per project');
   assert(!documentHtml.includes('href="/projects/') && !documentHtml.includes('href="/es/projects/'), name + ': gallery must not create project URLs');
   assert(documentHtml.includes('AI-assisted projects'), name + ': projects are missing from the generated CV');
   assert(!/github\.com\/luro7\/(manosalaobra|DisplayConductor|my-flight-android|sound-mixer)/i.test(documentHtml), name + ': private repository URL exposed');
@@ -161,26 +161,25 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
 for (const project of site.projects) {
   for (const language of ['en', 'es']) {
     const documentHtml = language === 'es' ? spanishHtml : html;
-    assert(documentHtml.includes('data-open-project="' + project.slug + '"'), project.slug + ' ' + language + ': project card trigger is missing');
-    assert(documentHtml.includes('id="project-dialog-' + project.slug + '"'), project.slug + ' ' + language + ': in-page project gallery is missing');
-    assert(documentHtml.includes('id="project-dialog-title-' + project.slug + '"'), project.slug + ' ' + language + ': project gallery title is missing');
-    for (const screenshot of project.screenshots || []) assert(documentHtml.includes('src="' + screenshot.image + '"'), project.slug + ' ' + language + ': screenshot missing ' + screenshot.image);
+    assert(documentHtml.includes('data-gallery="' + project.slug + '"'), project.slug + ' ' + language + ': project card gallery trigger is missing');
+    assert(documentHtml.includes('id="project-gallery-' + project.slug + '"'), project.slug + ' ' + language + ': in-page gallery group is missing');
+    for (const screenshot of project.screenshots || []) assert(documentHtml.includes('href="' + screenshot.image + '"'), project.slug + ' ' + language + ': screenshot missing ' + screenshot.image);
   }
 }
 assert(!existsSync(resolve(output, 'projects')), 'Separate project URLs should not be generated');
 
 const printCss = readFileSync(resolve(output, 'css/interactive.css'), 'utf8');
-const projectCss = readFileSync(resolve(output, 'css/project-dialog.css'), 'utf8');
+const projectCss = readFileSync(resolve(output, 'css/project-gallery.css'), 'utf8');
 const compactProjectCss = projectCss.replace(/\s+/g, '');
 assert(compactProjectCss.includes('backdrop-filter:blur('), 'Project gallery must blur the page behind its modal');
-assert(compactProjectCss.includes('overscroll-behavior:contain'), 'Project gallery must keep scrolling inside the modal');
-assert(compactProjectCss.includes('.project-gallery-main{') && compactProjectCss.includes('cursor:grab'), 'Project gallery must support mouse dragging');
-assert(projectCss.includes('.project-gallery-thumb.swiper-slide-thumb-active'), 'Project gallery must show the selected thumbnail');
-assert(compactProjectCss.includes('@media(max-width:720px)'), 'Project gallery must have a tablet and mobile layout');
-assert(spanishHtml.includes('data-gallery-main') && spanishHtml.includes('data-gallery-thumbs'), 'Project gallery must render the Swiper viewer and thumbnail navigation');
-assert(existsSync(resolve(output, 'js/vendor/swiper-bundle.min.js')) && existsSync(resolve(output, 'css/swiper-bundle.min.css')), 'Swiper assets must be included in the build');
-assert(!spanishHtml.includes('embla-carousel'), 'The previous gallery engine must be removed from the page');
-assert(spanishHtml.includes('href="https://manosalaobra.pages.dev" target="_blank"'), 'Manos a la Obra gallery must link to its public landing page');
+assert(compactProjectCss.includes('aspect-ratio:16/9') && compactProjectCss.includes('width:100%'), 'Project cards must constrain images to their responsive card width');
+assert(compactProjectCss.includes('.glightbox-container.gslide-imageimg') || compactProjectCss.includes('.glightbox-container.gslide-image img'), 'Project gallery must style the library image stage');
+assert(compactProjectCss.includes('@media(max-width:680px)'), 'Project gallery must have a mobile layout');
+assert(spanishHtml.includes('project-lightbox-link') && spanishHtml.includes('data-gallery="manos-a-la-obra"'), 'Project gallery must use grouped lightbox images');
+assert(existsSync(resolve(output, 'js/vendor/glightbox.min.js')) && existsSync(resolve(output, 'css/vendor/glightbox.min.css')) && existsSync(resolve(output, 'js/vendor/GLIGHTBOX-LICENSE.md')), 'GLightbox assets and license must be included');
+assert(readFileSync(resolve(output, 'js/project-gallery.js'), 'utf8').includes('touchNavigation: true') && readFileSync(resolve(output, 'js/project-gallery.js'), 'utf8').includes('draggable: true'), 'Project gallery must use the library touch and mouse navigation');
+assert(!spanishHtml.includes('swiper-bundle') && !spanishHtml.includes('project-gallery-main'), 'The previous gallery markup must be removed');
+assert(spanishHtml.includes('href="https://manosalaobra.pages.dev" target="_blank"'), 'Manos a la Obra project card must link to its public landing page');
 assert(printCss.includes('@page{size:A4'), 'Print output must use A4 paper');
 assert(printCss.includes('.print-cv-portrait'), 'Print output must include the CV portrait');
 assert(printCss.includes('body>:not(.print-cv)'), 'Print output must use the CV document instead of page styling');

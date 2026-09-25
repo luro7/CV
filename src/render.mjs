@@ -140,10 +140,18 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     const screenshot = shot
       ? '<span class="project-card-cover"><img src="' + escapeHtml(shot.image) + '" alt="" loading="lazy" decoding="async"></span>'
       : '<span class="project-card-cover project-preview-pending" role="img" aria-label="' + escapeHtml(t('Screenshot capture pending')) + '"><span>' + escapeHtml(t('Screenshot capture pending')) + '</span></span>';
+    const cardTriggerOpen = shot
+      ? '<a class="project-card-link project-lightbox-link" href="' + escapeHtml(shot.image) + '" data-gallery="' + escapeHtml(item.slug) + '" data-type="image" data-title="' + escapeHtml(t(item.name)) + '" data-description="' + escapeHtml(t(shot.caption || item.name)) + '" data-alt="' + escapeHtml(t(shot.alt || item.name)) + '" aria-haspopup="dialog" aria-controls="project-gallery-' + escapeHtml(item.slug) + '">'
+      : '<div class="project-card-link">';
     return template('cards/project', {
       category,
       slug: escapeHtml(item.slug),
+      cardTriggerOpen,
+      cardTriggerClose: shot ? '</a>' : '</div>',
       screenshot,
+      liveLink: item.url
+        ? '<a class="project-card-live-link" href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(t(item.urlLabel || 'Live website')) + '<span aria-hidden="true"> ↗</span></a>'
+        : '',
       openProjectLabel: escapeHtml(t('Open project gallery')),
       name: escapeHtml(t(item.name)),
       description: escapeHtml(t(item.description)),
@@ -151,39 +159,14 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     });
   }).join('\n');
 
-  const projectDialogs = site.projects.map(item => {
-    const category = item.category || 'web';
-    if (!['web', 'android', 'windows'].includes(category)) throw new Error('Invalid project category: ' + item.name);
+  const projectGalleries = site.projects.map(item => {
     const projectShots = screenshotsFor(item);
-    const screenshots = projectShots.length
-      ? '<section class="project-gallery" data-project-gallery data-slide-count="' + projectShots.length + '" role="region" aria-roledescription="carousel" aria-label="' + escapeHtml(t('Project image gallery')) + '">' +
-        '<div class="project-gallery-main swiper" data-gallery-main tabindex="0" aria-label="' + escapeHtml(t('Hold the left mouse button and drag, swipe on touch, or use the arrow keys to browse images.')) + '">' +
-          '<div class="swiper-wrapper">' + projectShots.map((shot, index) =>
-            '<figure class="project-gallery-slide swiper-slide" style="--project-gallery-backdrop:url(\'' + escapeHtml(shot.image) + '\')"><img src="' + escapeHtml(shot.image) + '" alt="' + escapeHtml(t(shot.alt || item.name)) + '" loading="lazy" decoding="async" draggable="false"><figcaption><span class="project-gallery-slide-index">' + String(index + 1).padStart(2, '0') + '</span><span>' + escapeHtml(t(shot.caption || item.name)) + '</span></figcaption></figure>'
-          ).join('\n') + '</div>' +
-          '<button class="project-gallery-arrow project-gallery-prev" type="button" data-gallery-prev aria-label="' + escapeHtml(t('Previous image')) + '"><span aria-hidden="true">←</span></button>' +
-          '<button class="project-gallery-arrow project-gallery-next" type="button" data-gallery-next aria-label="' + escapeHtml(t('Next image')) + '"><span aria-hidden="true">→</span></button>' +
-          '<span class="project-gallery-count" data-gallery-count aria-live="polite">01 / ' + String(projectShots.length).padStart(2, '0') + '</span>' +
-        '</div>' +
-        '<div class="project-gallery-utility"><p class="project-gallery-instructions">' + escapeHtml(t('Hold the left mouse button and drag, or swipe on mobile.')) + '</p><span aria-hidden="true">' + escapeHtml(t('DRAG · SWIPE · EXPLORE')) + '</span></div>' +
-        '<div class="project-gallery-thumbs swiper' + (projectShots.length < 2 ? ' is-single-image' : '') + '" data-gallery-thumbs role="group" aria-label="' + escapeHtml(t('Choose an image')) + '"><div class="swiper-wrapper">' +
-          projectShots.map((shot, index) => '<button class="project-gallery-thumb swiper-slide" type="button" aria-label="' + escapeHtml(t('Show image') + ' ' + (index + 1) + ': ' + t(shot.caption || item.name)) + '"><img src="' + escapeHtml(shot.image) + '" alt="" loading="lazy" decoding="async"><span class="project-gallery-thumb-index">' + String(index + 1).padStart(2, '0') + '</span><span class="project-gallery-thumb-caption">' + escapeHtml(t(shot.caption || item.name)) + '</span></button>').join('') +
-        '</div></div></section>'
-      : '<p class="project-gallery-empty">' + escapeHtml(t('Screenshots for this project are being prepared.')) + '</p>';
-    const projectLink = item.url
-      ? '<a class="project-dialog-live-link" href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(t(item.urlLabel || 'Live website')) + '<span aria-hidden="true"> ↗</span></a>'
-      : '';
-    return template('shared/project-dialog', {
+    const galleryItems = projectShots.slice(1).map(shot =>
+      '<a class="project-lightbox-link" href="' + escapeHtml(shot.image) + '" data-gallery="' + escapeHtml(item.slug) + '" data-type="image" data-title="' + escapeHtml(t(item.name)) + '" data-description="' + escapeHtml(t(shot.caption || item.name)) + '" data-alt="' + escapeHtml(t(shot.alt || item.name)) + '"></a>'
+    ).join('\n');
+    return template('shared/project-gallery-source', {
       slug: escapeHtml(item.slug),
-      categoryLabel: escapeHtml(t(category === 'windows' ? 'Windows application' : category === 'android' ? 'Android application' : 'Web application')),
-      galleryEyebrow: escapeHtml(t('Project screenshots')),
-      projectName: escapeHtml(t(item.name)),
-      projectDescription: escapeHtml(t(item.description)),
-      technologiesLabel: escapeHtml(t('Technologies')),
-      technologies: escapeHtml(item.technologies),
-      screenshots,
-      projectLink,
-      closeLabel: escapeHtml(t('Close gallery'))
+      galleryItems
     });
   }).join('\n');
 
@@ -249,7 +232,7 @@ export function render(site, { language = 'en', translations = {} } = {}) {
       printLanguages
     }),
     projectCards,
-    projectDialogs,
+    projectGalleries,
     projectsIntro: escapeHtml(t(site.projectsIntro)),
     projectGalleryLabel: escapeHtml(t('View project gallery')),
     experienceCount: String(site.experience.length),
