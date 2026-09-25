@@ -151,6 +151,16 @@
   backdrop-filter: blur(10px);
   transition: color .18s ease, background .18s ease, border-color .18s ease;
 }
+.glightbox-container .gprev,
+.glightbox-container .gnext {
+  transform: translateX(var(--gallery-arrow-drag-x, 0px));
+  transition: transform .48s cubic-bezier(.2, 1.55, .45, 1), color .18s ease, background .18s ease, border-color .18s ease;
+  will-change: transform;
+}
+.glightbox-container .gcontainer.gallery-is-dragging .gprev,
+.glightbox-container .gcontainer.gallery-is-dragging .gnext {
+  transition: none;
+}
 .glightbox-container .gbtn:hover,
 .glightbox-container .gbtn:focus-visible {
   color: #0d1915;
@@ -181,5 +191,7 @@ body.glightbox-open { overflow: hidden; }
   .project-card-cover img,
   .project-card-title > span,
   .project-card-live-link,
-  .glightbox-container .gbtn { transition: none; }
+  .glightbox-container .gbtn,
+  .glightbox-container .gprev,
+  .glightbox-container .gnext { transition: none; }
 }

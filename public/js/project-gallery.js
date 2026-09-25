@@ -22,6 +22,9 @@ if (typeof openGallery === 'function') {
 
   let navigationFrame = 0;
   let observedImage = null;
+  let dragStartX = null;
+  let dragTimer = 0;
+  let dragContainer = null;
   const imageObserver = typeof ResizeObserver === 'function'
     ? new ResizeObserver(() => positionNavigation())
     : null;
@@ -66,6 +69,51 @@ if (typeof openGallery === 'function') {
     });
   }
 
+  function finishNavigationDrag(waitForSlide = false) {
+    if (!dragContainer) return;
+    window.clearTimeout(dragTimer);
+    const container = dragContainer;
+    const reset = () => {
+      container.classList.remove('gallery-is-dragging');
+      container.style.removeProperty('--gallery-arrow-drag-x');
+      dragContainer = null;
+      dragStartX = null;
+    };
+    if (waitForSlide) {
+      positionNavigation();
+      requestAnimationFrame(() => requestAnimationFrame(reset));
+      dragTimer = window.setTimeout(reset, 650);
+    } else {
+      reset();
+    }
+  }
+
+  function onPointerDown(event) {
+    if (event.button !== 0 && event.pointerType !== 'touch') return;
+    const image = event.target.closest('.glightbox-container .gslide.current .gslide-image img');
+    const container = event.target.closest('.glightbox-container .gcontainer');
+    if (!image || !container || image.closest('.gslide')?.classList.contains('zoomed')) return;
+    finishNavigationDrag();
+    dragContainer = container;
+    dragStartX = event.clientX;
+    container.classList.add('gallery-is-dragging');
+    container.style.setProperty('--gallery-arrow-drag-x', '0px');
+  }
+
+  function onPointerMove(event) {
+    if (dragStartX === null || !dragContainer) return;
+    const delta = Math.max(-64, Math.min(64, (event.clientX - dragStartX) * .42));
+    dragContainer.style.setProperty('--gallery-arrow-drag-x', `${delta}px`);
+  }
+
+  function onPointerUp() {
+    if (dragStartX === null) return;
+    // Let GLightbox complete its slide gesture first. slide_changed clears the drag
+    // state on success; this timeout also restores the arrows after a short drag.
+    window.clearTimeout(dragTimer);
+    dragTimer = window.setTimeout(() => finishNavigationDrag(true), 420);
+  }
+
   gallery.on('open', () => {
     const translate = text => document.documentElement.lang === 'es' ? translations[text] || text : text;
     const labels = {
@@ -82,12 +130,22 @@ if (typeof openGallery === 'function') {
     }
     positionNavigation();
     window.addEventListener('resize', positionNavigation);
+    document.addEventListener('pointerdown', onPointerDown, true);
+    document.addEventListener('pointermove', onPointerMove, { capture: true, passive: true });
+    document.addEventListener('pointerup', onPointerUp, true);
+    document.addEventListener('pointercancel', onPointerUp, true);
   });
 
+  gallery.on('slide_changed', () => finishNavigationDrag(true));
   gallery.on('slide_changed', positionNavigation);
   gallery.on('slide_after_load', positionNavigation);
   gallery.on('close', () => {
     window.removeEventListener('resize', positionNavigation);
+    document.removeEventListener('pointerdown', onPointerDown, true);
+    document.removeEventListener('pointermove', onPointerMove, true);
+    document.removeEventListener('pointerup', onPointerUp, true);
+    document.removeEventListener('pointercancel', onPointerUp, true);
+    finishNavigationDrag();
     imageObserver?.disconnect();
     observedImage = null;
   });
