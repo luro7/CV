@@ -20,6 +20,9 @@ test('build starts clean and generates English and Spanish indexable pages', () 
   assert.match(en, /<html lang="en">/);
   assert.match(es, /<html lang="es">/);
   assert.match(es, /Ingeniería de Datos/);
+  assert.match(es, /href="https:\/\/manosalaobra\.pages\.dev"[^>]*>Sitio web/);
+  assert.match(es, /href="https:\/\/manosalaobra\.pages\.dev\/#trabajos"[^>]*>Ver trabajos realizados/);
+  assert.ok(es.indexOf('class="project-dialog-links"') < es.indexOf('class="project-gallery"'));
   assert.match(en, /hreflang="es"/);
   assert.match(es, /rel="canonical" href="https:\/\/lucasrosat\.pages\.dev\/es\/"/);
   assert.match(sitemap, /lucasrosat\.pages\.dev\/es\//);

@@ -145,6 +145,9 @@
       "technologies": "Astro, React, TypeScript, Hono, Cloudflare Pages, D1, KV",
       "url": "https://manosalaobra.pages.dev",
       "urlLabel": "Live website",
+      "links": [
+        { "url": "https://manosalaobra.pages.dev/#trabajos", "label": "View completed work" }
+      ],
       "screenshotsNote": "Management view with sample records; no customer details are shown.",
       "screenshots": [{
         "image": "/assets/projects/manos-management-overview.png",

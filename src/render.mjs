@@ -169,9 +169,10 @@ export function render(site, { language = 'en', translations = {} } = {}) {
           projectShots.map((shot, index) => '<button class="project-gallery-thumb swiper-slide" type="button" aria-label="' + escapeHtml(t('Show image') + ' ' + (index + 1) + ': ' + t(shot.caption || item.name)) + '"><img src="' + escapeHtml(shot.image) + '" alt="" loading="lazy" decoding="async"></button>').join('') +
         '</div></div></section>'
       : '<p class="project-gallery-empty">' + escapeHtml(t('Screenshots for this project are being prepared.')) + '</p>';
-    const projectLink = item.url
-      ? '<a class="project-dialog-live-link" href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(t(item.urlLabel || 'Live website')) + '<span aria-hidden="true"> ↗</span></a>'
-      : '';
+    const projectLinks = [
+      ...(item.url ? [{ url: item.url, label: item.urlLabel || 'Live website' }] : []),
+      ...(item.links || [])
+    ].map(link => '<a class="project-dialog-live-link" href="' + escapeHtml(link.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(t(link.label)) + '<span aria-hidden="true"> ↗</span></a>').join('');
     const screenshotsNote = item.screenshotsNote
       ? '<p class="project-detail-note">' + escapeHtml(t(item.screenshotsNote)) + '</p>'
       : '';
@@ -185,7 +186,7 @@ export function render(site, { language = 'en', translations = {} } = {}) {
       technologies: escapeHtml(item.technologies),
       screenshotsNote,
       screenshots,
-      projectLink,
+      projectLinks: projectLinks ? '<nav class="project-dialog-links" aria-label="' + escapeHtml(t('Project links')) + '">' + projectLinks + '</nav>' : '',
       closeLabel: escapeHtml(t('Close gallery'))
     });
   }).join('\n');

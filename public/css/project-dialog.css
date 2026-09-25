@@ -32,6 +32,9 @@
 .project-dialog-live-link{display:inline-flex;align-items:center;gap:.3rem;margin:.55rem 0 .2rem;padding:.58rem .85rem;border:1px solid var(--line);border-radius:7px;color:var(--interactive-accent,#315f49);font-size:.86rem;font-weight:650;text-decoration:none}
 .project-dialog-live-link:hover{background:var(--paper)}
 .project-dialog-live-link:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+.project-dialog-links{display:flex;flex-wrap:wrap;gap:.55rem;margin:.8rem 0 1rem}
+.project-dialog-links .project-dialog-live-link{margin:0}
+@media(min-width:1100px){.project-gallery-dialog{width:min(1500px,calc(100vw - 3rem));max-height:94dvh}.project-gallery-dialog .project-gallery-main{height:min(62dvh,720px)}}
 .project-gallery{min-width:0;margin-top:.65rem}
 .project-gallery-main{position:relative;width:100%;height:min(58dvh,650px);min-height:280px;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#101916;cursor:grab;touch-action:pan-y pinch-zoom}
 .project-gallery-main:active{cursor:grabbing}
