@@ -100,20 +100,19 @@ h2 span{color:#737B8C}
 .glightbox-container .gbtn:hover,.glightbox-container .gbtn:focus-visible{color:#111424;background:#9FA6FF;border-color:#9FA6FF}
 .glightbox-container .gloader{border-color:rgba(126,137,255,.28);border-right-color:#9FA6FF}
 
-/* Reworked theme toggle: compact orbital switch, calmer in light mode and luminous in dark mode. */
-.theme-toggle{position:relative;overflow:hidden;width:58px;padding:0;border-radius:999px;background:#252A39}
+/* Reworked theme toggle: an orbital switch instead of the previous day/night illustration. */
+.theme-toggle{position:relative;overflow:hidden;width:58px;padding:0;border-radius:999px;background:transparent}
 .sky-toggle{width:58px;height:34px;overflow:visible}
 .sky-toggle .toggle-track{fill:#E9ECF8;stroke:#B8BFE3;stroke-width:1}
-.sky-toggle .sun-core{fill:#F3B84C}
-.sky-toggle .sun-rays{fill:none;stroke:#D89B2E;stroke-width:1.6;stroke-linecap:round;transform-origin:18px 17px;transition:opacity .3s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
-.sky-toggle .moon-body{fill:#DDEEFF;transform:translateX(26px);transition:opacity .3s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
-.sky-toggle .stars{fill:#8FD7FF;opacity:0;transform:translateX(4px);transition:opacity .3s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
 .sky-toggle .thumb{fill:#FFFFFF;stroke:#C6CBE3;stroke-width:1;filter:drop-shadow(0 2px 3px #14182A22);transform:translateX(0);transition:transform .55s cubic-bezier(.2,.8,.2,1),fill .3s ease,stroke .3s ease}
-[data-theme=dark] .sky-toggle .toggle-track{fill:#172536;stroke:#35526A}
-[data-theme=dark] .sky-toggle .thumb{fill:#101823;stroke:#4D6B83;transform:translateX(24px)}
-[data-theme=dark] .sky-toggle .sun-rays{opacity:0;transform:rotate(80deg) scale(.7)}
-[data-theme=dark] .sky-toggle .moon-body{opacity:1;transform:translateX(0)}
-[data-theme=dark] .sky-toggle .stars{opacity:1;transform:translateX(0)}
+.sky-toggle .sun-core{fill:#F3B84C;opacity:1;transform-origin:17px 17px;transition:opacity .28s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.sky-toggle .sun-rays{fill:none;stroke:#D89B2E;stroke-width:1.6;stroke-linecap:round;opacity:1;transform-origin:17px 17px;transition:opacity .28s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.sky-toggle .moon-body{fill:#DDEEFF;opacity:0;transform:translateX(0);transition:opacity .28s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.sky-toggle .stars{fill:#8FD7FF;opacity:0;transform:translateX(0);transition:opacity .28s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+
+.daylight-transition{background:radial-gradient(circle at 70% 10%,#7379E82C,transparent 42%),linear-gradient(180deg,transparent 30%,#4A52C718 100%)}
+.sunset .daylight-transition{background:radial-gradient(circle at 70% 10%,#6FCBFF38,transparent 42%),linear-gradient(180deg,transparent 24%,#203A551F 100%)}
+.sunrise .daylight-transition{background:radial-gradient(circle at 70% 10%,#8D94FF32,transparent 42%),linear-gradient(0deg,transparent 20%,#4A52C71B 100%)}
 
 [data-theme=dark]{
   color-scheme:dark;
@@ -133,6 +132,13 @@ h2 span{color:#737B8C}
 [data-theme=dark] body{background:#0A0D12;color:#EEF4FA}
 [data-theme=dark] ::selection{background:#294A67;color:#F4FAFF}
 [data-theme=dark] a:hover{color:#8AD7FF}
+[data-theme=dark] .brand span,[data-theme=dark] .sidebar-name span,[data-theme=dark] .sidebar nav a[aria-current],[data-theme=dark] .sidebar a:hover{color:#8AD7FF}
+[data-theme=dark] .sidebar nav a[aria-current],[data-theme=dark] .sidebar nav a:hover{background:#172536}
+[data-theme=dark] .sidebar nav a[aria-current]{box-shadow:inset 3px 0 #6FCBFF}
+[data-theme=dark] .sidebar a:focus-visible{outline-color:#77D0FF}
+[data-theme=dark] .preference-button{border-color:#35526A;background:#172536;color:#F4FAFF}
+[data-theme=dark] .preference-button:hover{background:#203449}
+[data-theme=dark] .language-next{color:#9BC8E2}
 [data-theme=dark] .hero-role,[data-theme=dark] .column-title,[data-theme=dark] .greeting{color:#C2CEDA}
 [data-theme=dark] h1>span,[data-theme=dark] h2 span{color:#8AD7FF}
 [data-theme=dark] .experience-section{background:#0F141C}
@@ -162,9 +168,16 @@ h2 span{color:#737B8C}
 [data-theme=dark] .credential-art-label{color:#8AD7FF;background:#14202D}
 [data-theme=dark] .credential-art-label span{border-color:#355B78}
 
+[data-theme=dark] .sky-toggle .toggle-track{fill:#172536;stroke:#35526A}
+[data-theme=dark] .sky-toggle .thumb{fill:#101823;stroke:#4D6B83;transform:translateX(24px)}
+[data-theme=dark] .sky-toggle .sun-core,[data-theme=dark] .sky-toggle .sun-rays{opacity:0;transform:rotate(80deg) scale(.7)}
+[data-theme=dark] .sky-toggle .moon-body{opacity:1;transform:translateX(18px)}
+[data-theme=dark] .sky-toggle .stars{opacity:1;transform:translateX(24px)}
+
 @media(max-width:800px){
   .sidebar nav a[aria-current]{box-shadow:inset 0 -3px #8D94FF}
+  [data-theme=dark] .sidebar nav a[aria-current]{box-shadow:inset 0 -3px #6FCBFF}
 }
 @media(prefers-reduced-motion:reduce){
-  .sky-toggle .sun-rays,.sky-toggle .moon-body,.sky-toggle .stars,.sky-toggle .thumb{transition:none}
+  .sky-toggle .sun-core,.sky-toggle .sun-rays,.sky-toggle .moon-body,.sky-toggle .stars,.sky-toggle .thumb{transition:none}
 }
