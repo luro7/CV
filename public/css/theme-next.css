@@ -1,0 +1,170 @@
+/* Professional graphite + cobalt / sky-blue theme. Loaded last so legacy green tokens cannot leak into the UI. */
+:root{
+  color-scheme:light;
+  --bg:#F6F7FA;
+  --paper:#FFFFFF;
+  --ink:#191B22;
+  --muted:#68707D;
+  --line:#DDE1E8;
+  --green:#4A52C7;
+  --lime:#7379E8;
+  --interactive-accent:#4A52C7;
+  --interactive-accent-soft:#ECEEFD;
+  --interactive-accent-line:#A8AFE8;
+  --interactive-accent-bright:#7379E8;
+  --sidebar:#171A24;
+  --sidebar-soft:#232737;
+  --sidebar-line:#343A50;
+  --focus:#5962D9;
+}
+
+body{background:var(--bg);color:var(--ink)}
+::selection{background:#DDE1FF;color:#181B45}
+a:focus-visible,summary:focus-visible,button:focus-visible{outline-color:var(--focus)}
+a:hover{color:#4048B5}
+
+.sidebar{background:var(--sidebar);color:#F6F7FB}
+.brand span,.sidebar-name span{color:#8E95FF}
+.sidebar-identity>p:last-child{color:#B5BCCB}
+.sidebar nav a{color:#E6E9F0;border-color:var(--sidebar-line)}
+.sidebar nav a>span:first-child{color:#9EA5B8}
+.nav-arrow{color:#AAB1C4}
+.sidebar nav a[aria-current]{color:#A9AEFF}
+.sidebar a:hover{color:#A9AEFF}
+.sidebar a:focus-visible{outline-color:#8E95FF}
+
+.document-meta,.eyebrow{color:var(--muted)}
+.greeting{color:#5D6473}
+h1>span{color:#5962D9}
+.hero-role{color:#454B59}
+.role-divider{color:#9299A7}
+h2 span{color:#737B8C}
+.column-title{color:#545CC1}
+
+.expertise-card:hover{border-color:#B9BFE8}
+.card-number{color:#4248A8;background:#ECEEFD}
+.tags li{background:#F1F2F8;border-color:#E1E4ED;color:#4F5666}
+.experience-item .experience-heading:hover .experience-role{color:#444CC0}
+.responsibilities li::marker{color:#7E86C7}
+.languages{background:#F0F1F7}
+.current-badge{background:#E3E6FF;color:#3F47AF}
+
+.preference-button{border-color:#454C66;background:#272B3A;color:#F8F9FC}
+.preference-button:hover{background:#33384A;color:#fff}
+.language-next{color:#B7BED0}
+.sidebar nav a[aria-current]{background:#262B3A;box-shadow:inset 3px 0 #8D94FF}
+.sidebar nav a:hover{background:#262B3A}
+.command-hero:hover,.download-button:hover{border-color:#A8AFE8}
+.command-hero kbd{background:#F0F1F7;border-color:#DCE0EA;color:#51586A}
+
+.hero::before{
+  background:
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y),#7379E826 0 1px,transparent 2px),
+    linear-gradient(90deg,transparent 49.7%,#4A52C70A 50%,transparent 50.3%),
+    linear-gradient(transparent 49.7%,#4A52C70A 50%,transparent 50.3%);
+  background-size:auto,44px 44px,44px 44px
+}
+.hero-signal span{background:#7379E8;box-shadow:0 0 0 7px #7379E814}
+.hero-signal span::after{background:linear-gradient(90deg,#7379E866,transparent)}
+.skill-map-panel{background:linear-gradient(135deg,var(--paper),#F2F3FD)}
+.skill-node:hover,.skill-node:focus-visible,.skill-node.is-active{border-color:#A8AFE8;background:#ECEEFD;color:#30379E}
+.experience-item.skill-match{background:linear-gradient(90deg,#7379E81E,transparent 72%)}
+.timeline .experience-item.skill-match::before{background:#8D94FF;border-color:#4A52C7}
+.credential-art-label{color:#4148A5;background:#F0F1FA}
+.credential-art-label span{border-color:#A8AFE8}
+.pipeline-dock{background:color-mix(in srgb,var(--paper) 94%,transparent)}
+.engineering-panel{background:#111522F2;color:#EEF1F8;border-color:#343A50}
+.engineering-panel-head,.engineering-inspector,.engineering-metrics{border-color:#2A3043}
+.engineering-kicker,.engineering-inspector>strong{color:#9FA5FF}
+.engineering-close{color:#DCE1EC}
+.engineering-stat dt,.engineering-inspecting,.engineering-context dt,.engineering-metrics span{color:#9EA6BA}
+.engineering-context dd{color:#E8EBF2}
+.engineering-metrics b{color:#F4F6FA}
+.engineering-system summary{color:#CED3E1}
+.engineering-mode [data-engineering-label]::after{color:#545CC1;background:#FAFAFD;border-color:#DDE1E8}
+.command-palette::backdrop{background:#080A12CC}
+.command-result:hover,.command-result:focus-visible{background:#ECEEFD;color:#30379E}
+.skill-trace-status{color:#4A52C7}
+
+.project-card:hover{box-shadow:0 16px 34px rgba(39,45,75,.14)}
+.project-card-title>span,.project-card-content .project-technologies,.project-card-action{color:#4D55B8}
+.project-card-cover{background:#151925}
+.project-card-live-link{color:#4D55B8}
+.project-card-live-link:hover,.project-card-live-link:focus-visible{border-color:#A8AFE8}
+.project-preview-pending{color:#69708A}
+.goverlay{background:rgba(7,9,18,.88)!important}
+.glightbox-container .gslide-description{background:linear-gradient(180deg,rgba(10,12,23,.16),rgba(10,12,23,.96))}
+.glightbox-container .gslide-title,.glightbox-container .gcounter{color:#F2F4F8}
+.glightbox-container .gslide-desc{color:#B8BFCD}
+.glightbox-container .gbtn{color:#EEF2F7;background:rgba(18,22,36,.82);border-color:rgba(126,137,255,.32)}
+.glightbox-container .gbtn:hover,.glightbox-container .gbtn:focus-visible{color:#111424;background:#9FA6FF;border-color:#9FA6FF}
+.glightbox-container .gloader{border-color:rgba(126,137,255,.28);border-right-color:#9FA6FF}
+
+/* Reworked theme toggle: compact orbital switch, calmer in light mode and luminous in dark mode. */
+.theme-toggle{position:relative;overflow:hidden;width:58px;padding:0;border-radius:999px;background:#252A39}
+.sky-toggle{width:58px;height:34px;overflow:visible}
+.sky-toggle .toggle-track{fill:#E9ECF8;stroke:#B8BFE3;stroke-width:1}
+.sky-toggle .sun-core{fill:#F3B84C}
+.sky-toggle .sun-rays{fill:none;stroke:#D89B2E;stroke-width:1.6;stroke-linecap:round;transform-origin:18px 17px;transition:opacity .3s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.sky-toggle .moon-body{fill:#DDEEFF;transform:translateX(26px);transition:opacity .3s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.sky-toggle .stars{fill:#8FD7FF;opacity:0;transform:translateX(4px);transition:opacity .3s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.sky-toggle .thumb{fill:#FFFFFF;stroke:#C6CBE3;stroke-width:1;filter:drop-shadow(0 2px 3px #14182A22);transform:translateX(0);transition:transform .55s cubic-bezier(.2,.8,.2,1),fill .3s ease,stroke .3s ease}
+[data-theme=dark] .sky-toggle .toggle-track{fill:#172536;stroke:#35526A}
+[data-theme=dark] .sky-toggle .thumb{fill:#101823;stroke:#4D6B83;transform:translateX(24px)}
+[data-theme=dark] .sky-toggle .sun-rays{opacity:0;transform:rotate(80deg) scale(.7)}
+[data-theme=dark] .sky-toggle .moon-body{opacity:1;transform:translateX(0)}
+[data-theme=dark] .sky-toggle .stars{opacity:1;transform:translateX(0)}
+
+[data-theme=dark]{
+  color-scheme:dark;
+  --bg:#0A0D12;
+  --paper:#121721;
+  --ink:#EEF4FA;
+  --muted:#A8B3C2;
+  --line:#293544;
+  --green:#6FCBFF;
+  --lime:#8AD7FF;
+  --interactive-accent:#6FCBFF;
+  --interactive-accent-soft:#17283A;
+  --interactive-accent-line:#355B78;
+  --interactive-accent-bright:#8AD7FF;
+  --focus:#77D0FF;
+}
+[data-theme=dark] body{background:#0A0D12;color:#EEF4FA}
+[data-theme=dark] ::selection{background:#294A67;color:#F4FAFF}
+[data-theme=dark] a:hover{color:#8AD7FF}
+[data-theme=dark] .hero-role,[data-theme=dark] .column-title,[data-theme=dark] .greeting{color:#C2CEDA}
+[data-theme=dark] h1>span,[data-theme=dark] h2 span{color:#8AD7FF}
+[data-theme=dark] .experience-section{background:#0F141C}
+[data-theme=dark] .expertise-card{box-shadow:none}
+[data-theme=dark] .tags li,[data-theme=dark] .card-number{background:#182231;border-color:#2D4052;color:#D8E7F2}
+[data-theme=dark] .languages{background:#141E29}
+[data-theme=dark] .experience-item .experience-heading:hover .experience-role{color:#8AD7FF}
+[data-theme=dark] .current-badge{background:#18354A;color:#8AD7FF}
+[data-theme=dark] .command-hero kbd,[data-theme=dark] .command-close{background:#182331;border-color:#304357;color:#CFE7F4}
+[data-theme=dark] .skill-node:hover,[data-theme=dark] .skill-node:focus-visible,[data-theme=dark] .skill-node.is-active,[data-theme=dark] .command-result:hover,[data-theme=dark] .command-result:focus-visible{background:#17283A;color:#AEE6FF;border-color:#355B78}
+[data-theme=dark] .hero::before{
+  background:
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y),#6FCBFF24 0 1px,transparent 2px),
+    linear-gradient(90deg,transparent 49.7%,#6FCBFF0B 50%,transparent 50.3%),
+    linear-gradient(transparent 49.7%,#6FCBFF0B 50%,transparent 50.3%);
+  background-size:auto,44px 44px,44px 44px
+}
+[data-theme=dark] .hero-signal span{background:#6FCBFF;box-shadow:0 0 0 7px #6FCBFF12}
+[data-theme=dark] .hero-signal span::after{background:linear-gradient(90deg,#6FCBFF55,transparent)}
+[data-theme=dark] .skill-hub,[data-theme=dark] .hero-pipeline span.is-active,[data-theme=dark] .pipeline-dock-head strong,[data-theme=dark] .pipeline-dock-stage.is-active,[data-theme=dark] .skill-trace-status{color:#8AD7FF}
+[data-theme=dark] .hero-pipeline::before,[data-theme=dark] .pipeline-dock-fill,[data-theme=dark] .timeline::after{background:#6FCBFF}
+[data-theme=dark] .hero-pipeline span.is-active::before,[data-theme=dark] .pipeline-dock-stage.is-active i{background:#8AD7FF;border-color:#6FCBFF}
+[data-theme=dark] .pipeline-dock{background:#101720E8;border-color:#2D3E4F}
+[data-theme=dark] .engineering-mode [data-engineering-label]::after{color:#9FDCFF;background:#111A25;border-color:#355064}
+[data-theme=dark] .project-card-title>span,[data-theme=dark] .project-card-content .project-technologies,[data-theme=dark] .project-card-action,[data-theme=dark] .project-card-live-link{color:#8AD7FF}
+[data-theme=dark] .project-card-live-link:hover,[data-theme=dark] .project-card-live-link:focus-visible{border-color:#5A9BC2}
+[data-theme=dark] .credential-art-label{color:#8AD7FF;background:#14202D}
+[data-theme=dark] .credential-art-label span{border-color:#355B78}
+
+@media(max-width:800px){
+  .sidebar nav a[aria-current]{box-shadow:inset 0 -3px #8D94FF}
+}
+@media(prefers-reduced-motion:reduce){
+  .sky-toggle .sun-rays,.sky-toggle .moon-body,.sky-toggle .stars,.sky-toggle .thumb{transition:none}
+}
