@@ -1,0 +1,32 @@
+/* Theme toggle refinement. Loaded after theme-next.css. */
+.theme-toggle{
+  width:44px;
+  min-width:44px;
+  height:44px;
+  min-height:44px;
+  padding:0;
+  border-radius:50%;
+  border:1px solid #454C66;
+  background:#272B3A;
+  color:#F8F9FC;
+  display:inline-grid;
+  place-items:center;
+  overflow:hidden;
+}
+.theme-toggle:hover{background:#33384A;color:#fff}
+.theme-icon{width:22px;height:22px;overflow:visible}
+.theme-icon .sun-icon,
+.theme-icon .moon-icon{transform-origin:12px 12px;transition:opacity .28s ease,transform .45s cubic-bezier(.2,.8,.2,1)}
+.theme-icon .sun-icon{opacity:1;transform:rotate(0deg) scale(1)}
+.theme-icon .sun-icon circle{fill:#F5B942}
+.theme-icon .sun-icon path{fill:none;stroke:#F5B942;stroke-width:1.8;stroke-linecap:round}
+.theme-icon .moon-icon{opacity:0;transform:rotate(-35deg) scale(.6)}
+.theme-icon .moon-icon path{fill:#8AD7FF}
+.theme-icon .moon-icon circle{fill:#6FCBFF}
+[data-theme=dark] .theme-toggle{border-color:#35526A;background:#172536;color:#F4FAFF}
+[data-theme=dark] .theme-toggle:hover{background:#203449}
+[data-theme=dark] .theme-icon .sun-icon{opacity:0;transform:rotate(75deg) scale(.55)}
+[data-theme=dark] .theme-icon .moon-icon{opacity:1;transform:rotate(0deg) scale(1)}
+@media(prefers-reduced-motion:reduce){
+  .theme-icon .sun-icon,.theme-icon .moon-icon{transition:none}
+}
