@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#0A0D12"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="#4A52C7" stroke-width="3"/>
+  <path d="M14 16h5v32h-5z" fill="#7379E8"/>
+  <text x="37" y="41" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="25" font-weight="700" letter-spacing="-2" fill="#F4F7FB">LR</text>
+  <circle cx="51" cy="14" r="4" fill="#6FCBFF"/>
+</svg>
