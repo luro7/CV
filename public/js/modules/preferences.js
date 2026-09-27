@@ -166,7 +166,7 @@ export function initPreferences() {
       themeTimer = setTimeout(() => root.classList.remove('sunset','sunrise'), 900);
     }
     root.dataset.theme = next;
-    document.querySelector('meta[name="theme-color"]').content = next === 'dark' ? '#101916' : '#153b31';
+    document.querySelector('meta[name="theme-color"]').content = next === 'dark' ? '#0A0D12' : '#4A52C7';
     store('cv-theme', next);
     updateControls();
   });
