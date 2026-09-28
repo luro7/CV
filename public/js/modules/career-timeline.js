@@ -1,5 +1,14 @@
 const root = document.documentElement;
 
+const styleHref = '/css/experience-timeline.css?v=career-progression-20260928';
+if (!document.querySelector('link[data-career-timeline-style]')) {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = styleHref;
+  link.dataset.careerTimelineStyle = '';
+  document.head.append(link);
+}
+
 const textOnly = element => [...(element?.childNodes || [])]
   .filter(node => node.nodeType === Node.TEXT_NODE)
   .map(node => node.textContent.trim())
@@ -23,7 +32,7 @@ export function initCareerTimeline() {
     progression: spanish ? 'Progresión profesional' : 'Career progression',
     stack: spanish ? 'Stack tecnológico' : 'Technology stack',
     role: spanish ? 'rol' : 'role',
-    roles: spanish ? 'roles' : 'roles',
+    roles: 'roles',
     company: spanish ? 'empresa' : 'company',
     companies: spanish ? 'empresas' : 'companies'
   };
