@@ -43,6 +43,18 @@ test('credential wall keeps compact cards while restoring prominent artwork', ()
   assert.ok(layoutFix.includes('width: 88px'));
 });
 
+test('Skillsoft text fallbacks are upgraded to official Accredible badge artwork', () => {
+  const script = readFileSync(resolve(root, 'public/js/modules/credential-badges.js'), 'utf8');
+  const main = readFileSync(resolve(root, 'public/js/main.js'), 'utf8');
+  const headers = readFileSync(resolve(root, 'public/_headers'), 'utf8');
+
+  assert.equal((script.match(/credential_badge_image\//g) || []).length, 5);
+  assert.ok(script.includes("querySelector('.credential-art-label')"));
+  assert.ok(script.includes("classList.remove('credential-art-label')"));
+  assert.ok(main.includes('initCredentialBadges'));
+  assert.ok(headers.includes("img-src 'self' https://api.accredible.com"));
+});
+
 test('project gallery provides a counter and clickable thumbnail rail', () => {
   const script = readFileSync(resolve(root, 'public/js/project-gallery.js'), 'utf8');
   const css = readFileSync(resolve(root, 'public/css/gallery-premium.css'), 'utf8');
