@@ -1,9 +1,133 @@
 const root = document.documentElement;
 
+const textOnly = element => [...(element?.childNodes || [])]
+  .filter(node => node.nodeType === Node.TEXT_NODE)
+  .map(node => node.textContent.trim())
+  .filter(Boolean)
+  .join(' ');
+
+const rangeFor = items => {
+  if (items.length === 1) return items[0].dataset.date || '';
+  const newest = (items[0].dataset.date || '').split(' — ');
+  const oldest = (items.at(-1).dataset.date || '').split(' — ');
+  return [oldest[0], newest[1] || newest[0]].filter(Boolean).join(' — ');
+};
+
 export function initCareerTimeline() {
-  const rail = document.querySelector('[data-career-rail]');
-  const items = [...document.querySelectorAll('.experience-item[data-company][data-role][data-date]')];
-  if (!rail || !items.length) return;
+  const timeline = document.querySelector('#experience .timeline');
+  const items = [...(timeline?.querySelectorAll('.experience-item') || [])];
+  if (!timeline || !items.length || timeline.dataset.careerEnhanced === 'true') return;
+
+  const spanish = root.lang === 'es';
+  const labels = {
+    progression: spanish ? 'Progresión profesional' : 'Career progression',
+    stack: spanish ? 'Stack tecnológico' : 'Technology stack',
+    role: spanish ? 'rol' : 'role',
+    roles: spanish ? 'roles' : 'roles',
+    company: spanish ? 'empresa' : 'company',
+    companies: spanish ? 'empresas' : 'companies'
+  };
+
+  items.forEach(item => {
+    const companyNode = item.querySelector('.company');
+    const dateNode = item.querySelector('.date');
+    const roleNode = item.querySelector('.experience-role');
+    const meta = item.querySelector('.experience-meta');
+    const body = item.querySelector('.experience-body');
+    const tags = body?.querySelector(':scope > .tags');
+
+    const company = companyNode?.textContent.trim() || '';
+    const role = textOnly(roleNode) || roleNode?.textContent.trim() || '';
+    const date = dateNode?.textContent.trim() || '';
+
+    item.dataset.company = company;
+    item.dataset.role = role;
+    item.dataset.date = date;
+
+    companyNode?.classList.add('sr-only');
+    dateNode?.classList.add('experience-date');
+    if (meta && roleNode && roleNode.parentElement !== meta) meta.prepend(roleNode);
+
+    if (body && tags && !body.querySelector('.experience-stack')) {
+      const stack = document.createElement('div');
+      stack.className = 'experience-stack';
+      const stackLabel = document.createElement('span');
+      stackLabel.className = 'experience-stack-label';
+      stackLabel.textContent = labels.stack;
+      stack.append(stackLabel, tags);
+      body.append(stack);
+    }
+  });
+
+  const groups = [];
+  for (const item of items) {
+    const company = item.dataset.company || '';
+    const previous = groups.at(-1);
+    if (previous?.company === company) previous.items.push(item);
+    else groups.push({ company, items: [item] });
+  }
+
+  const layout = document.createElement('div');
+  layout.className = 'career-layout';
+
+  const rail = document.createElement('aside');
+  rail.className = 'career-rail';
+  rail.dataset.careerRail = '';
+  rail.setAttribute('aria-hidden', 'true');
+
+  const railKicker = document.createElement('span');
+  railKicker.className = 'career-rail-kicker';
+  railKicker.textContent = labels.progression;
+  const railCompany = document.createElement('strong');
+  railCompany.className = 'career-rail-company';
+  railCompany.dataset.careerCompany = '';
+  const railRole = document.createElement('span');
+  railRole.className = 'career-rail-role';
+  railRole.dataset.careerRole = '';
+  const railDate = document.createElement('span');
+  railDate.className = 'career-rail-date';
+  railDate.dataset.careerDate = '';
+  const railMeta = document.createElement('span');
+  railMeta.className = 'career-rail-meta';
+  railMeta.textContent = items.length + ' ' + (items.length === 1 ? labels.role : labels.roles) + ' · ' + groups.length + ' ' + (groups.length === 1 ? labels.company : labels.companies);
+  rail.append(railKicker, railCompany, railRole, railDate, railMeta);
+
+  const groupContainer = document.createElement('div');
+  groupContainer.className = 'career-groups';
+
+  groups.forEach((group, groupIndex) => {
+    const section = document.createElement('section');
+    section.className = 'career-company-group';
+    section.dataset.company = group.company;
+
+    const header = document.createElement('header');
+    header.className = 'career-company-header';
+    const index = document.createElement('span');
+    index.className = 'career-company-index';
+    index.textContent = String(groupIndex + 1).padStart(2, '0');
+    const heading = document.createElement('div');
+    const companyTitle = document.createElement('h3');
+    companyTitle.textContent = group.company;
+    const span = document.createElement('p');
+    span.textContent = rangeFor(group.items);
+    heading.append(companyTitle, span);
+    const count = document.createElement('span');
+    count.className = 'career-role-count';
+    count.textContent = group.items.length + ' ' + (group.items.length === 1 ? labels.role : labels.roles);
+    header.append(index, heading, count);
+
+    const stack = document.createElement('div');
+    stack.className = 'career-role-stack';
+    group.items.forEach(item => stack.append(item));
+    section.append(header, stack);
+    groupContainer.append(section);
+  });
+
+  layout.append(rail, groupContainer);
+  timeline.replaceChildren(layout);
+  timeline.classList.remove('timeline');
+  timeline.classList.add('career-timeline');
+  timeline.dataset.careerEnhanced = 'true';
 
   const company = rail.querySelector('[data-career-company]');
   const role = rail.querySelector('[data-career-role]');
@@ -22,7 +146,7 @@ export function initCareerTimeline() {
     rail.style.setProperty('--career-progress', String(items.length <= 1 ? 1 : safeIndex / (items.length - 1)));
 
     items.forEach((item, itemIndex) => item.classList.toggle('is-career-active', itemIndex === safeIndex));
-    document.querySelectorAll('.career-company-group').forEach(group => {
+    groupContainer.querySelectorAll('.career-company-group').forEach(group => {
       group.classList.toggle('is-career-active', group.contains(active));
     });
   };
@@ -53,8 +177,6 @@ export function initCareerTimeline() {
 
   addEventListener('scroll', schedule, { passive: true });
   addEventListener('resize', schedule, { passive: true });
-  addEventListener('cv:language', schedule);
   schedule();
-
   root.classList.add('career-trace-ready');
 }
