@@ -21,8 +21,9 @@ const matchesExperience = (skill, item) => {
 export function initCapabilityRoleDetails() {
   const map = document.querySelector('[data-skill-map]');
   const status = document.querySelector('[data-skill-status]');
+  const usage = document.querySelector('[data-capability-usage]');
   const experienceItems = [...document.querySelectorAll('.experience-item')];
-  if (!map || !status) return;
+  if (!map || !status || !usage) return;
 
   let hoverSkill = null;
   let focusedSkill = null;
@@ -30,28 +31,37 @@ export function initCapabilityRoleDetails() {
 
   const render = skill => {
     if (!skill) return;
+
     const category = tr(siteData.skillTypes?.[skill] || 'Skill');
     const matches = experienceItems.filter(item => matchesExperience(skill, item));
+    const roles = matches.map(roleLabel).filter(Boolean);
 
-    if (!matches.length) {
+    if (!roles.length) {
       status.textContent = tr(skill) + ' · ' + category;
       return;
     }
 
-    const roles = matches.map(roleLabel).filter(Boolean);
-    const count = matches.length;
-    const prefix = root.lang === 'es'
-      ? count + (count === 1 ? ' rol relacionado: ' : ' roles relacionados: ')
-      : count + (count === 1 ? ' related role: ' : ' related roles: ');
+    const relatedSeparator = root.lang === 'es' ? ' · Relacionado: ' : ' · Related: ';
+    const currentUsage = usage.textContent || '';
+    const relatedIndex = currentUsage.indexOf(relatedSeparator);
+    const relatedCopy = relatedIndex >= 0 ? currentUsage.slice(relatedIndex) : '';
+    const rolePrefix = root.lang === 'es'
+      ? (roles.length === 1 ? 'Rol: ' : 'Roles: ')
+      : (roles.length === 1 ? 'Role: ' : 'Roles: ');
 
-    status.textContent = prefix + roles.join(' · ');
+    usage.textContent = rolePrefix + roles.join(' · ') + relatedCopy;
+    status.textContent = root.lang === 'es'
+      ? tr(skill) + ' · ' + category + ' · ' + roles.length + (roles.length === 1 ? ' rol relacionado' : ' roles relacionados')
+      : tr(skill) + ' · ' + category + ' · ' + roles.length + (roles.length === 1 ? ' related role' : ' related roles');
   };
 
   const refresh = () => {
     cancelAnimationFrame(frame);
     frame = requestAnimationFrame(() => {
-      const skill = root.dataset.activeSkill || focusedSkill || hoverSkill;
-      if (skill) render(skill);
+      frame = requestAnimationFrame(() => {
+        const skill = root.dataset.activeSkill || focusedSkill || hoverSkill;
+        if (skill) render(skill);
+      });
     });
   };
 
