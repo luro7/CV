@@ -28,13 +28,13 @@
 .capability-node.is-active{z-index:6;background:var(--interactive-accent);border-color:var(--interactive-accent);color:#fff;box-shadow:0 0 0 6px color-mix(in srgb,var(--interactive-accent) 13%,transparent),0 14px 36px color-mix(in srgb,var(--interactive-accent) 22%,transparent)}
 .capability-node.is-related{z-index:4;border-color:var(--interactive-accent-bright);color:var(--interactive-accent);background:color-mix(in srgb,var(--paper) 84%,var(--interactive-accent-soft))}
 .capability-node.is-dimmed{opacity:.24!important;filter:saturate(.45)}
-.capability-inspector{position:relative;display:grid;grid-template-columns:minmax(180px,.7fr) minmax(220px,1.2fr) minmax(220px,1fr);gap:1.25rem;align-items:center;min-height:92px;padding:1rem 0;border-bottom:1px solid var(--line)}
+.capability-inspector{position:relative;display:none;grid-template-columns:minmax(180px,.7fr) minmax(220px,1.2fr) minmax(220px,1fr);gap:1.25rem;align-items:center;min-height:92px;padding:1rem 0;border-bottom:1px solid var(--line)}
 .capability-inspector-main{display:grid;gap:.22rem}
 .capability-inspector-main span{font:700 .66rem Consolas,monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--interactive-accent)}
 .capability-inspector-main strong{font-size:1rem}
 .capability-inspector>p{margin:0;color:var(--muted);font-size:.84rem;line-height:1.55}
 .capability-inspector .skill-trace-status{margin:0;padding:0;border:0;color:var(--interactive-accent);font-size:.72rem}
-.capability-inspector[data-active=true]{background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--interactive-accent) 5%,transparent),transparent)}
+.capability-inspector[data-active=true]{display:grid;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--interactive-accent) 5%,transparent),transparent)}
 .capability-clear{position:absolute;right:0;top:.7rem;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--muted);padding:.38rem .68rem;font:600 .68rem Consolas,monospace;transition:border-color .18s,color .18s,background .18s}
 .capability-clear:hover,.capability-clear:focus-visible{border-color:var(--interactive-accent);color:var(--interactive-accent);background:var(--interactive-accent-soft)}
 .capability-clear[hidden]{display:none!important}
