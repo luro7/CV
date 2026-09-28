@@ -2,9 +2,11 @@ import { trackSections } from './modules/navigation.js';
 import { initPreferences } from './modules/preferences.js';
 import { initMotion } from './modules/motion.js';
 import { initLab } from './modules/lab.js';
+import { initCapabilityConstellation } from './modules/capability-map.js';
 import './project-gallery.js?v=gallery-cursor-no-zoom-20260925';
 
 initPreferences();
 trackSections();
 initMotion();
 initLab();
+initCapabilityConstellation();
