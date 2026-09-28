@@ -1,0 +1,19 @@
+.credential-art-embed {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+}
+
+.skillsoft-badge-embed {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .credential-art-embed,
+[data-theme="dark"] .skillsoft-badge-embed {
+  background: #fff;
+}
