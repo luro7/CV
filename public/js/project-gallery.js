@@ -27,9 +27,99 @@ if (typeof openGallery === 'function') {
   let dragTimer = 0;
   let dragContainer = null;
   let dragBaseline = null;
+  let activeGalleryName = null;
+  let galleryChrome = null;
   const imageObserver = typeof ResizeObserver === 'function'
     ? new ResizeObserver(() => positionNavigation())
     : null;
+
+  document.addEventListener('click', event => {
+    const source = event.target.closest('.project-lightbox-link[data-gallery]');
+    if (source) activeGalleryName = source.dataset.gallery || null;
+  }, true);
+
+  function activeGallerySources() {
+    if (!activeGalleryName) return [];
+    return Array.from(document.querySelectorAll('.project-lightbox-link[data-gallery]'))
+      .filter(link => link.dataset.gallery === activeGalleryName);
+  }
+
+  function currentSlideIndex() {
+    const slides = Array.from(document.querySelectorAll('.glightbox-container .gslide'));
+    const index = slides.findIndex(slide => slide.classList.contains('current'));
+    return index >= 0 ? index : 0;
+  }
+
+  function removeGalleryChrome() {
+    galleryChrome?.remove();
+    galleryChrome = null;
+  }
+
+  function updateGalleryChrome() {
+    if (!galleryChrome) return;
+    const sources = activeGallerySources();
+    const index = Math.min(currentSlideIndex(), Math.max(0, sources.length - 1));
+    const counter = galleryChrome.querySelector('.project-gallery-counter');
+    if (counter) counter.textContent = `${index + 1} / ${Math.max(1, sources.length)}`;
+
+    galleryChrome.querySelectorAll('.project-gallery-thumb').forEach((button, buttonIndex) => {
+      const active = buttonIndex === index;
+      button.classList.toggle('is-active', active);
+      if (active) {
+        button.setAttribute('aria-current', 'true');
+        button.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'nearest', inline: 'nearest' });
+      } else {
+        button.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function buildGalleryChrome() {
+    removeGalleryChrome();
+    const container = document.querySelector('.glightbox-container .gcontainer');
+    const sources = activeGallerySources();
+    if (!container || sources.length === 0) return;
+
+    const spanish = document.documentElement.lang === 'es';
+    const chrome = document.createElement('div');
+    chrome.className = 'project-gallery-chrome';
+
+    const counter = document.createElement('span');
+    counter.className = 'project-gallery-counter';
+    counter.setAttribute('aria-live', 'polite');
+
+    const thumbnails = document.createElement('div');
+    thumbnails.className = 'project-gallery-thumbs';
+    thumbnails.setAttribute('aria-label', spanish ? 'Miniaturas del proyecto' : 'Project thumbnails');
+
+    if (sources.length > 1) {
+      sources.forEach((source, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'project-gallery-thumb';
+        button.setAttribute('aria-label', spanish
+          ? `Ver imagen ${index + 1} de ${sources.length}`
+          : `View image ${index + 1} of ${sources.length}`);
+
+        const image = document.createElement('img');
+        image.src = source.getAttribute('href') || '';
+        image.alt = '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        button.append(image);
+        button.addEventListener('click', () => {
+          if (typeof gallery.goToSlide === 'function') gallery.goToSlide(index);
+        });
+        thumbnails.append(button);
+      });
+    }
+
+    chrome.append(counter);
+    if (sources.length > 1) chrome.append(thumbnails);
+    container.append(chrome);
+    galleryChrome = chrome;
+    updateGalleryChrome();
+  }
 
   function updateNavigationPosition() {
     const container = document.querySelector('.glightbox-container .gcontainer');
@@ -191,8 +281,6 @@ if (typeof openGallery === 'function') {
 
   function onPointerUp() {
     if (dragStartX === null) return;
-    // Let GLightbox complete its slide gesture first; otherwise restore the arrows
-    // after a short drag that did not change the active image.
     window.clearTimeout(dragTimer);
     dragTimer = window.setTimeout(() => {
       finishNavigationDrag();
@@ -204,8 +292,6 @@ if (typeof openGallery === 'function') {
     const image = document.querySelector('.glightbox-container .gslide.current .gslide-image img.dragging');
     if (!image) return;
 
-    // GLightbox listens for mouseup on the image itself. If the pointer is released
-    // outside it, forward one cleanup event so its drag state and grabbing cursor reset.
     if (event.target !== image && !image.contains(event.target)) {
       image.dispatchEvent(new MouseEvent('mouseup', {
         bubbles: false,
@@ -235,7 +321,10 @@ if (typeof openGallery === 'function') {
         control.setAttribute('title', translate(label));
       }
     }
-    positionNavigation();
+    requestAnimationFrame(() => {
+      buildGalleryChrome();
+      positionNavigation();
+    });
     window.addEventListener('resize', positionNavigation);
     document.addEventListener('pointerdown', onPointerDown, true);
     document.addEventListener('pointermove', onPointerMove, { capture: true, passive: true });
@@ -246,9 +335,13 @@ if (typeof openGallery === 'function') {
 
   gallery.on('slide_changed', () => {
     finishNavigationDrag();
+    updateGalleryChrome();
     positionNavigation();
   });
-  gallery.on('slide_after_load', positionNavigation);
+  gallery.on('slide_after_load', () => {
+    updateGalleryChrome();
+    positionNavigation();
+  });
   gallery.on('close', () => {
     window.removeEventListener('resize', positionNavigation);
     document.removeEventListener('pointerdown', onPointerDown, true);
@@ -257,9 +350,11 @@ if (typeof openGallery === 'function') {
     document.removeEventListener('pointercancel', onPointerUp, true);
     document.removeEventListener('mouseup', onGlobalMouseUp, true);
     finishNavigationDrag();
+    removeGalleryChrome();
     if (navigationFrame) cancelAnimationFrame(navigationFrame);
     if (dragPositionFrame) cancelAnimationFrame(dragPositionFrame);
     imageObserver?.disconnect();
     observedImage = null;
+    activeGalleryName = null;
   });
 }
