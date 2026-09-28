@@ -43,16 +43,21 @@ test('credential wall keeps compact cards while restoring prominent artwork', ()
   assert.ok(layoutFix.includes('width: 88px'));
 });
 
-test('Skillsoft text fallbacks are upgraded to official Accredible badge artwork', () => {
+test('all Skillsoft credentials use the official Skillsoft embed endpoint', () => {
   const script = readFileSync(resolve(root, 'public/js/modules/credential-badges.js'), 'utf8');
   const main = readFileSync(resolve(root, 'public/js/main.js'), 'utf8');
   const headers = readFileSync(resolve(root, 'public/_headers'), 'utf8');
+  const layout = readFileSync(resolve(root, 'src/templates/layout.html'), 'utf8');
+  const site = JSON.parse(readFileSync(resolve(root, 'content/site.json'), 'utf8'));
 
-  assert.equal((script.match(/credential_badge_image\//g) || []).length, 5);
-  assert.ok(script.includes("querySelector('.credential-art-label')"));
-  assert.ok(script.includes("classList.remove('credential-art-label')"));
+  assert.equal(site.certifications.filter(item => item.credentialUrl.includes('skillsoft.digitalbadges.skillsoft.com')).length, 7);
+  assert.ok(script.includes('https://skillsoft.digitalbadges.skillsoft.com/embed/${credentialId}'));
+  assert.ok(script.includes("hostname !== 'skillsoft.digitalbadges.skillsoft.com'"));
+  assert.ok(script.includes('skillsoft-badge-embed'));
   assert.ok(main.includes('initCredentialBadges'));
-  assert.ok(headers.includes("img-src 'self' https://api.accredible.com"));
+  assert.ok(headers.includes('frame-src https://skillsoft.digitalbadges.skillsoft.com'));
+  assert.ok(!headers.includes('https://api.accredible.com'));
+  assert.ok(layout.includes('/css/skillsoft-badges.css'));
 });
 
 test('project gallery provides a counter and clickable thumbnail rail', () => {
