@@ -1,4 +1,4 @@
-/* Capability map visibility refinements. Loaded after capability-map.css. */
+/* Capability map visibility and inspector refinements. Loaded after capability-map.css. */
 .capability-link{
   stroke:color-mix(in srgb,var(--line) 70%,var(--interactive-accent) 30%);
   stroke-width:1.15;
@@ -8,12 +8,26 @@
   stroke:color-mix(in srgb,var(--interactive-accent) 48%,var(--line));
   opacity:.88;
 }
+.capability-inspector{
+  grid-template-columns:minmax(190px,.55fr) minmax(0,1.45fr);
+}
+.capability-inspector>p[data-capability-usage]{
+  color:var(--muted);
+  line-height:1.65;
+}
 .capability-inspector .skill-trace-status{
-  display:block;
-  margin:0;
-  color:var(--interactive-accent);
-  font-size:.73rem;
-  line-height:1.55;
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+.capability-clear{
+  display:none!important;
 }
 [data-theme=dark] .capability-link{
   stroke:#3A5268;
@@ -22,4 +36,11 @@
 [data-theme=dark] .capability-link.is-group-active{
   stroke:#4A718E;
   opacity:.92;
+}
+@media(max-width:1024px){
+  .capability-inspector{
+    grid-template-columns:1fr;
+    gap:.55rem;
+    padding-right:0;
+  }
 }
