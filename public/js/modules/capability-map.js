@@ -4,7 +4,8 @@ import { buildCapabilityModel, skillMatchesExperience } from './interaction-mode
 
 const root = document.documentElement;
 const tr = text => root.lang === 'es' ? (translations[text] || text) : text;
-const mobileQuery = matchMedia('(max-width: 820px)');
+const stackedQuery = matchMedia('(max-width: 1024px)');
+const compactQuery = matchMedia('(max-width: 560px)');
 const svgNs = 'http://www.w3.org/2000/svg';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -15,6 +16,12 @@ const centerOf = (element, containerRect) => {
     y: rect.top - containerRect.top + rect.height / 2
   };
 };
+
+function estimateNodeSize(node, maxWidth = 174) {
+  const width = clamp(74 + node.skill.length * 4.3, 92, node.importance === 3 ? maxWidth : Math.min(maxWidth, 154));
+  const height = node.skill.length > 24 ? 54 : 40;
+  return { width, height };
+}
 
 function layoutGroupNodes(nodes, anchor, width, height, groupIndex) {
   const ordered = [...nodes].sort((a, b) => b.importance - a.importance || a.order - b.order);
@@ -32,36 +39,34 @@ function layoutGroupNodes(nodes, anchor, width, height, groupIndex) {
     const angle = rotation + (Math.PI * 2 * ringIndex) / Math.max(1, ringCount) - Math.PI / 2;
     const rx = outer ? outerRx : innerRx;
     const ry = outer ? outerRy : innerRy;
-    const targetX = anchor.x + Math.cos(angle) * rx;
-    const targetY = anchor.y + Math.sin(angle) * ry;
-    const estimatedWidth = clamp(74 + node.skill.length * 4.3, 92, node.importance === 3 ? 172 : 154);
-    const estimatedHeight = node.skill.length > 24 ? 52 : 38;
+    const size = estimateNodeSize(node);
     return {
       ...node,
-      x: targetX,
-      y: targetY,
-      targetX,
-      targetY,
-      width: estimatedWidth,
-      height: estimatedHeight
+      x: anchor.x + Math.cos(angle) * rx,
+      y: anchor.y + Math.sin(angle) * ry,
+      targetX: anchor.x + Math.cos(angle) * rx,
+      targetY: anchor.y + Math.sin(angle) * ry,
+      width: size.width,
+      height: size.height
     };
   });
 }
 
-function relaxLayout(items, width, height) {
+function relaxLayout(items, width, height, obstacles = []) {
   const nodes = items.map(item => ({ ...item }));
-  for (let iteration = 0; iteration < 72; iteration += 1) {
+
+  for (let iteration = 0; iteration < 84; iteration += 1) {
     for (const node of nodes) {
-      node.x += (node.targetX - node.x) * 0.035;
-      node.y += (node.targetY - node.y) * 0.035;
+      node.x += (node.targetX - node.x) * 0.034;
+      node.y += (node.targetY - node.y) * 0.034;
     }
 
     for (let i = 0; i < nodes.length; i += 1) {
       for (let j = i + 1; j < nodes.length; j += 1) {
         const a = nodes[i];
         const b = nodes[j];
-        const minX = (a.width + b.width) / 2 + 10;
-        const minY = (a.height + b.height) / 2 + 8;
+        const minX = (a.width + b.width) / 2 + 12;
+        const minY = (a.height + b.height) / 2 + 10;
         const dx = b.x - a.x || 0.01;
         const dy = b.y - a.y || 0.01;
         const overlapX = minX - Math.abs(dx);
@@ -81,11 +86,57 @@ function relaxLayout(items, width, height) {
     }
 
     for (const node of nodes) {
+      for (const obstacle of obstacles) {
+        const minX = (node.width + obstacle.width) / 2 + 18;
+        const minY = (node.height + obstacle.height) / 2 + 14;
+        let dx = node.x - obstacle.x;
+        let dy = node.y - obstacle.y;
+
+        if (Math.abs(dx) < 0.01) dx = node.targetX >= obstacle.x ? 0.01 : -0.01;
+        if (Math.abs(dy) < 0.01) dy = node.targetY >= obstacle.y ? 0.01 : -0.01;
+
+        const overlapX = minX - Math.abs(dx);
+        const overlapY = minY - Math.abs(dy);
+        if (overlapX <= 0 || overlapY <= 0) continue;
+
+        if (overlapX < overlapY) {
+          node.x += overlapX * Math.sign(dx);
+        } else {
+          node.y += overlapY * Math.sign(dy);
+        }
+      }
+
       node.x = clamp(node.x, node.width / 2 + 14, width - node.width / 2 - 14);
       node.y = clamp(node.y, node.height / 2 + 18, height - node.height / 2 - 18);
     }
   }
+
   return nodes;
+}
+
+function layoutStackedNodes(nodes, width, compact = false) {
+  const ordered = [...nodes].sort((a, b) => b.importance - a.importance || a.order - b.order);
+  const columns = compact ? 2 : 3;
+  const sidePadding = compact ? 12 : 18;
+  const columnWidth = (width - sidePadding * 2) / columns;
+  const firstY = compact ? 158 : 152;
+  const rowGap = compact ? 72 : 68;
+  const hub = { x: width / 2, y: 68, width: 176, height: 80 };
+  const positioned = ordered.map((node, index) => {
+    const row = Math.floor(index / columns);
+    const col = index % columns;
+    const size = estimateNodeSize(node, Math.max(116, columnWidth - 18));
+    return {
+      ...node,
+      x: sidePadding + columnWidth * (col + 0.5),
+      y: firstY + row * rowGap,
+      width: Math.min(size.width, columnWidth - 14),
+      height: size.height
+    };
+  });
+  const rows = Math.ceil(ordered.length / columns);
+  const height = firstY + Math.max(0, rows - 1) * rowGap + 58;
+  return { hub, positioned, height };
 }
 
 export function initCapabilityConstellation() {
@@ -101,11 +152,13 @@ export function initCapabilityConstellation() {
   const inspectorType = inspector?.querySelector('[data-capability-type]');
   const inspectorName = inspector?.querySelector('[data-capability-name]');
   const inspectorUsage = inspector?.querySelector('[data-capability-usage]');
+  const clearButton = inspector?.querySelector('[data-capability-clear]');
   const experienceItems = [...document.querySelectorAll('.experience-item')];
   const model = buildCapabilityModel(siteData.expertise, siteData.experience, siteData.skillTypes, siteData.skillRoleIds);
   const nodeBySkill = new Map(model.nodes.map(node => [node.skill, node]));
   const elementBySkill = new Map();
   const hubByGroup = new Map();
+  const clusterByGroup = new Map();
   const baseLines = [];
   let relationLines = [];
   let pinnedSkill = null;
@@ -136,10 +189,12 @@ export function initCapabilityConstellation() {
     const cluster = document.createElement('section');
     cluster.className = 'capability-cluster';
     cluster.dataset.group = String(group.groupIndex);
+    clusterByGroup.set(group.groupIndex, cluster);
 
     const hub = document.createElement('div');
     hub.className = 'capability-hub';
     hub.dataset.capabilityHub = String(group.groupIndex);
+
     const number = document.createElement('span');
     number.textContent = group.number;
     const title = document.createElement('strong');
@@ -182,22 +237,32 @@ export function initCapabilityConstellation() {
     if (!status) return;
     const category = tr(siteData.skillTypes?.[skill] || 'Skill');
     const count = matches.length;
+
     if (!count) {
       status.textContent = skill + ' · ' + category;
       return;
     }
+
     status.textContent = root.lang === 'es'
       ? skill + ' · ' + category + ' · ' + count + (count === 1 ? ' rol relacionado' : ' roles relacionados')
       : skill + ' · ' + category + ' · ' + count + (count === 1 ? ' related role' : ' related roles');
   };
 
-  const renderInspector = (skill, matches) => {
+  const renderInspector = (skill, matches, pinned = false) => {
     const node = nodeBySkill.get(skill);
     if (!node || !inspector) return;
+
     const related = model.relatedBySkill[skill] || [];
     inspector.dataset.active = 'true';
+
     if (inspectorType) inspectorType.textContent = tr(node.type) + ' · ' + tr(siteData.expertise[node.groupIndex]?.title || '');
     if (inspectorName) inspectorName.textContent = tr(skill);
+    if (clearButton) {
+      clearButton.hidden = !pinned;
+      clearButton.textContent = root.lang === 'es' ? 'Limpiar selección' : 'Clear selection';
+      clearButton.setAttribute('aria-label', root.lang === 'es' ? 'Limpiar selección' : 'Clear selection');
+    }
+
     if (inspectorUsage) {
       const count = matches.length;
       const usage = root.lang === 'es'
@@ -217,6 +282,7 @@ export function initCapabilityConstellation() {
     if (inspectorName) inspectorName.textContent = tr('Explore the expertise map');
     if (inspectorUsage) inspectorUsage.textContent = tr('Hover, focus or select a skill or technology to trace where it appears in my experience.');
     if (status) status.textContent = tr('Select a skill or technology to trace experience.');
+    if (clearButton) clearButton.hidden = true;
   };
 
   const clearRelationLines = () => {
@@ -240,7 +306,7 @@ export function initCapabilityConstellation() {
   const updateBaseLines = () => {
     baseLines.length = 0;
     baseGroup.replaceChildren();
-    if (mobileQuery.matches) return;
+
     for (const node of model.nodes) {
       const hub = hubByGroup.get(node.groupIndex);
       const element = elementBySkill.get(node.skill);
@@ -255,10 +321,15 @@ export function initCapabilityConstellation() {
 
   const updateRelationLines = skill => {
     clearRelationLines();
-    if (!skill || mobileQuery.matches) return;
+    if (!skill) return;
+
     const from = elementBySkill.get(skill);
-    if (!from) return;
+    const sourceNode = nodeBySkill.get(skill);
+    if (!from || !sourceNode) return;
+
     for (const relatedSkill of model.relatedBySkill[skill] || []) {
+      const relatedNode = nodeBySkill.get(relatedSkill);
+      if (stackedQuery.matches && relatedNode?.groupIndex !== sourceNode.groupIndex) continue;
       const to = elementBySkill.get(relatedSkill);
       if (!to) continue;
       const line = drawLine(from, to, 'capability-relation-link');
@@ -270,6 +341,7 @@ export function initCapabilityConstellation() {
   const renderSkill = skill => {
     const node = nodeBySkill.get(skill);
     if (!node) return;
+
     previewSkill = skill;
     const related = new Set(model.relatedBySkill[skill] || []);
     const matches = matchingExperience(skill);
@@ -283,7 +355,10 @@ export function initCapabilityConstellation() {
       element.setAttribute('aria-pressed', String(active && pinnedSkill === skill));
     }
 
-    for (const [groupIndex, hub] of hubByGroup) hub.classList.toggle('is-active', groupIndex === node.groupIndex);
+    for (const [groupIndex, hub] of hubByGroup) {
+      hub.classList.toggle('is-active', groupIndex === node.groupIndex);
+    }
+
     for (const line of baseLines) {
       line.classList.toggle('is-active', line.dataset.skill === skill);
       line.classList.toggle('is-group-active', Number(line.dataset.group) === node.groupIndex);
@@ -296,36 +371,48 @@ export function initCapabilityConstellation() {
     });
 
     updateRelationLines(skill);
-    renderInspector(skill, matches);
+    renderInspector(skill, matches, pinnedSkill === skill);
     updateStatus(skill, matches);
   };
 
   const clearVisual = () => {
     previewSkill = null;
+
     for (const element of elementBySkill.values()) {
       element.classList.remove('is-active', 'is-related', 'is-dimmed');
       element.setAttribute('aria-pressed', 'false');
     }
+
     for (const hub of hubByGroup.values()) hub.classList.remove('is-active');
     for (const line of baseLines) line.classList.remove('is-active', 'is-group-active');
+
     clearRelationLines();
     clearExperience();
     resetInspector();
   };
 
+  const syncRootSkill = skill => {
+    selfSync = true;
+    if (skill) root.dataset.activeSkill = skill;
+    else delete root.dataset.activeSkill;
+    selfSync = false;
+  };
+
+  const clearSelection = () => {
+    pinnedSkill = null;
+    syncRootSkill(null);
+    clearVisual();
+  };
+
   const setPinned = skill => {
     if (pinnedSkill === skill) {
-      pinnedSkill = null;
-      selfSync = true;
-      delete root.dataset.activeSkill;
-      selfSync = false;
-      clearVisual();
+      clearSelection();
+      elementBySkill.get(skill)?.blur();
       return;
     }
+
     pinnedSkill = skill;
-    selfSync = true;
-    root.dataset.activeSkill = skill;
-    selfSync = false;
+    syncRootSkill(skill);
     renderSkill(skill);
   };
 
@@ -333,11 +420,38 @@ export function initCapabilityConstellation() {
     button.addEventListener('mouseenter', () => {
       if (!pinnedSkill) renderSkill(skill);
     });
+
+    button.addEventListener('mouseleave', () => {
+      if (pinnedSkill) renderSkill(pinnedSkill);
+      else clearVisual();
+    });
+
     button.addEventListener('focus', () => {
       if (!pinnedSkill) renderSkill(skill);
     });
-    button.addEventListener('click', () => setPinned(skill));
+
+    button.addEventListener('blur', () => {
+      requestAnimationFrame(() => {
+        if (pinnedSkill) {
+          renderSkill(pinnedSkill);
+          return;
+        }
+
+        const focusedSkill = document.activeElement?.closest?.('.capability-node');
+        if (!focusedSkill) clearVisual();
+      });
+    });
+
+    button.addEventListener('click', event => {
+      event.stopPropagation();
+      setPinned(skill);
+    });
   }
+
+  container.addEventListener('click', event => {
+    if (event.target.closest?.('.capability-node,.capability-hub')) return;
+    clearSelection();
+  });
 
   container.addEventListener('mouseleave', () => {
     if (pinnedSkill) renderSkill(pinnedSkill);
@@ -352,17 +466,16 @@ export function initCapabilityConstellation() {
     });
   });
 
+  clearButton?.addEventListener('click', () => clearSelection());
+
   addEventListener('keydown', event => {
     if (event.key !== 'Escape' || (!pinnedSkill && !previewSkill)) return;
-    pinnedSkill = null;
-    selfSync = true;
-    delete root.dataset.activeSkill;
-    selfSync = false;
-    clearVisual();
+    clearSelection();
   });
 
   const observer = new MutationObserver(() => {
     if (selfSync) return;
+
     const externalSkill = root.dataset.activeSkill;
     if (externalSkill && nodeBySkill.has(externalSkill)) {
       pinnedSkill = externalSkill;
@@ -372,24 +485,19 @@ export function initCapabilityConstellation() {
       clearVisual();
     }
   });
+
   observer.observe(root, { attributes: true, attributeFilter: ['data-active-skill'] });
 
-  const layout = () => {
-    if (mobileQuery.matches) {
-      svg.setAttribute('viewBox', '0 0 1 1');
-      for (const element of [...hubByGroup.values(), ...elementBySkill.values()]) {
-        element.style.removeProperty('--cap-x');
-        element.style.removeProperty('--cap-y');
-      }
-      updateBaseLines();
-      updateRelationLines(pinnedSkill || previewSkill);
-      return;
-    }
-
+  const layoutDesktop = () => {
     const width = container.clientWidth;
     const height = container.clientHeight;
     if (!width || !height) return;
+
     svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+
+    for (const cluster of clusterByGroup.values()) {
+      cluster.style.removeProperty('height');
+    }
 
     const anchors = [
       { x: width * 0.18, y: height * 0.49 },
@@ -397,14 +505,24 @@ export function initCapabilityConstellation() {
       { x: width * 0.82, y: height * 0.50 }
     ];
 
+    const obstacles = [];
     const candidates = [];
+
     for (const group of model.groups) {
       const hub = hubByGroup.get(group.groupIndex);
       const anchor = anchors[group.groupIndex];
+
       if (hub) {
         hub.style.setProperty('--cap-x', anchor.x + 'px');
         hub.style.setProperty('--cap-y', anchor.y + 'px');
+        obstacles.push({
+          x: anchor.x,
+          y: anchor.y,
+          width: Math.max(168, hub.offsetWidth || 168),
+          height: Math.max(82, hub.offsetHeight || 82)
+        });
       }
+
       candidates.push(...layoutGroupNodes(
         model.nodes.filter(node => node.groupIndex === group.groupIndex),
         anchor,
@@ -414,13 +532,55 @@ export function initCapabilityConstellation() {
       ));
     }
 
-    const relaxed = relaxLayout(candidates, width, height);
+    const relaxed = relaxLayout(candidates, width, height, obstacles);
+
     for (const node of relaxed) {
       const element = elementBySkill.get(node.skill);
       if (!element) continue;
+      element.style.removeProperty('--cap-node-max');
       element.style.setProperty('--cap-x', node.x + 'px');
       element.style.setProperty('--cap-y', node.y + 'px');
     }
+  };
+
+  const layoutStacked = () => {
+    const compact = compactQuery.matches;
+
+    for (const group of model.groups) {
+      const cluster = clusterByGroup.get(group.groupIndex);
+      const hub = hubByGroup.get(group.groupIndex);
+      if (!cluster || !hub) continue;
+
+      const width = cluster.clientWidth;
+      if (!width) continue;
+
+      const result = layoutStackedNodes(
+        model.nodes.filter(node => node.groupIndex === group.groupIndex),
+        width,
+        compact
+      );
+
+      cluster.style.height = result.height + 'px';
+      hub.style.setProperty('--cap-x', result.hub.x + 'px');
+      hub.style.setProperty('--cap-y', result.hub.y + 'px');
+
+      for (const node of result.positioned) {
+        const element = elementBySkill.get(node.skill);
+        if (!element) continue;
+        element.style.setProperty('--cap-x', node.x + 'px');
+        element.style.setProperty('--cap-y', node.y + 'px');
+        element.style.setProperty('--cap-node-max', node.width + 'px');
+      }
+    }
+
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    if (width && height) svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+  };
+
+  const layout = () => {
+    if (stackedQuery.matches) layoutStacked();
+    else layoutDesktop();
 
     requestAnimationFrame(() => {
       updateBaseLines();
@@ -431,7 +591,9 @@ export function initCapabilityConstellation() {
 
   const resizeObserver = new ResizeObserver(layout);
   resizeObserver.observe(container);
-  mobileQuery.addEventListener?.('change', layout);
+  stackedQuery.addEventListener?.('change', layout);
+  compactQuery.addEventListener?.('change', layout);
+
   layout();
   resetInspector();
 }
