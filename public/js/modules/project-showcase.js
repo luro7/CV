@@ -1,35 +1,50 @@
-import { getProjectCaseStudy } from './project-showcase-model.js';
-
 export function initProjectShowcase() {
-  const language = document.documentElement.lang === 'es' ? 'es' : 'en';
-  const labels = language === 'es'
-    ? { problem: 'Problema', solution: 'Solución' }
-    : { problem: 'Problem', solution: 'Solution' };
-
   document.querySelectorAll('.project-card[data-project-slug]').forEach(card => {
-    const target = card.querySelector('[data-project-case]');
-    if (!target) return;
+    const mediaLink = card.querySelector('.project-card-media .project-lightbox-link');
+    const action = card.querySelector('[data-open-project-gallery]');
 
-    const study = getProjectCaseStudy(card.dataset.projectSlug, language);
-    if (!study) {
-      target.hidden = true;
-      return;
+    if (action) {
+      if (!mediaLink) {
+        action.hidden = true;
+      } else {
+        action.addEventListener('click', () => mediaLink.click());
+      }
     }
 
-    target.replaceChildren();
-    for (const [key, label] of Object.entries(labels)) {
-      const block = document.createElement('div');
-      block.className = 'project-case-block';
+    if (card.dataset.projectCategory !== 'android' || !mediaLink) return;
 
-      const heading = document.createElement('span');
-      heading.className = 'project-case-label';
-      heading.textContent = label;
+    const cover = mediaLink.querySelector('.project-card-cover');
+    const firstImage = cover?.querySelector('img');
+    if (!cover || !firstImage) return;
 
-      const copy = document.createElement('p');
-      copy.textContent = study[key];
+    const gallerySource = document.getElementById(`project-gallery-${card.dataset.projectSlug}`);
+    const sources = [
+      firstImage.getAttribute('src'),
+      ...Array.from(gallerySource?.querySelectorAll('.project-lightbox-link') || [], link => link.getAttribute('href'))
+    ].filter(Boolean);
+    const uniqueSources = [...new Set(sources)].slice(0, 3);
+    if (uniqueSources.length < 2) return;
 
-      block.append(heading, copy);
-      target.append(block);
-    }
+    const strip = document.createElement('span');
+    strip.className = 'project-phone-strip';
+    strip.setAttribute('aria-hidden', 'true');
+
+    uniqueSources.forEach((source, index) => {
+      const frame = document.createElement('span');
+      frame.className = 'project-phone-shot';
+      if (index === 1) frame.classList.add('is-primary');
+
+      const image = document.createElement('img');
+      image.src = source;
+      image.alt = '';
+      image.loading = 'lazy';
+      image.decoding = 'async';
+
+      frame.append(image);
+      strip.append(frame);
+    });
+
+    cover.classList.add('project-card-cover--devices');
+    cover.replaceChildren(strip);
   });
 }

@@ -1,19 +1,20 @@
 <article class="project-card" data-project-category="{{category}}" data-project-slug="{{slug}}">
-  {{cardTriggerOpen}}
+  <div class="project-card-media">
+    {{cardTriggerOpen}}
+      {{screenshot}}
+    {{cardTriggerClose}}
+  </div>
+  <div class="project-card-content">
     <span class="project-platform">{{category}}</span>
-    {{screenshot}}
-    <div class="project-card-content">
-      <div class="project-card-heading">
-        <span class="project-card-title" role="heading" aria-level="3">{{name}}</span>
-        <span class="project-card-action">{{openProjectLabel}} <span aria-hidden="true">↗</span></span>
-      </div>
-      <p class="project-card-description">{{description}}</p>
-      <div class="project-case-grid" data-project-case></div>
-      <div class="project-stack">
-        <span class="project-stack-label">Stack</span>
-        <p class="project-technologies">{{technologies}}</p>
-      </div>
+    <h3 class="project-card-title">{{name}}</h3>
+    <p class="project-card-description">{{description}}</p>
+    <div class="project-stack">
+      <span class="project-stack-label">Stack</span>
+      <p class="project-technologies">{{technologies}}</p>
     </div>
-  {{cardTriggerClose}}
-  {{liveLink}}
+    <div class="project-actions">
+      <button type="button" class="project-card-action" data-open-project-gallery>{{openProjectLabel}} <span aria-hidden="true">↗</span></button>
+      {{liveLink}}
+    </div>
+  </div>
 </article>
