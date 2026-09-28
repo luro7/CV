@@ -11,6 +11,76 @@ export function skillMatchesExperience(skill, toolData, experienceId, skillRoleI
   return tools.includes(normalized) || linked.has(experienceId);
 }
 
+export function nextPinnedSkill(currentSkill, clickedSkill) {
+  return currentSkill === clickedSkill ? null : clickedSkill;
+}
+
+export function relaxCapabilityLayout(items, width, height, obstacles = [], iterations = 96) {
+  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+  const nodes = items.map(item => ({ ...item }));
+  const safeObstacles = obstacles.map(item => ({ padding: 12, ...item }));
+
+  const separateFromObstacle = (node, obstacle) => {
+    const dx = node.x - obstacle.x || 0.01;
+    const dy = node.y - obstacle.y || 0.01;
+    const minX = (node.width + obstacle.width) / 2 + obstacle.padding;
+    const minY = (node.height + obstacle.height) / 2 + obstacle.padding;
+    const overlapX = minX - Math.abs(dx);
+    const overlapY = minY - Math.abs(dy);
+    if (overlapX <= 0 || overlapY <= 0) return;
+
+    if (overlapX < overlapY) node.x += overlapX * Math.sign(dx);
+    else node.y += overlapY * Math.sign(dy);
+  };
+
+  for (let iteration = 0; iteration < iterations; iteration += 1) {
+    for (const node of nodes) {
+      node.x += (node.targetX - node.x) * 0.028;
+      node.y += (node.targetY - node.y) * 0.028;
+    }
+
+    for (let i = 0; i < nodes.length; i += 1) {
+      for (let j = i + 1; j < nodes.length; j += 1) {
+        const a = nodes[i];
+        const b = nodes[j];
+        const minX = (a.width + b.width) / 2 + 12;
+        const minY = (a.height + b.height) / 2 + 10;
+        const dx = b.x - a.x || 0.01;
+        const dy = b.y - a.y || 0.01;
+        const overlapX = minX - Math.abs(dx);
+        const overlapY = minY - Math.abs(dy);
+        if (overlapX <= 0 || overlapY <= 0) continue;
+
+        if (overlapX < overlapY) {
+          const push = overlapX * 0.52 * Math.sign(dx);
+          a.x -= push;
+          b.x += push;
+        } else {
+          const push = overlapY * 0.52 * Math.sign(dy);
+          a.y -= push;
+          b.y += push;
+        }
+      }
+    }
+
+    for (const node of nodes) {
+      for (const obstacle of safeObstacles) separateFromObstacle(node, obstacle);
+      node.x = clamp(node.x, node.width / 2 + 14, width - node.width / 2 - 14);
+      node.y = clamp(node.y, node.height / 2 + 18, height - node.height / 2 - 18);
+    }
+  }
+
+  for (let pass = 0; pass < 4; pass += 1) {
+    for (const node of nodes) {
+      for (const obstacle of safeObstacles) separateFromObstacle(node, obstacle);
+      node.x = clamp(node.x, node.width / 2 + 14, width - node.width / 2 - 14);
+      node.y = clamp(node.y, node.height / 2 + 18, height - node.height / 2 - 18);
+    }
+  }
+
+  return nodes;
+}
+
 export function buildCapabilityModel(expertise = [], experience = [], skillTypes = {}, skillRoleIds = {}) {
   const roleIdsFor = skill => {
     const normalized = String(skill).toLowerCase();
