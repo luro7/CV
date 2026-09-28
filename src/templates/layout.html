@@ -45,10 +45,10 @@
   <link rel="stylesheet" href="/css/project-showcase.css?v=project-showcase-layout-fix-20260928">
   <link rel="stylesheet" href="/css/credential-wall.css?v=credential-wall-20260928">
   <link rel="stylesheet" href="/css/portfolio-layout-fix.css?v=project-spacing-credentials-20260928">
-  <link rel="stylesheet" href="/css/skillsoft-badges.css?v=skillsoft-embed-20260928b">
+  <link rel="stylesheet" href="/css/skillsoft-badges.css?v=skillsoft-embed-details-20260928">
   <link rel="stylesheet" href="/css/gallery-premium.css?v=gallery-thumbnails-20260928">
   <script src="/js/vendor/glightbox.min.js" defer></script>
-  <script type="module" src="/js/main.js?v=skillsoft-embed-20260928b"></script>
+  <script type="module" src="/js/main.js?v=skillsoft-embed-details-20260928"></script>
 </head>
 <body>
   <a class="skip-link" href="#content">Skip to content</a>
@@ -66,6 +66,22 @@
 
   {{printCv}}
   {{projectGalleries}}
+
+  <dialog class="credential-dialog" id="credential-dialog" aria-labelledby="credential-dialog-title">
+    <div class="credential-dialog-shell">
+      <div class="credential-dialog-head">
+        <div>
+          <span class="credential-dialog-kicker">Skillsoft credential</span>
+          <h3 id="credential-dialog-title" data-credential-dialog-title>Credential details</h3>
+        </div>
+        <button type="button" class="credential-dialog-close" data-credential-dialog-close aria-label="Close">×</button>
+      </div>
+      <div class="credential-dialog-frame-wrap">
+        <iframe data-credential-dialog-frame title="Credential details" loading="lazy" allowfullscreen></iframe>
+      </div>
+      <a class="credential-dialog-external" data-credential-dialog-external href="#" target="_blank" rel="noopener noreferrer">Open on Skillsoft <span aria-hidden="true">↗</span></a>
+    </div>
+  </dialog>
 
   <aside class="engineering-panel" id="engineering-panel" inert aria-hidden="true" aria-label="Engineering mode">
     <div class="engineering-panel-head">
