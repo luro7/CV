@@ -1,13 +1,7 @@
-<article class="experience-item" data-experience-id="{{experienceId}}" data-tools="{{toolData}}" data-company="{{company}}" data-role="{{role}}" data-date="{{date}}">
-  <span class="company sr-only">{{company}}</span>
+<article class="experience-item" data-experience-id="{{experienceId}}" data-tools="{{toolData}}">
   <header class="experience-heading">
-    <div class="experience-meta">
-      <span class="experience-role">{{role}}{{currentBadge}}</span>
-      <span class="experience-date">{{date}}</span>
-    </div>
+    <span class="experience-meta"><span class="company">{{company}}</span><span class="date">{{date}}</span></span>
+    <span class="experience-role">{{role}}{{currentBadge}}</span>
   </header>
-  <div class="experience-body">
-    <ul class="responsibilities">{{points}}</ul>
-    <div class="experience-stack"><span class="experience-stack-label">{{technologyStackLabel}}</span><ul class="tags" aria-label="Technologies used">{{tools}}</ul></div>
-  </div>
+  <div class="experience-body"><ul class="responsibilities">{{points}}</ul><ul class="tags" aria-label="Technologies used">{{tools}}</ul></div>
 </article>
