@@ -11,6 +11,59 @@ export function skillMatchesExperience(skill, toolData, experienceId, skillRoleI
   return tools.includes(normalized) || linked.has(experienceId);
 }
 
+export function buildCapabilityModel(expertise = [], experience = [], skillTypes = {}, skillRoleIds = {}) {
+  const roleIdsFor = skill => {
+    const normalized = String(skill).toLowerCase();
+    const explicit = new Set(skillRoleIds?.[skill] || []);
+    return experience
+      .filter(item => explicit.has(item.id) || (item.tools || []).some(tool => String(tool).toLowerCase() === normalized))
+      .map(item => item.id);
+  };
+
+  const groups = expertise.map((group, groupIndex) => ({
+    id: 'capability-group-' + groupIndex,
+    number: group.number || String(groupIndex + 1).padStart(2, '0'),
+    title: group.title,
+    groupIndex
+  }));
+
+  const nodes = expertise.flatMap((group, groupIndex) =>
+    (group.tools || []).map((skill, order) => {
+      const roleIds = roleIdsFor(skill);
+      return {
+        skill,
+        groupIndex,
+        order,
+        type: skillTypes?.[skill] || 'Skill',
+        roleIds,
+        importance: Math.min(3, Math.max(1, roleIds.length + 1))
+      };
+    })
+  );
+
+  const relatedBySkill = Object.fromEntries(nodes.map(node => {
+    const nodeRoles = new Set(node.roleIds);
+    const ranked = nodes
+      .filter(candidate => candidate.skill !== node.skill && candidate.groupIndex === node.groupIndex)
+      .map(candidate => {
+        const sharedRoles = candidate.roleIds.filter(roleId => nodeRoles.has(roleId)).length;
+        const sameType = candidate.type === node.type ? 1 : 0;
+        return {
+          skill: candidate.skill,
+          score: sharedRoles * 10 + sameType * 2 + candidate.importance * 0.1
+        };
+      })
+      .filter(candidate => candidate.score >= 2)
+      .sort((a, b) => b.score - a.score || a.skill.localeCompare(b.skill))
+      .slice(0, 4)
+      .map(candidate => candidate.skill);
+
+    return [node.skill, ranked];
+  }));
+
+  return { groups, nodes, relatedBySkill };
+}
+
 export function rankCommandItems(source, query, translate = value => value) {
   const normalizedQuery = String(query || '').trim().toLowerCase();
 
