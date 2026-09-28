@@ -27,6 +27,22 @@
 [data-theme=dark] .theme-toggle:hover{background:#203449}
 [data-theme=dark] .theme-icon .sun-icon{opacity:0;transform:rotate(75deg) scale(.55)}
 [data-theme=dark] .theme-icon .moon-icon{opacity:1;transform:rotate(0deg) scale(1)}
+
+/* Keep the capability section clean: no repeated guidance or empty inspector row. */
+.capability-stage:not(.has-pinned-skill) + .capability-inspector{display:none!important}
+.capability-stage.has-pinned-skill + .capability-inspector{
+  display:flex!important;
+  min-height:0!important;
+  padding:.7rem 0!important;
+  justify-content:flex-end;
+  border-bottom:1px solid var(--line);
+  background:none!important;
+}
+.capability-stage.has-pinned-skill + .capability-inspector .capability-clear{
+  position:static!important;
+  margin-left:auto;
+}
+
 @media(prefers-reduced-motion:reduce){
   .theme-icon .sun-icon,.theme-icon .moon-icon{transition:none}
 }
