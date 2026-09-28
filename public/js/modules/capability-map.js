@@ -1,10 +1,10 @@
 import siteData from '../site-data.js';
 import translations from '../translations.js';
-import { buildCapabilityModel, skillMatchesExperience } from './interaction-model.js';
+import { buildCapabilityModel, nextPinnedSkill, relaxCapabilityLayout, skillMatchesExperience } from './interaction-model.js?v=capability-layout-20260928';
 
 const root = document.documentElement;
 const tr = text => root.lang === 'es' ? (translations[text] || text) : text;
-const mobileQuery = matchMedia('(max-width: 820px)');
+const stackedQuery = matchMedia('(max-width: 1024px)');
 const svgNs = 'http://www.w3.org/2000/svg';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -16,13 +16,18 @@ const centerOf = (element, containerRect) => {
   };
 };
 
-function layoutGroupNodes(nodes, anchor, width, height, groupIndex) {
+const estimateNodeBox = node => ({
+  width: clamp(74 + node.skill.length * 4.3, 92, node.importance === 3 ? 172 : 154),
+  height: node.skill.length > 24 ? 52 : 38
+});
+
+function layoutGroupNodes(nodes, anchor, width, groupIndex) {
   const ordered = [...nodes].sort((a, b) => b.importance - a.importance || a.order - b.order);
   const innerCount = Math.min(5, ordered.length);
   const innerRx = Math.min(118, width * 0.095);
   const innerRy = 108;
-  const outerRx = Math.min(168, width * 0.132);
-  const outerRy = 176;
+  const outerRx = Math.min(172, width * 0.135);
+  const outerRy = 182;
   const rotation = [-0.26, 0.12, -0.1][groupIndex] || 0;
 
   return ordered.map((node, index) => {
@@ -30,62 +35,31 @@ function layoutGroupNodes(nodes, anchor, width, height, groupIndex) {
     const ringIndex = outer ? index - innerCount : index;
     const ringCount = outer ? ordered.length - innerCount : innerCount;
     const angle = rotation + (Math.PI * 2 * ringIndex) / Math.max(1, ringCount) - Math.PI / 2;
-    const rx = outer ? outerRx : innerRx;
-    const ry = outer ? outerRy : innerRy;
-    const targetX = anchor.x + Math.cos(angle) * rx;
-    const targetY = anchor.y + Math.sin(angle) * ry;
-    const estimatedWidth = clamp(74 + node.skill.length * 4.3, 92, node.importance === 3 ? 172 : 154);
-    const estimatedHeight = node.skill.length > 24 ? 52 : 38;
-    return {
-      ...node,
-      x: targetX,
-      y: targetY,
-      targetX,
-      targetY,
-      width: estimatedWidth,
-      height: estimatedHeight
-    };
+    const box = estimateNodeBox(node);
+    const targetX = anchor.x + Math.cos(angle) * (outer ? outerRx : innerRx);
+    const targetY = anchor.y + Math.sin(angle) * (outer ? outerRy : innerRy);
+    return { ...node, ...box, x: targetX, y: targetY, targetX, targetY };
   });
 }
 
-function relaxLayout(items, width, height) {
-  const nodes = items.map(item => ({ ...item }));
-  for (let iteration = 0; iteration < 72; iteration += 1) {
-    for (const node of nodes) {
-      node.x += (node.targetX - node.x) * 0.035;
-      node.y += (node.targetY - node.y) * 0.035;
-    }
+function layoutMiniGroupNodes(nodes, anchor, width) {
+  const ordered = [...nodes].sort((a, b) => b.importance - a.importance || a.order - b.order);
+  const innerCount = Math.min(4, ordered.length);
+  const innerRx = Math.min(135, width * 0.29);
+  const outerRx = Math.min(205, width * 0.43);
+  const innerRy = 92;
+  const outerRy = 158;
 
-    for (let i = 0; i < nodes.length; i += 1) {
-      for (let j = i + 1; j < nodes.length; j += 1) {
-        const a = nodes[i];
-        const b = nodes[j];
-        const minX = (a.width + b.width) / 2 + 10;
-        const minY = (a.height + b.height) / 2 + 8;
-        const dx = b.x - a.x || 0.01;
-        const dy = b.y - a.y || 0.01;
-        const overlapX = minX - Math.abs(dx);
-        const overlapY = minY - Math.abs(dy);
-        if (overlapX <= 0 || overlapY <= 0) continue;
-
-        if (overlapX < overlapY) {
-          const push = overlapX * 0.52 * Math.sign(dx);
-          a.x -= push;
-          b.x += push;
-        } else {
-          const push = overlapY * 0.52 * Math.sign(dy);
-          a.y -= push;
-          b.y += push;
-        }
-      }
-    }
-
-    for (const node of nodes) {
-      node.x = clamp(node.x, node.width / 2 + 14, width - node.width / 2 - 14);
-      node.y = clamp(node.y, node.height / 2 + 18, height - node.height / 2 - 18);
-    }
-  }
-  return nodes;
+  return ordered.map((node, index) => {
+    const outer = index >= innerCount;
+    const ringIndex = outer ? index - innerCount : index;
+    const ringCount = outer ? ordered.length - innerCount : innerCount;
+    const angle = (Math.PI * 2 * ringIndex) / Math.max(1, ringCount) - Math.PI / 2 + (outer ? 0.28 : -0.12);
+    const box = estimateNodeBox(node);
+    const targetX = anchor.x + Math.cos(angle) * (outer ? outerRx : innerRx);
+    const targetY = anchor.y + Math.sin(angle) * (outer ? outerRy : innerRy);
+    return { ...node, ...box, x: targetX, y: targetY, targetX, targetY };
+  });
 }
 
 export function initCapabilityConstellation() {
@@ -106,6 +80,7 @@ export function initCapabilityConstellation() {
   const nodeBySkill = new Map(model.nodes.map(node => [node.skill, node]));
   const elementBySkill = new Map();
   const hubByGroup = new Map();
+  const clusterByGroup = new Map();
   const baseLines = [];
   let relationLines = [];
   let pinnedSkill = null;
@@ -124,6 +99,14 @@ export function initCapabilityConstellation() {
   const clusters = document.createElement('div');
   clusters.className = 'capability-clusters';
 
+  const clearButton = document.createElement('button');
+  clearButton.type = 'button';
+  clearButton.className = 'capability-clear';
+  clearButton.hidden = true;
+  clearButton.textContent = root.lang === 'es' ? 'Limpiar selección' : 'Clear selection';
+  clearButton.setAttribute('aria-label', clearButton.textContent);
+  inspector?.append(clearButton);
+
   if (legend) {
     legend.replaceChildren(...model.groups.map(group => {
       const item = document.createElement('span');
@@ -136,6 +119,7 @@ export function initCapabilityConstellation() {
     const cluster = document.createElement('section');
     cluster.className = 'capability-cluster';
     cluster.dataset.group = String(group.groupIndex);
+    clusterByGroup.set(group.groupIndex, cluster);
 
     const hub = document.createElement('div');
     hub.className = 'capability-hub';
@@ -240,7 +224,6 @@ export function initCapabilityConstellation() {
   const updateBaseLines = () => {
     baseLines.length = 0;
     baseGroup.replaceChildren();
-    if (mobileQuery.matches) return;
     for (const node of model.nodes) {
       const hub = hubByGroup.get(node.groupIndex);
       const element = elementBySkill.get(node.skill);
@@ -255,7 +238,7 @@ export function initCapabilityConstellation() {
 
   const updateRelationLines = skill => {
     clearRelationLines();
-    if (!skill || mobileQuery.matches) return;
+    if (!skill) return;
     const from = elementBySkill.get(skill);
     if (!from) return;
     for (const relatedSkill of model.relatedBySkill[skill] || []) {
@@ -313,31 +296,57 @@ export function initCapabilityConstellation() {
     resetInspector();
   };
 
+  const syncPinnedState = () => {
+    clearButton.hidden = !pinnedSkill;
+    container.classList.toggle('has-pinned-skill', Boolean(pinnedSkill));
+  };
+
+  const clearPinned = () => {
+    pinnedSkill = null;
+    selfSync = true;
+    delete root.dataset.activeSkill;
+    selfSync = false;
+    syncPinnedState();
+    clearVisual();
+  };
+
   const setPinned = skill => {
-    if (pinnedSkill === skill) {
-      pinnedSkill = null;
-      selfSync = true;
-      delete root.dataset.activeSkill;
-      selfSync = false;
-      clearVisual();
+    const next = nextPinnedSkill(pinnedSkill, skill);
+    if (!next) {
+      clearPinned();
       return;
     }
-    pinnedSkill = skill;
+    pinnedSkill = next;
     selfSync = true;
-    root.dataset.activeSkill = skill;
+    root.dataset.activeSkill = next;
     selfSync = false;
-    renderSkill(skill);
+    syncPinnedState();
+    renderSkill(next);
   };
+
+  clearButton.addEventListener('click', clearPinned);
 
   for (const [skill, button] of elementBySkill) {
     button.addEventListener('mouseenter', () => {
       if (!pinnedSkill) renderSkill(skill);
     });
+    button.addEventListener('mouseleave', () => {
+      if (!pinnedSkill && !button.matches(':focus')) clearVisual();
+    });
     button.addEventListener('focus', () => {
       if (!pinnedSkill) renderSkill(skill);
     });
-    button.addEventListener('click', () => setPinned(skill));
+    button.addEventListener('click', event => {
+      event.stopPropagation();
+      setPinned(skill);
+    });
   }
+
+  container.addEventListener('click', event => {
+    const target = event.target;
+    if (target.closest?.('.capability-node,.capability-hub')) return;
+    if (pinnedSkill) clearPinned();
+  });
 
   container.addEventListener('mouseleave', () => {
     if (pinnedSkill) renderSkill(pinnedSkill);
@@ -354,11 +363,7 @@ export function initCapabilityConstellation() {
 
   addEventListener('keydown', event => {
     if (event.key !== 'Escape' || (!pinnedSkill && !previewSkill)) return;
-    pinnedSkill = null;
-    selfSync = true;
-    delete root.dataset.activeSkill;
-    selfSync = false;
-    clearVisual();
+    clearPinned();
   });
 
   const observer = new MutationObserver(() => {
@@ -366,38 +371,60 @@ export function initCapabilityConstellation() {
     const externalSkill = root.dataset.activeSkill;
     if (externalSkill && nodeBySkill.has(externalSkill)) {
       pinnedSkill = externalSkill;
+      syncPinnedState();
       renderSkill(externalSkill);
     } else if (!externalSkill && pinnedSkill) {
       pinnedSkill = null;
+      syncPinnedState();
       clearVisual();
     }
   });
   observer.observe(root, { attributes: true, attributeFilter: ['data-active-skill'] });
 
-  const layout = () => {
-    if (mobileQuery.matches) {
-      svg.setAttribute('viewBox', '0 0 1 1');
-      for (const element of [...hubByGroup.values(), ...elementBySkill.values()]) {
-        element.style.removeProperty('--cap-x');
-        element.style.removeProperty('--cap-y');
-      }
-      updateBaseLines();
-      updateRelationLines(pinnedSkill || previewSkill);
-      return;
-    }
+  const positionNode = (node, offsetX = 0, offsetY = 0) => {
+    const element = elementBySkill.get(node.skill);
+    if (!element) return;
+    element.style.setProperty('--cap-x', (node.x + offsetX) + 'px');
+    element.style.setProperty('--cap-y', (node.y + offsetY) + 'px');
+  };
 
+  const layoutStacked = () => {
+    container.classList.add('is-stacked');
+    for (const group of model.groups) {
+      const cluster = clusterByGroup.get(group.groupIndex);
+      const hub = hubByGroup.get(group.groupIndex);
+      if (!cluster || !hub) continue;
+      const width = cluster.clientWidth;
+      const height = cluster.clientHeight;
+      if (!width || !height) continue;
+      const anchor = { x: width * 0.5, y: height * 0.5 };
+      hub.style.setProperty('--cap-x', anchor.x + 'px');
+      hub.style.setProperty('--cap-y', anchor.y + 'px');
+      const obstacles = [{ x: anchor.x, y: anchor.y, width: Math.min(210, width * 0.62), height: 84, padding: 18 }];
+      const candidates = layoutMiniGroupNodes(
+        model.nodes.filter(node => node.groupIndex === group.groupIndex),
+        anchor,
+        width
+      );
+      const relaxed = relaxCapabilityLayout(candidates, width, height, obstacles, 120);
+      for (const node of relaxed) positionNode(node);
+    }
+  };
+
+  const layoutDesktop = () => {
+    container.classList.remove('is-stacked');
     const width = container.clientWidth;
     const height = container.clientHeight;
     if (!width || !height) return;
-    svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
 
     const anchors = [
-      { x: width * 0.18, y: height * 0.49 },
-      { x: width * 0.50, y: height * 0.43 },
+      { x: width * 0.18, y: height * 0.50 },
+      { x: width * 0.50, y: height * 0.45 },
       { x: width * 0.82, y: height * 0.50 }
     ];
-
+    const obstacles = anchors.map(anchor => ({ ...anchor, width: 202, height: 92, padding: 18 }));
     const candidates = [];
+
     for (const group of model.groups) {
       const hub = hubByGroup.get(group.groupIndex);
       const anchor = anchors[group.groupIndex];
@@ -409,20 +436,23 @@ export function initCapabilityConstellation() {
         model.nodes.filter(node => node.groupIndex === group.groupIndex),
         anchor,
         width,
-        height,
         group.groupIndex
       ));
     }
 
-    const relaxed = relaxLayout(candidates, width, height);
-    for (const node of relaxed) {
-      const element = elementBySkill.get(node.skill);
-      if (!element) continue;
-      element.style.setProperty('--cap-x', node.x + 'px');
-      element.style.setProperty('--cap-y', node.y + 'px');
-    }
+    const relaxed = relaxCapabilityLayout(candidates, width, height, obstacles, 120);
+    for (const node of relaxed) positionNode(node);
+  };
+
+  const layout = () => {
+    if (stackedQuery.matches) layoutStacked();
+    else layoutDesktop();
 
     requestAnimationFrame(() => {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (!width || !height) return;
+      svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
       updateBaseLines();
       updateRelationLines(pinnedSkill || previewSkill);
       container.classList.add('is-ready');
@@ -431,7 +461,8 @@ export function initCapabilityConstellation() {
 
   const resizeObserver = new ResizeObserver(layout);
   resizeObserver.observe(container);
-  mobileQuery.addEventListener?.('change', layout);
+  stackedQuery.addEventListener?.('change', layout);
   layout();
+  syncPinnedState();
   resetInspector();
 }

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildCapabilityModel, progressToStage, rankCommandItems, skillMatchesExperience } from '../public/js/modules/interaction-model.js';
+import { buildCapabilityModel, nextPinnedSkill, progressToStage, rankCommandItems, relaxCapabilityLayout, skillMatchesExperience } from '../public/js/modules/interaction-model.js';
 
 test('progress maps continuously into five pipeline stages',()=>{
   assert.equal(progressToStage(0),0);
@@ -15,6 +15,22 @@ test('expertise matching supports exact tools and explicit conceptual role links
   assert.equal(skillMatchesExperience('SQL Server','SQL Server|T-SQL','role-b',links),true);
   assert.equal(skillMatchesExperience('SQL Development','SQL Server|T-SQL','role-a',links),true);
   assert.equal(skillMatchesExperience('SQL Development','SQL Server|T-SQL','role-b',links),false);
+});
+
+test('clicking the pinned capability again returns to the default state',()=>{
+  assert.equal(nextPinnedSkill(null,'SQL Server'),'SQL Server');
+  assert.equal(nextPinnedSkill('SQL Server','SQL Server'),null);
+  assert.equal(nextPinnedSkill('SQL Server','Power BI'),'Power BI');
+});
+
+test('capability collision relaxation treats hubs as fixed obstacles',()=>{
+  const hub={x:200,y:150,width:160,height:80,padding:16};
+  const [node]=relaxCapabilityLayout([
+    {skill:'SQL Server',x:200,y:150,targetX:200,targetY:150,width:100,height:40}
+  ],400,300,[hub],80);
+  const separatedX=Math.abs(node.x-hub.x) >= (node.width+hub.width)/2+hub.padding-1;
+  const separatedY=Math.abs(node.y-hub.y) >= (node.height+hub.height)/2+hub.padding-1;
+  assert(separatedX || separatedY);
 });
 
 test('capability model groups skills, derives importance and relates shared experience',()=>{
