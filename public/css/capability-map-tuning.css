@@ -1,0 +1,25 @@
+/* Capability map visibility refinements. Loaded after capability-map.css. */
+.capability-link{
+  stroke:color-mix(in srgb,var(--line) 70%,var(--interactive-accent) 30%);
+  stroke-width:1.15;
+  opacity:.78;
+}
+.capability-link.is-group-active{
+  stroke:color-mix(in srgb,var(--interactive-accent) 48%,var(--line));
+  opacity:.88;
+}
+.capability-inspector .skill-trace-status{
+  display:block;
+  margin:0;
+  color:var(--interactive-accent);
+  font-size:.73rem;
+  line-height:1.55;
+}
+[data-theme=dark] .capability-link{
+  stroke:#3A5268;
+  opacity:.82;
+}
+[data-theme=dark] .capability-link.is-group-active{
+  stroke:#4A718E;
+  opacity:.92;
+}
