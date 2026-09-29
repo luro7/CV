@@ -31,28 +31,14 @@ export function initCredentials() {
   document.querySelectorAll('.certification-card[data-credential-provider="skillsoft"]').forEach(card => {
     const credentialId = card.dataset.credentialId?.trim();
     const credentialUrl = card.dataset.credentialUrl?.trim();
-    const preview = card.querySelector('[data-credential-preview]');
     const action = card.querySelector('[data-credential-details]');
     const title = card.querySelector('h4')?.textContent?.trim() || 'Skillsoft credential';
-    if (!credentialId || !credentialUrl || !preview || !action) return;
-
-    const embedUrl = skillsoftEmbedUrl(credentialId);
-    const previewFrame = document.createElement('iframe');
-    previewFrame.className = 'skillsoft-card-preview';
-    previewFrame.src = embedUrl;
-    previewFrame.title = `${title} badge preview`;
-    previewFrame.loading = 'lazy';
-    previewFrame.setAttribute('aria-hidden', 'true');
-    previewFrame.setAttribute('tabindex', '-1');
-    previewFrame.setAttribute('allowfullscreen', '');
-    previewFrame.addEventListener('load', () => {
-      preview.classList.add('is-embed-ready');
-    }, { once: true });
-    preview.append(previewFrame);
+    if (!credentialId || !credentialUrl || !action) return;
 
     action.addEventListener('click', event => {
       if (!isPrimaryActivation(event) || !dialog || !dialogFrame || !dialogTitle || !dialogExternal) return;
 
+      const embedUrl = skillsoftEmbedUrl(credentialId);
       dialogTitle.textContent = title;
       dialogFrame.src = embedUrl;
       dialogFrame.title = `${title} credential details`;
