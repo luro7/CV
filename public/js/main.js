@@ -6,7 +6,7 @@ import { initCareerTimeline } from './modules/career-timeline.js?v=career-progre
 import { initCapabilityConstellation } from './modules/capability-map.js?v=capability-interaction-20260928';
 import { initCapabilityRoleDetails } from './modules/capability-role-details.js?v=capability-role-detail-20260928b';
 import { initProjectShowcase } from './modules/project-showcase.js?v=project-showcase-layout-fix-20260928';
-import { initCredentialBadges } from './modules/credential-badges.js?v=skillsoft-embed-20260928b';
+import { initCredentials } from './modules/credentials.js?v=credentials-refactor-20260928';
 import './project-gallery.js?v=gallery-thumbnails-20260928';
 
 initPreferences();
@@ -17,4 +17,4 @@ initLab();
 initCapabilityConstellation();
 initCapabilityRoleDetails();
 initProjectShowcase();
-initCredentialBadges();
+initCredentials();
