@@ -171,12 +171,14 @@ for (const project of site.projects) {
 assert(!existsSync(resolve(output, 'projects')), 'Separate project URLs should not be generated');
 
 const printCss = readFileSync(resolve(output, 'css/interactive.css'), 'utf8');
-const projectCss = readFileSync(resolve(output, 'css/project-gallery.css'), 'utf8');
-const compactProjectCss = projectCss.replace(/\s+/g, '');
-assert(compactProjectCss.includes('backdrop-filter:blur('), 'Project gallery must blur the page behind its modal');
-assert(compactProjectCss.includes('aspect-ratio:16/9') && compactProjectCss.includes('width:100%'), 'Project cards must constrain images to their responsive card width');
-assert(compactProjectCss.includes('.glightbox-container.gslide-imageimg') || compactProjectCss.includes('.glightbox-container.gslide-image img'), 'Project gallery must style the library image stage');
-assert(compactProjectCss.includes('@media(max-width:680px)'), 'Project gallery must have a mobile layout');
+const projectGalleryCss = readFileSync(resolve(output, 'css/project-gallery.css'), 'utf8');
+const projectShowcaseCss = readFileSync(resolve(output, 'css/project-showcase.css'), 'utf8');
+const compactProjectGalleryCss = projectGalleryCss.replace(/\s+/g, '');
+const compactProjectShowcaseCss = projectShowcaseCss.replace(/\s+/g, '');
+assert(compactProjectGalleryCss.includes('backdrop-filter:blur('), 'Project gallery must blur the page behind its modal');
+assert(compactProjectShowcaseCss.includes('aspect-ratio:16/9') && compactProjectShowcaseCss.includes('width:100%'), 'Project cards must constrain images to their responsive card width');
+assert(compactProjectGalleryCss.includes('.glightbox-container.gslide-imageimg') || compactProjectGalleryCss.includes('.glightbox-container.gslide-image img'), 'Project gallery must style the library image stage');
+assert(compactProjectGalleryCss.includes('@media(max-width:760px)'), 'Project gallery must have a mobile layout');
 assert(spanishHtml.includes('project-lightbox-link') && spanishHtml.includes('data-gallery="manos-a-la-obra"'), 'Project gallery must use grouped lightbox images');
 assert(existsSync(resolve(output, 'js/vendor/glightbox.min.js')) && existsSync(resolve(output, 'css/vendor/glightbox.min.css')) && existsSync(resolve(output, 'js/vendor/GLIGHTBOX-LICENSE.md')), 'GLightbox assets and license must be included');
 assert(readFileSync(resolve(output, 'js/project-gallery.js'), 'utf8').includes('touchNavigation: true') && readFileSync(resolve(output, 'js/project-gallery.js'), 'utf8').includes('draggable: true'), 'Project gallery must use the library touch and mouse navigation');

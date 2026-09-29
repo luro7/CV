@@ -83,6 +83,7 @@ if (typeof openGallery === 'function') {
     const spanish = document.documentElement.lang === 'es';
     const chrome = document.createElement('div');
     chrome.className = 'project-gallery-chrome';
+    chrome.addEventListener('click', event => event.stopPropagation());
 
     const counter = document.createElement('span');
     counter.className = 'project-gallery-counter';
@@ -107,7 +108,9 @@ if (typeof openGallery === 'function') {
         image.loading = 'lazy';
         image.decoding = 'async';
         button.append(image);
-        button.addEventListener('click', () => {
+        button.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
           if (typeof gallery.goToSlide === 'function') gallery.goToSlide(index);
         });
         thumbnails.append(button);

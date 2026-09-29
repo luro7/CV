@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { localizeHtml } from '../scripts/localize.mjs';
 
 const templates = new URL('./templates/', import.meta.url);
+const credentialAssets = JSON.parse(readFileSync(new URL('../content/credential-assets.json', import.meta.url), 'utf8'));
 
 export const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({
   '&': '&amp;',
@@ -99,17 +100,34 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     if (url.protocol !== 'https:' || !['www.credly.com', 'skillsoft.digitalbadges.skillsoft.com'].includes(url.hostname)) {
       throw new Error('Invalid credential URL');
     }
-    let credentialArt;
-    if (item.image) {
-      if (!/^\/assets\/credentials\/[a-z0-9-]+\.png$/.test(item.image)) throw new Error('Invalid credential image');
-      credentialArt = '<div class="credential-art"><img src="' + escapeHtml(item.image) + '" alt="" width="400" height="400" loading="lazy" decoding="async"></div>';
-    } else {
-      if (!/^[A-Za-z0-9]{2,8}$/.test(item.badgeLabel || '')) throw new Error('Invalid credential badge label');
-      credentialArt = '<div class="credential-art credential-art-label" aria-hidden="true"><span>' + escapeHtml(item.badgeLabel) + '</span></div>';
+
+    const credentialProvider = url.hostname === 'skillsoft.digitalbadges.skillsoft.com' ? 'skillsoft' : 'credly';
+    const credentialId = credentialProvider === 'skillsoft'
+      ? (url.pathname.split('/').filter(Boolean).at(0) || '')
+      : '';
+    if (credentialProvider === 'skillsoft' && !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(credentialId)) {
+      throw new Error('Invalid Skillsoft credential ID');
     }
+
+    const credentialImage = credentialProvider === 'skillsoft'
+      ? credentialAssets.skillsoft?.[credentialId]
+      : item.image;
+    if (!/^\/assets\/credentials\/[a-z0-9-]+\.png$/.test(credentialImage || '')) {
+      throw new Error('Missing or invalid credential artwork: ' + item.title);
+    }
+    const credentialArt = '<div class="credential-art"><img src="' + escapeHtml(credentialImage) + '" alt="" width="400" height="400" loading="lazy" decoding="async"></div>';
+
+    const credentialAction = credentialProvider === 'skillsoft'
+      ? '<button type="button" class="credential-action" data-credential-details>Verify credential <span aria-hidden="true">↗</span></button>'
+      : '<a class="credential-action" href="' + escapeHtml(item.credentialUrl) + '" target="_blank" rel="noopener noreferrer">Verify credential <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>';
+
     return template('cards/certification', {
       ...localizedObject(item, t),
-      credentialArt
+      credentialProvider,
+      credentialId: escapeHtml(credentialId),
+      credentialUrl: escapeHtml(item.credentialUrl),
+      credentialArt,
+      credentialAction
     });
   }).join('\n');
 

@@ -30,15 +30,19 @@ The **Save PDF** action prints the currently rendered locale with a dedicated CV
 
 ## Architecture
 
-content/ stores public CV data, the expertise taxonomy and translations. src/ contains the static renderer and semantic templates. public/ contains local assets plus the CSS and JavaScript enhancement layer. scripts/ owns build, localization, validation and local preview. tests/ covers clean builds, locale generation, preference behavior and pure interaction logic.
+content/ stores public CV data, the expertise taxonomy and translations. src/ contains the static renderer and semantic templates. public/ contains local assets plus the CSS and JavaScript enhancement layer. scripts/ owns build, localization, validation and local preview. tests/ covers clean builds, locale generation, preference behavior and interaction contracts.
 
-The browser layer is split by responsibility:
+The browser layer is split by feature responsibility. Each feature owns its primary stylesheet and enhancement module instead of relying on late override files:
 
 - navigation.js: active-section navigation
 - preferences.js: locale navigation and theme state
 - motion.js: reveal, pointer and reading-progress effects
 - interaction-model.js: pure ranking, pipeline-stage and skill-role matching logic
 - lab.js: command palette, expertise map, scroll pipeline, print behavior and Engineering Mode
+- career-timeline.js + experience-timeline.css: experience progression enhancement
+- project-showcase.js + project-showcase.css: project presentation and Android preview composition
+- project-gallery.js + project-gallery.css: GLightbox setup, gallery navigation and thumbnail rail
+- credentials.js + credential-wall.css: certification previews, Skillsoft details dialog and credential layout
 
 ## Development
 

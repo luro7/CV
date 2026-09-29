@@ -1,10 +1,10 @@
-<article class="certification-card">
-  <a class="credential-card-link" href="{{credentialUrl}}" target="_blank" rel="noopener noreferrer">
+<article class="certification-card" data-credential-provider="{{credentialProvider}}" data-credential-id="{{credentialId}}" data-credential-url="{{credentialUrl}}">
+  <div class="credential-preview" data-credential-preview>
     {{credentialArt}}
-    <div class="credential-info">
-      <p class="credential-issuer"><span>{{institution}}</span><span class="date">{{date}}</span></p>
-      <h4>{{title}}</h4>
-      <span class="credential-verify"><span>Verify credential</span> <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></span>
-    </div>
-  </a>
+  </div>
+  <div class="credential-info">
+    <p class="credential-issuer"><span>{{institution}}</span><span class="date">{{date}}</span></p>
+    <h4>{{title}}</h4>
+    <div class="credential-actions">{{credentialAction}}</div>
+  </div>
 </article>
