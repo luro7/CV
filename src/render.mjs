@@ -99,6 +99,15 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     if (url.protocol !== 'https:' || !['www.credly.com', 'skillsoft.digitalbadges.skillsoft.com'].includes(url.hostname)) {
       throw new Error('Invalid credential URL');
     }
+
+    const credentialProvider = url.hostname === 'skillsoft.digitalbadges.skillsoft.com' ? 'skillsoft' : 'credly';
+    const credentialId = credentialProvider === 'skillsoft'
+      ? (url.pathname.split('/').filter(Boolean).at(0) || '')
+      : '';
+    if (credentialProvider === 'skillsoft' && !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(credentialId)) {
+      throw new Error('Invalid Skillsoft credential ID');
+    }
+
     let credentialArt;
     if (item.image) {
       if (!/^\/assets\/credentials\/[a-z0-9-]+\.png$/.test(item.image)) throw new Error('Invalid credential image');
@@ -107,9 +116,18 @@ export function render(site, { language = 'en', translations = {} } = {}) {
       if (!/^[A-Za-z0-9]{2,8}$/.test(item.badgeLabel || '')) throw new Error('Invalid credential badge label');
       credentialArt = '<div class="credential-art credential-art-label" aria-hidden="true"><span>' + escapeHtml(item.badgeLabel) + '</span></div>';
     }
+
+    const credentialAction = credentialProvider === 'skillsoft'
+      ? '<button type="button" class="credential-action" data-credential-details>Verify credential <span aria-hidden="true">↗</span></button>'
+      : '<a class="credential-action" href="' + escapeHtml(item.credentialUrl) + '" target="_blank" rel="noopener noreferrer">Verify credential <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>';
+
     return template('cards/certification', {
       ...localizedObject(item, t),
-      credentialArt
+      credentialProvider,
+      credentialId: escapeHtml(credentialId),
+      credentialUrl: escapeHtml(item.credentialUrl),
+      credentialArt,
+      credentialAction
     });
   }).join('\n');
 
