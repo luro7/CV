@@ -21,11 +21,6 @@ const descriptions = {
   ])
 };
 
-const artworkOverrides = new Map([
-  ['9885d253-7eaa-4e93-8d5e-7dd872fd6d48', 'https://api.accredible.com/v1/frontend/credential_badge_image/31919885'],
-  ['e76f6824-61cc-43d2-9624-b6799e3620d2', 'https://api.accredible.com/v1/frontend/credential_badge_image/32000909']
-]);
-
 function credentialIdFrom(card) {
   const provider = card.dataset.credentialProvider;
   const directId = card.dataset.credentialId?.trim();
@@ -53,9 +48,14 @@ export function initCredentialDescriptions() {
     const info = card.querySelector('.credential-info');
     const actions = card.querySelector('.credential-actions');
     const image = card.querySelector('.credential-art img');
-    const artwork = artworkOverrides.get(id);
 
-    if (image && artwork) image.src = artwork;
+    if (image) {
+      const originalSrc = image.getAttribute('src');
+      if (originalSrc?.startsWith('/assets/credentials/')) {
+        image.loading = 'eager';
+        image.src = originalSrc.split('?')[0] + '?v=credential-badges-20260929c';
+      }
+    }
 
     if (!description || !info || !actions || info.querySelector('.credential-description')) return;
 
