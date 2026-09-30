@@ -22,15 +22,24 @@ export function initMotion() {
 
   const observer = new IntersectionObserver(entries => {
     for (const entry of entries) {
-      setRevealVisibility(entry.target, reducedMotion.matches || entry.isIntersecting);
+      if (reducedMotion.matches || entry.isIntersecting) setRevealVisibility(entry.target, true);
     }
   }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
+
+  // A separate exit boundary exceeds the 14px reveal translation. This keeps
+  // partially visible cards from toggling themselves across the entrance edge.
+  const exitObserver = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting && !reducedMotion.matches) setRevealVisibility(entry.target, false);
+    }
+  }, { threshold: 0, rootMargin: '48px' });
 
   document.querySelectorAll('.section-heading,.skill-map-panel,.expertise-card,.experience-item,.education-item,.certification-card,.languages')
     .forEach((element, index) => {
       element.classList.add('reveal');
       element.style.setProperty('--reveal-delay', String(Math.min(index % 4, 3) * 55) + 'ms');
       observer.observe(element);
+      exitObserver.observe(element);
     });
 
   reducedMotion.addEventListener('change', () => {
