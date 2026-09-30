@@ -9,7 +9,7 @@ import { initProjectShowcase } from './modules/project-showcase.js?v=project-sho
 import { initCredentials } from './modules/credentials.js?v=credentials-static-badges-20260929';
 import { initCredentialImages } from './modules/credential-images.js?v=credential-registry-v2-20260929';
 import { initCredentialDescriptions } from './modules/credential-descriptions.js?v=credential-local-badges-20260929c';
-import './project-gallery.js?v=gallery-thumbnail-close-fix-20260929';
+import { initProjectGallery } from './project-gallery.js?v=gallery-redesign-20260929';
 
 initPreferences();
 trackSections();
@@ -22,3 +22,5 @@ initProjectShowcase();
 initCredentials();
 initCredentialImages();
 initCredentialDescriptions();
+
+initProjectGallery();

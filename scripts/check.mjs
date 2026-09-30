@@ -119,7 +119,7 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('data-print-cv'), name + ': PDF/print action is missing');
   assert(documentHtml.includes('class="project-gallery-link" href="#projects"'), name + ': project action must scroll to the cards without leaving the page');
   const primaryNavigation = documentHtml.match(/<nav aria-label="[^"]+">([\s\S]*?)<\/nav>/)?.[1] || '';
-  assert(!primaryNavigation.includes('#projects'), name + ': projects must stay out of the main navigation');
+  assert(primaryNavigation.includes('#projects'), name + ': projects must be accessible from the main navigation');
   assert(documentHtml.includes('class="project-lightbox-link"'), name + ': project gallery library triggers are missing');
   assert(documentHtml.includes('data-gallery="manos-a-la-obra"'), name + ': project gallery images must be grouped per project');
   assert(!documentHtml.includes('href="/projects/') && !documentHtml.includes('href="/es/projects/'), name + ': gallery must not create project URLs');

@@ -1,224 +1,72 @@
-.project-gallery-source[hidden] {
-  display: none !important;
-}
-
-.goverlay {
-  background: rgba(5, 9, 15, .96) !important;
-  backdrop-filter: blur(16px) saturate(.75);
-  -webkit-backdrop-filter: blur(16px) saturate(.75);
-}
-
-.glightbox-container .gcontainer {
-  padding: 18px 22px 126px;
-}
-
-.glightbox-container .gslide-media {
-  overflow: hidden;
-  background: #0a111b;
-  border: 1px solid rgba(111, 201, 255, .14);
-  border-radius: 14px;
-  box-shadow: 0 30px 90px rgba(0, 0, 0, .42);
-}
-
+/* Project gallery: fixed controls and an image stage independent of captions. */
+.project-gallery-source[hidden] { display: none !important; }
+.goverlay { background: rgba(6, 10, 18, .98) !important; backdrop-filter: blur(16px); }
+.glightbox-container .gcontainer { padding: 64px 76px 154px; box-sizing: border-box; }
+.glightbox-container .ginner-container { height: 100% !important; }
+.glightbox-container .gslide-media { background: transparent; box-shadow: none; }
 .glightbox-container .gslide-image img {
-  max-width: min(90vw, 1560px);
-  max-height: calc(100dvh - 235px);
-  object-fit: contain;
-  background: #0a111b;
-  border-radius: 12px;
-}
-
-.glightbox-container .gslide-description {
-  margin-top: 10px;
-  padding: 10px 14px 8px;
-  background: rgba(8, 14, 23, .82);
-  border: 1px solid rgba(111, 201, 255, .12);
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
-}
-
-.glightbox-container .gslide-title {
-  color: #f3f7fb;
-  font-size: .96rem;
-  font-weight: 700;
-}
-
-.glightbox-container .gslide-desc {
-  color: #aebdcb;
-  font-size: .8rem;
-  line-height: 1.45;
-}
-
-.glightbox-container .gbtn {
-  color: #eaf6ff;
-  background: rgba(10, 18, 29, .88);
-  border: 1px solid rgba(111, 201, 255, .28);
-  border-radius: 50%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .24);
-  backdrop-filter: blur(12px);
-  transition: color .18s ease, background .18s ease, border-color .18s ease;
-}
-
-.glightbox-container .gprev,
-.glightbox-container .gnext {
-  transition: left .48s cubic-bezier(.2, 1.55, .45, 1), top .48s cubic-bezier(.2, 1.55, .45, 1), color .18s ease, background .18s ease, border-color .18s ease;
-  will-change: left, top;
-}
-
-.glightbox-container .gcontainer.gallery-is-dragging .gprev,
-.glightbox-container .gcontainer.gallery-is-dragging .gnext {
-  transition: none;
-}
-
-.glightbox-container .gbtn:hover,
-.glightbox-container .gbtn:focus-visible {
-  color: #07111a;
-  background: #79d0fa;
-  border-color: #79d0fa;
-}
-
-.glightbox-container .gcounter {
-  display: none !important;
-}
-
-.glightbox-container .gloader {
-  border-color: rgba(121, 208, 250, .3);
-  border-right-color: #79d0fa;
-}
-
-.project-gallery-chrome {
-  position: absolute;
-  z-index: 10002;
-  left: 50%;
-  bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: min(920px, calc(100vw - 120px));
-  min-height: 82px;
-  padding: 9px 12px;
-  color: #dce9f3;
-  background: rgba(9, 16, 26, .9);
-  border: 1px solid rgba(111, 201, 255, .18);
-  border-radius: 14px;
-  box-shadow: 0 18px 60px rgba(0, 0, 0, .32);
-  transform: translateX(-50%);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-.project-gallery-counter {
-  flex: 0 0 auto;
-  min-width: 44px;
-  color: #8fdcff;
-  font: 700 .72rem/1 Consolas, monospace;
-  letter-spacing: .05em;
-  text-align: center;
-}
-
-.project-gallery-thumbs {
-  display: flex;
-  flex: 1 1 auto;
-  gap: 8px;
+  max-width: calc(100vw - 152px);
+  max-height: calc(100dvh - 218px);
   min-width: 0;
-  overflow-x: auto;
-  overscroll-behavior-inline: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(121, 208, 250, .38) transparent;
-}
-
-.project-gallery-thumb {
-  position: relative;
-  flex: 0 0 72px;
-  width: 72px;
-  height: 58px;
-  padding: 3px;
-  overflow: hidden;
-  background: #0a111b;
-  border: 1px solid rgba(111, 201, 255, .17);
-  border-radius: 9px;
-  cursor: pointer;
-  opacity: .6;
-  transition: opacity .18s ease, border-color .18s ease, transform .18s ease, background .18s ease;
-}
-
-.project-gallery-thumb:hover,
-.project-gallery-thumb:focus-visible,
-.project-gallery-thumb.is-active {
-  opacity: 1;
-  background: #101d2b;
-  border-color: #79d0fa;
-}
-
-.project-gallery-thumb.is-active {
-  transform: translateY(-1px);
-  box-shadow: inset 0 0 0 1px rgba(121, 208, 250, .3);
-}
-
-.project-gallery-thumb:focus-visible {
-  outline: 2px solid #79d0fa;
-  outline-offset: 2px;
-}
-
-.project-gallery-thumb img {
-  display: block;
-  width: 100%;
-  height: 100%;
   object-fit: contain;
-  background: #080e16;
-  border-radius: 6px;
+  border-radius: 8px;
+  box-shadow: 0 16px 64px rgba(0, 0, 0, .25);
 }
-
-body.glightbox-open {
-  overflow: hidden;
+/* Captions are presented once, in the persistent footer. */
+.glightbox-container .gslide-description { display: none !important; }
+.glightbox-container .gbtn {
+  width: 44px; height: 44px;
+  color: #eaf6ff;
+  background: #172536;
+  border: 1px solid #35526a;
+  border-radius: 50%;
+  opacity: 1;
+  z-index: 100001;
 }
-
+.glightbox-container .gclose { top: 16px; right: 20px; }
+.glightbox-container .gprev { left: 16px; top: calc(50% - 68px); }
+.glightbox-container .gnext { right: 16px; top: calc(50% - 68px); }
+.glightbox-container .gbtn:hover { background: #35526a; }
+.glightbox-container .gbtn:focus-visible { outline: 3px solid #8ad7ff; outline-offset: 3px; }
+.project-gallery-chrome {
+  position: absolute; z-index: 100000;
+  left: 24px; right: 24px; bottom: 18px;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center; gap: 24px;
+  padding: 16px 20px;
+  color: #eef5fc; background: #101925;
+  border: 1px solid #26384d; border-radius: 12px;
+}
+.project-gallery-copy { min-width: 0; }
+.project-gallery-title { display: block; font-size: 1rem; }
+.project-gallery-caption { margin: 6px 0; color: #bac9d8; font-size: .82rem; line-height: 1.45; }
+.project-gallery-counter { color: #8ad7ff; font: .75rem/1.4 Consolas, monospace; }
+.project-gallery-thumbs {
+  position: relative; display: flex; gap: 8px; min-width: 0;
+  overflow-x: auto; padding: 4px;
+  overscroll-behavior-inline: contain; scrollbar-width: thin;
+}
+.project-gallery-thumb {
+  flex: 0 0 72px; width: 72px; height: 58px; padding: 3px;
+  background: #080e16; border: 1px solid #35526a; border-radius: 6px;
+  cursor: pointer; opacity: .65;
+}
+.project-gallery-thumb:hover, .project-gallery-thumb.is-active { opacity: 1; border-color: #8ad7ff; }
+.project-gallery-thumb:focus-visible { outline: 2px solid #8ad7ff; outline-offset: 2px; }
+.project-gallery-thumb img { display: block; width: 100%; height: 100%; object-fit: contain; }
+body.glightbox-open { overflow: hidden; }
 @media (max-width: 760px) {
-  .glightbox-container .gcontainer {
-    padding: 12px 10px 108px;
-  }
-
-  .glightbox-container .gslide-image img {
-    max-width: calc(100vw - 20px);
-    max-height: calc(100dvh - 200px);
-    border-radius: 8px;
-  }
-
-  .project-gallery-chrome {
-    bottom: 9px;
-    width: calc(100vw - 18px);
-    min-height: 72px;
-    gap: 8px;
-    padding: 7px 8px;
-    border-radius: 11px;
-  }
-
-  .project-gallery-counter {
-    min-width: 38px;
-    font-size: .67rem;
-  }
-
-  .project-gallery-thumb {
-    flex-basis: 58px;
-    width: 58px;
-    height: 50px;
-  }
-
-  .glightbox-container .gslide-description {
-    margin-inline: 4px;
-    padding: 8px 10px 7px;
-  }
+  .glightbox-container .gcontainer { padding: 64px 12px 228px; }
+  .glightbox-container .gslide-image img { max-width: calc(100vw - 24px); max-height: calc(100dvh - 292px); }
+  .glightbox-container .gprev { left: 12px; top: 12px; }
+  .glightbox-container .gnext { left: 64px; right: auto; top: 12px; }
+  .glightbox-container .gclose { top: 12px; right: 12px; }
+  .project-gallery-chrome { left: 12px; right: 12px; bottom: 12px; grid-template-columns: 1fr; gap: 8px; padding: 12px; }
+  .project-gallery-caption { font-size: .75rem; }
+  .project-gallery-thumb { flex-basis: 60px; width: 60px; height: 48px; }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .project-gallery-thumb,
-  .glightbox-container .gbtn,
-  .glightbox-container .gprev,
-  .glightbox-container .gnext {
-    transition: none;
-  }
-
-  .project-gallery-thumb.is-active {
-    transform: none;
-  }
+@media (max-height: 500px) and (min-width: 761px) {
+  .glightbox-container .gcontainer { padding-top: 12px; padding-bottom: 130px; }
+  .glightbox-container .gslide-image img { max-height: calc(100dvh - 142px); }
+  .project-gallery-chrome { padding: 10px 14px; bottom: 8px; }
 }

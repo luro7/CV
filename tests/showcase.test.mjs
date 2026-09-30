@@ -16,8 +16,8 @@ test('project showcase stays unnumbered and owns its layout', () => {
   assert.ok(template.includes('data-open-project-gallery'));
   assert.ok(!template.includes('data-project-case'));
   assert.ok(!/project-(?:number|index)|\{\{(?:number|index)\}\}/i.test(template));
-  assert.ok(css.includes('grid-template-columns: minmax(0, 1.55fr) minmax(300px, .65fr)'));
-  assert.ok(css.includes('padding: clamp(.65rem, 1.4vw, 1.15rem) clamp(2rem, 3.6vw, 3.5rem)'));
+  assert.ok(css.includes('grid-template-columns: repeat(2, minmax(0, 1fr))'));
+  assert.ok(css.includes('object-fit: contain'));
   assert.ok(css.includes('@media (max-width: 860px)'));
 });
 
@@ -91,7 +91,7 @@ test('gallery thumbnail navigation cannot bubble into the outside-click closer',
   const layout = readFileSync(resolve(root, 'src/templates/layout.html'), 'utf8');
 
   assert.ok(script.includes("chrome.addEventListener('click', event => event.stopPropagation())"));
-  assert.ok(script.includes('event.preventDefault();\n          event.stopPropagation();'));
+  assert.match(script, /event\.preventDefault\(\);\r?\n\s+event\.stopPropagation\(\);/);
   assert.ok(script.includes('gallery.goToSlide(index)'));
   assert.ok(script.includes('closeOnOutsideClick: true'));
   assert.ok(css.includes('.project-gallery-thumbs'));

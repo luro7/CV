@@ -32,17 +32,22 @@ The **Save PDF** action prints the currently rendered locale with a dedicated CV
 
 content/ stores public CV data, the expertise taxonomy and translations. src/ contains the static renderer and semantic templates. public/ contains local assets plus the CSS and JavaScript enhancement layer. scripts/ owns build, localization, validation and local preview. tests/ covers clean builds, locale generation, preference behavior and interaction contracts.
 
-The browser layer is split by feature responsibility. Each feature owns its primary stylesheet and enhancement module instead of relying on late override files:
+The browser layer is split by feature responsibility. Each feature owns its stylesheet and enhancement modules. Related layout, artwork and detail styles live together rather than in separate patch files:
 
+- main.css + interactive.css: base layout, responsive behavior and print styles
+- theme.css: color tokens, theme appearance and preference controls
 - navigation.js: active-section navigation
 - preferences.js: locale navigation and theme state
 - motion.js: reveal, pointer and reading-progress effects
 - interaction-model.js: pure ranking, pipeline-stage and skill-role matching logic
 - lab.js: command palette, expertise map, scroll pipeline, print behavior and Engineering Mode
+- capability-map.js + capability-role-details.js + capability-map.css: skill visualization and role details
 - career-timeline.js + experience-timeline.css: experience progression enhancement
 - project-showcase.js + project-showcase.css: project presentation and Android preview composition
 - project-gallery.js + project-gallery.css: GLightbox setup, gallery navigation and thumbnail rail
-- credentials.js + credential-wall.css: certification previews, Skillsoft details dialog and credential layout
+- credentials.js + credential-images.js + credential-descriptions.js + credential-wall.css: certification artwork, descriptions, Skillsoft details dialog and credential layout
+
+CSS files are loaded in an explicit order in src/templates/layout.html. Keep that order when reorganizing styles: later rules may intentionally refine earlier shared styles. Third-party gallery assets and their license stay isolated under public/css/vendor and public/js/vendor. Only deployable files belong in public/; temporary deployment markers do not.
 
 ## Development
 

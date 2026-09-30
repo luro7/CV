@@ -159,7 +159,7 @@ export function render(site, { language = 'en', translations = {} } = {}) {
       ? '<span class="project-card-cover"><img src="' + escapeHtml(shot.image) + '" alt="" loading="lazy" decoding="async"></span>'
       : '<span class="project-card-cover project-preview-pending" role="img" aria-label="' + escapeHtml(t('Screenshot capture pending')) + '"><span>' + escapeHtml(t('Screenshot capture pending')) + '</span></span>';
     const cardTriggerOpen = shot
-      ? '<a class="project-card-link project-lightbox-link" href="' + escapeHtml(shot.image) + '" data-gallery="' + escapeHtml(item.slug) + '" data-type="image" data-title="' + escapeHtml(t(item.name)) + '" data-description="' + escapeHtml(t(shot.caption || item.name)) + '" data-alt="' + escapeHtml(t(shot.alt || item.name)) + '" aria-haspopup="dialog" aria-controls="project-gallery-' + escapeHtml(item.slug) + '">'
+      ? '<a class="project-card-link project-lightbox-link" href="' + escapeHtml(shot.image) + '" data-gallery="' + escapeHtml(item.slug) + '" data-type="image" data-title="' + escapeHtml(t(item.name)) + '" data-description="' + escapeHtml(t(shot.caption || item.name)) + '" data-alt="' + escapeHtml(t(shot.alt || item.name)) + '" aria-label="' + escapeHtml(t('Open project gallery') + ': ' + t(item.name)) + '" aria-haspopup="dialog" aria-controls="project-gallery-' + escapeHtml(item.slug) + '">'
       : '<div class="project-card-link">';
     return template('cards/project', {
       category,

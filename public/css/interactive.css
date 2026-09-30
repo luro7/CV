@@ -140,7 +140,7 @@ button:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
 @media(max-width:800px){
   html{scroll-padding-top:150px}.sidebar{position:sticky;top:0;z-index:40;display:grid;grid-template-columns:auto 1fr;padding:.7rem 1.25rem .5rem;gap:.5rem 1rem;box-shadow:0 3px 12px #0002}
   .preferences{margin:0;justify-self:end;flex-wrap:nowrap}.preference-button{min-width:44px}.language-toggle{min-width:58px}.sky-toggle{width:50px}
-  .sidebar nav{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.25rem;width:100%}
+  .sidebar nav{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.25rem;width:100%}
   .sidebar nav a,.sidebar nav a:first-child,.sidebar nav a:last-child{display:flex;justify-content:center;padding:.65rem .3rem;min-height:44px;text-align:center;font-size:.8125rem}
   .sidebar nav a[aria-current]{box-shadow:inset 0 -3px var(--lime)}.sidebar nav a span{display:none}
   .pipeline-dock{display:none}.hero-signal{opacity:.28;width:55vw}.engineering-mode [data-engineering-label]::after{display:none}
@@ -187,7 +187,7 @@ button:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
   .hero-focus{gap:.35rem .8rem}
 }
 @media(max-width:560px){
-  .sidebar nav{display:flex;overflow-x:auto;scrollbar-width:none;justify-content:flex-start;gap:.25rem}
+  .sidebar nav{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;justify-content:flex-start;gap:.25rem}
   .sidebar nav::-webkit-scrollbar{display:none}
   .sidebar nav a,.sidebar nav a:first-child,.sidebar nav a:last-child{flex:0 0 auto;padding:.6rem .8rem;white-space:nowrap}
   .profile-details{margin-bottom:2.25rem}
