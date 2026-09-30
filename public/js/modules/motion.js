@@ -1,4 +1,15 @@
-export function setRevealVisibility(element, visible) {
+export function setRevealVisibility(element, visible, direction = 'down') {
+  if (visible && !element.classList.contains('is-visible')) {
+    const fromTop = direction === 'up';
+    if (element.classList.contains('reveal-from-top') !== fromTop) {
+      // Commit the new starting position while hidden, without animating the
+      // direction change itself. The existing entrance transition stays intact.
+      element.classList.add('reveal-preparing');
+      element.classList.toggle('reveal-from-top', fromTop);
+      element.getBoundingClientRect();
+      element.classList.remove('reveal-preparing');
+    }
+  }
   element.classList.toggle('is-visible', Boolean(visible));
 }
 
@@ -20,9 +31,19 @@ export function initMotion() {
 
   if (!('IntersectionObserver' in window)) return;
 
+  let lastScrollY = Math.max(0, window.scrollY || 0);
+  let direction = 'down';
+  function updateDirection() {
+    const scrollY = Math.max(0, window.scrollY || 0);
+    if (scrollY !== lastScrollY) direction = scrollY < lastScrollY ? 'up' : 'down';
+    lastScrollY = scrollY;
+  }
+  window.addEventListener('scroll', updateDirection, { passive: true });
+
   const observer = new IntersectionObserver(entries => {
+    updateDirection();
     for (const entry of entries) {
-      if (reducedMotion.matches || entry.isIntersecting) setRevealVisibility(entry.target, true);
+      if (reducedMotion.matches || entry.isIntersecting) setRevealVisibility(entry.target, true, reducedMotion.matches ? 'down' : direction);
     }
   }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
 
@@ -51,7 +72,7 @@ export function initMotion() {
 
       const rect = element.getBoundingClientRect();
       const visible = rect.bottom > 32 && rect.top < innerHeight - 32;
-      setRevealVisibility(element, visible);
+      setRevealVisibility(element, visible, direction);
     });
   });
 }

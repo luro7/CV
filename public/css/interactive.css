@@ -114,6 +114,8 @@ button:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
 .command-result:hover,.command-result:focus-visible{background:#e8f0e9;color:#173c31;outline:0}
 .command-result small{color:var(--muted);font:600 .68rem Consolas,monospace;text-transform:uppercase;letter-spacing:.04em;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:.18rem .5rem;white-space:nowrap}
 .reveal{opacity:0;transform:translateY(14px);transition:opacity .48s ease var(--reveal-delay,0ms),transform .48s cubic-bezier(.2,.7,.2,1) var(--reveal-delay,0ms)}
+.reveal-from-top{transform:translateY(-14px)}
+.reveal.reveal-preparing{transition:none}
 .reveal.is-visible{opacity:1;transform:none}
 .daylight-transition{position:fixed;inset:0;z-index:20;pointer-events:none;opacity:0;background:linear-gradient(180deg,transparent 30%,#ba744629 72%,#f4af5645)}
 .sunset .daylight-transition,.sunrise .daylight-transition{animation:dusk .9s ease both}.sunrise .daylight-transition{background:linear-gradient(0deg,transparent 20%,#f4bd4828)}
