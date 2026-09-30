@@ -265,7 +265,7 @@ button:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
   .print-cv[hidden]{display:block!important}
   .print-cv{display:block!important;width:100%;max-width:none;margin:0;color:#161616;font:9pt/1.35 Arial,Helvetica,sans-serif}
   .print-cv-header{display:flex;align-items:center;gap:6mm;padding-bottom:4mm;border-bottom:1px solid #777}
-  .print-cv-portrait{display:block;width:25mm;height:25mm;object-fit:cover;border-radius:50%;border:1px solid #444}
+  .print-cv-portrait{display:block;width:25mm;height:25mm;flex:0 0 25mm;object-fit:cover;object-position:50% 0%;border-radius:50%;border:1px solid #444}
   .print-cv-identity{min-width:0}
   .print-cv-name{margin:0 0 1mm!important;color:#111!important;font-size:22pt!important;line-height:1.05!important;font-weight:700}
   .print-cv-headline{margin:0 0 1.5mm;font-size:10pt;color:#333!important}
