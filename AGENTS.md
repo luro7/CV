@@ -106,3 +106,9 @@ Do **not** create or switch branches, open pull requests, commit, push, merge or
 Do not simulate a team of agents by default. Use one focused implementation path unless the user explicitly asks to split work. For large changes, reason in stages (inspect, implement, validate, review) while keeping one coherent final result.
 
 Be proactive about finding regressions that are directly caused by the requested change, but do not expand the scope into a general repo cleanup unless asked.
+## Repository harness
+This compact static site stays with one main agent. Do not create frontend/content/build subagents by default; those concerns share one render/content pipeline here. Reusable workflows live in .agents/skills: local-validation, responsive-review and accessibility-seo-review. Consult only the relevant workflow.
+
+Source pipeline: content/site.json + content/locales/es.json + src/render.mjs/templates -> scripts/build.mjs -> dist (EN root, ES /es/, generated js/site-data.js and js/translations.js, robots.txt, sitemap.xml), with deployable public assets copied in. npm run check and npm start already regenerate output; do not repeat npm run build first unless checking the build command itself. Preview defaults to http://127.0.0.1:5081/; inspect /es/index.html directly as the local server is not a hosting directory router.
+Cloudflare Git integration publishes main using npm run build, output dist. Local validation does not deploy. Contact is the public LinkedIn data/rendered link; do not add business WhatsApp flows from another project.
+Model policy: normal root work uses GPT-6 Luna Medium. Use Sol Low/Medium only after a focused investigation leaves a reasoning blocker, Astra Low only if Sol remains uncertain; return routine work to Luna. No stronger-model agents are installed.
