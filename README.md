@@ -1,8 +1,8 @@
 # Lucas Rosat — Professional CV
 
-Source code for the professional CV and technical portfolio published at **https://lucasrosat.pages.dev**.
+Source code for the professional CV and technical portfolio published at [lucasrosat.pages.dev](https://lucasrosat.pages.dev).
 
-The project is intentionally lightweight: static generation, progressive enhancement, zero runtime dependencies and no external client-side libraries. The interface is part of the portfolio itself, demonstrating responsive design, accessibility, browser APIs, secure deployment, bilingual SEO and interaction design without compromising readability.
+The project is intentionally lightweight: static generation, progressive enhancement and no npm runtime dependencies. Most interactions use native browser APIs; the project gallery uses locally vendored GLightbox with its license retained. The interface is part of the portfolio itself, demonstrating responsive design, accessibility, browser APIs, secure deployment, bilingual SEO and interaction design without compromising readability.
 
 ## Highlights
 
@@ -53,10 +53,13 @@ CSS files are loaded in an explicit order in src/templates/layout.html. Keep tha
 
 Requires Node.js 20 or newer.
 
-    npm run build
-    npm run check
-    npm test
-    npm start
+```powershell
+npm run check
+npm test
+npm start
+```
+
+`check` and `start` regenerate the site before validation or preview. Use `npm run build` when generating only the production output. The local preview defaults to `http://127.0.0.1:5081/`; open `/es/index.html` for Spanish in this simple local server. Production Spanish navigation remains `/es/`.
 
 The generated website is written to dist/. The build recreates that directory from scratch on every run so removed source assets cannot survive as stale deployment files.
 
@@ -68,7 +71,7 @@ A framework can be introduced if a future feature genuinely benefits from compon
 
 ## Deployment
 
-Cloudflare Pages builds the repository from main with:
+Cloudflare Pages builds the repository from `main` through Git integration. A push to that branch can trigger a deployment; local checks do not publish. Production settings:
 
 - Build command: npm run build
 - Output directory: dist
@@ -79,3 +82,7 @@ Canonical, sitemap and alternate-language URLs are generated from the single sit
 ## Repository scope
 
 Only information intended for the public CV belongs in this repository. Personal source documents, local-machine configuration, private contact information, deployment account identifiers, generated output and private source PDFs are excluded from version control.
+
+## Working with Codex
+
+[AGENTS.md](AGENTS.md) contains the repository map and product constraints. [Repository skills](.agents/skills) cover local validation, responsive review and accessibility/SEO; [.codex/config.toml](.codex/config.toml) provides project defaults. These files travel with every clone. This compact site uses one main agent rather than a permanent specialist team.
