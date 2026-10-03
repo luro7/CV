@@ -69,7 +69,6 @@ Use Node.js 20 or newer.
 For normal code changes, run:
 
 ```bash
-npm run build
 npm run check
 npm test
 ```
@@ -109,6 +108,9 @@ Be proactive about finding regressions that are directly caused by the requested
 ## Repository harness
 This compact static site stays with one main agent. Do not create frontend/content/build subagents by default; those concerns share one render/content pipeline here. Reusable workflows live in .agents/skills: local-validation, responsive-review and accessibility-seo-review. Consult only the relevant workflow.
 
-Source pipeline: content/site.json + content/locales/es.json + src/render.mjs/templates -> scripts/build.mjs -> dist (EN root, ES /es/, generated js/site-data.js and js/translations.js, robots.txt, sitemap.xml), with deployable public assets copied in. npm run check and npm start already regenerate output; do not repeat npm run build first unless checking the build command itself. Preview defaults to http://127.0.0.1:5081/; inspect /es/index.html directly as the local server is not a hosting directory router.
+Source pipeline: content/site.json + content/locales/es.json + src/render.mjs and src/templates/ -> scripts/build.mjs -> dist (EN root, ES /es/, generated js/site-data.js and js/translations.js, robots.txt, sitemap.xml), with deployable public assets copied in. npm run check and npm start already regenerate output; do not repeat npm run build first unless checking the build command itself. Preview defaults to http://127.0.0.1:5081/; inspect /es/index.html directly as the local server is not a hosting directory router.
 Cloudflare Git integration publishes main using npm run build, output dist. Local validation does not deploy. Contact is the public LinkedIn data/rendered link; do not add business WhatsApp flows from another project.
 Model policy: normal root work uses GPT-6 Luna Medium. Use Sol Low/Medium only after a focused investigation leaves a reasoning blocker, Astra Low only if Sol remains uncertain; return routine work to Luna. No stronger-model agents are installed.
+
+## Context and validation budget
+Start with the affected source and its tests; project architecture documents are references to read when that boundary matters, not a mandatory reading list. Use targeted `rg` searches and reuse unchanged findings. Read only the relevant `.agents/skills/<name>/SKILL.md`; paths and commands in those skills resolve from this repository root. Run the smallest meaningful check first, expand for affected boundaries, and reuse successful checks until a later edit invalidates them. Documentation or agent/skill-only edits need syntax, reference and diff validation, not application builds or live integration. After a failed attempt, change the hypothesis using the new evidence; escalate for a demonstrated reasoning blocker, never for missing tools or simple command errors. Stop when requested behavior and necessary validation are complete.
