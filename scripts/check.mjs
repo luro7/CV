@@ -129,7 +129,7 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('class="print-cv" hidden'), name + ': dedicated CV print content is missing');
   assert.equal((documentHtml.match(/class="certification-card"/g) || []).length, site.certifications.length, name + ': all credentials should appear on the page');
   assert(!documentHtml.includes('class="expertise-grid"'), name + ': skills should not be repeated below the interactive map');
-  assert(!documentHtml.includes('class="print-cv-portrait"'), name + ': CV must remain photo-free');
+  assert(documentHtml.includes('class="print-cv-portrait" src="' + site.cvPortrait + '"'), name + ': PDF portrait must be present');
   const visibleText = documentHtml.replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ');
   assert(!/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(visibleText), name + ': email address exposed');
   assert(!/(?<!\d)\+?\d[\d ()-]{7,}\d(?!\d)/.test(visibleText), name + ': phone number exposed');

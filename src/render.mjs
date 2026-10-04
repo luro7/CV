@@ -241,6 +241,7 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     certificationCards,
     engineeringItems,
     printCv: template('print/cv', {
+      portraitUrl: escapeHtml(site.cvPortrait),
       name: escapeHtml(site.name),
       headline: escapeHtml(site.title.split(' | ').map(t).join(' | ')),
       linkedin: escapeHtml(site.linkedin.replace(/^https:\/\/(www\.)?/, '')),
