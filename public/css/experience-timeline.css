@@ -8,6 +8,7 @@
 .career-rail-company{font-size:1.08rem;line-height:1.3;margin-top:.15rem}
 .career-rail-role{font-size:.86rem;line-height:1.45;color:var(--ink)}
 .career-rail-date{font:500 .7rem Consolas,monospace;color:var(--muted)}
+.career-rail-company,.career-rail-role,.career-rail-date{padding-left:1rem}
 .career-rail-meta{margin-top:1.2rem;padding-left:1rem;font:600 .68rem Consolas,monospace;color:var(--muted);line-height:1.65}
 .career-groups{display:grid;gap:2.8rem}
 .career-company-group{position:relative;scroll-margin-top:5rem}
@@ -45,6 +46,9 @@
 [data-theme=dark] .responsibilities li{background:#111923A8;border-color:#263544}
 [data-theme=dark] .experience-stack .tags li{background:#11192380;border-color:#2C3B4C;color:#CFE0EC}
 [data-theme=dark] .experience-item.skill-match{background:linear-gradient(90deg,#6FCBFF10,transparent 82%)}
+@media screen{
+  .career-layout .responsibilities{max-width:none}
+}
 @media(max-width:980px){
   .career-layout{grid-template-columns:1fr;gap:1.6rem}
   .career-rail{display:none}
