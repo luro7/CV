@@ -118,7 +118,7 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('class="pipeline-dock"'), name + ': persistent scroll pipeline is missing');
   assert(documentHtml.includes('data-skill-status'), name + ': skill trace status is missing');
   assert(documentHtml.includes('data-print-cv'), name + ': PDF/print action is missing');
-  assert(documentHtml.includes('class="project-gallery-link" href="#projects"'), name + ': project action must scroll to the cards without leaving the page');
+  assert(!documentHtml.includes('class="project-gallery-link" href="#projects"'), name + ': hero must not duplicate the projects navigation');
   const primaryNavigation = documentHtml.match(/<nav aria-label="[^"]+">([\s\S]*?)<\/nav>/)?.[1] || '';
   assert(primaryNavigation.includes('#projects'), name + ': projects must be accessible from the main navigation');
   assert(documentHtml.includes('class="project-lightbox-link"'), name + ': project gallery library triggers are missing');
