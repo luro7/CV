@@ -24,6 +24,21 @@ a:focus-visible,summary:focus-visible,button:focus-visible{outline-color:var(--f
 a:hover{color:#4048B5}
 
 .sidebar{background:var(--sidebar);color:#F6F7FB}
+@media(min-width:801px){
+  main::before{
+    content:"";
+    position:fixed;
+    left:calc(var(--rail) - 1px);
+    top:0;
+    bottom:0;
+    width:28px;
+    background:var(--sidebar);
+    mask:url('/assets/sidebar-edge.svg') 0 0 / 100% 100% no-repeat;
+    pointer-events:none;
+    z-index:41;
+  }
+}
+@media print{main::before{display:none}}
 @media screen and (min-width:801px){
   :root{--rail:220px}
   .sidebar{padding-inline:1.5rem}
@@ -62,12 +77,8 @@ h2 span{color:var(--ink)}
 .command-hero:hover,.download-button:hover{border-color:#A8AFE8}
 .command-hero kbd{background:#F0F1F7;border-color:#DCE0EA;color:#51586A}
 
-.hero::before{
-  background:url('/assets/data-contours.svg') center / 100% 100% no-repeat;
-  mask-image:none
-}
+.hero::before{display:none}
 .hero-signal{display:none}
-.section{background-image:url('/assets/data-contours.svg');background-position:center;background-size:100% 100%;background-repeat:no-repeat}
 .skill-map-panel{background:linear-gradient(135deg,var(--paper),#F2F3FD)}
 .skill-node:hover,.skill-node:focus-visible,.skill-node.is-active{border-color:#A8AFE8;background:#ECEEFD;color:#30379E}
 .experience-item.skill-match{background:linear-gradient(90deg,#7379E81E,transparent 72%)}
@@ -151,9 +162,6 @@ h2 span{color:var(--ink)}
 [data-theme=dark] .current-badge{background:#18354A;color:#8AD7FF}
 [data-theme=dark] .command-hero kbd,[data-theme=dark] .command-close{background:#182331;border-color:#304357;color:#CFE7F4}
 [data-theme=dark] .skill-node:hover,[data-theme=dark] .skill-node:focus-visible,[data-theme=dark] .skill-node.is-active,[data-theme=dark] .command-result:hover,[data-theme=dark] .command-result:focus-visible{background:#17283A;color:#AEE6FF;border-color:#355B78}
-[data-theme=dark] .hero::before{
-  background:url('/assets/data-contours.svg') center / 100% 100% no-repeat
-}
 [data-theme=dark] .hero-signal span{background:#6FCBFF;box-shadow:0 0 0 7px #6FCBFF12}
 [data-theme=dark] .hero-signal span::after{background:linear-gradient(90deg,#6FCBFF55,transparent)}
 [data-theme=dark] .skill-hub,[data-theme=dark] .hero-pipeline span.is-active,[data-theme=dark] .pipeline-dock-head strong,[data-theme=dark] .pipeline-dock-stage.is-active,[data-theme=dark] .skill-trace-status{color:#8AD7FF}
