@@ -229,6 +229,8 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     ...base,
     heroSummaryContent: paragraphs(heroSummary, t),
     aboutDetailContent: paragraphs(heroDetails, t),
+    heroDataProfile: paragraphs([site.about[0], site.about[1], site.about[4]], t),
+    heroAiProfile: paragraphs([site.about[2], site.about[3], site.about[5]], t),
     heroFocus: tags(heroFocus, t),
     experienceCards,
     educationCards,
