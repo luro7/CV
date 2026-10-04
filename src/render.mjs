@@ -75,6 +75,7 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     ogLocale: spanish ? 'es_AR' : 'en_US',
     currentLanguage: spanish ? 'ES' : 'EN',
     nextLanguage: spanish ? 'EN' : 'ES',
+    languageName: spanish ? 'English' : 'Español',
     languageTarget: spanish ? '/' : '/es/',
     languageLabel: spanish ? 'Switch to English' : 'Cambiar a español',
     year: new Date().getFullYear()
@@ -232,12 +233,14 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     heroDataProfile: paragraphs([site.about[0], site.about[1], site.about[4]], t),
     heroAiProfile: paragraphs([site.about[2], site.about[3], site.about[5]], t),
     heroFocus: tags(heroFocus, t),
+    location: escapeHtml(site.location),
+    mapsUrl: escapeHtml('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(site.location)),
+    mapsEmbedUrl: escapeHtml('https://www.google.com/maps?q=' + encodeURIComponent(site.location) + '&z=12&output=embed'),
     experienceCards,
     educationCards,
     certificationCards,
     engineeringItems,
     printCv: template('print/cv', {
-      portraitUrl: escapeHtml(site.cvPortrait),
       name: escapeHtml(site.name),
       headline: escapeHtml(site.title.split(' | ').map(t).join(' | ')),
       linkedin: escapeHtml(site.linkedin.replace(/^https:\/\/(www\.)?/, '')),

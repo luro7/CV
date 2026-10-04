@@ -35,10 +35,10 @@ export function initPreferences() {
   function updateControls() {
     const dark = root.dataset.theme === 'dark';
     themeButton.setAttribute('aria-checked', String(dark));
-    themeButton.setAttribute('aria-label', language === 'es' ? 'Modo oscuro' : 'Dark mode');
     themeButton.title = language === 'es'
       ? (dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro')
       : (dark ? 'Switch to light mode' : 'Switch to dark mode');
+    themeButton.setAttribute('aria-label', themeButton.title);
     preferences.setAttribute('aria-label', language === 'es' ? 'Preferencias de visualización' : 'Display preferences');
   }
 
@@ -155,6 +155,39 @@ export function initPreferences() {
   }
 
   languageButton.addEventListener('click', animateLanguageChange);
+
+  function initTypingLabel(button, label, abbreviated, fullName) {
+    if (!button || !label) return;
+    let hovered = false;
+    let focused = false;
+    let typingTimer;
+    function animateLanguageLabel() {
+      clearTimeout(typingTimer);
+      const target = hovered || focused ? fullName : abbreviated;
+      if (reducedMotion.matches) {
+        label.textContent = target;
+        label.style.width = target.length + 'ch';
+        return;
+      }
+      function typeNext() {
+        const current = label.textContent;
+        if (current === target) return;
+        label.textContent = target.startsWith(current)
+          ? target.slice(0, current.length + 1)
+          : current.slice(0, -1);
+        label.style.width = label.textContent.length + 'ch';
+        typingTimer = setTimeout(typeNext, target.startsWith(current) ? 75 : 45);
+      }
+      typeNext();
+    }
+    button.addEventListener('mouseenter', () => { hovered = true; animateLanguageLabel(); });
+    button.addEventListener('mouseleave', () => { hovered = false; animateLanguageLabel(); });
+    button.addEventListener('focus', () => { focused = true; animateLanguageLabel(); });
+    button.addEventListener('blur', () => { focused = false; animateLanguageLabel(); });
+  }
+  initTypingLabel(languageButton, document.querySelector('.language-label'), language === 'es' ? 'EN' : 'ES', language === 'es' ? 'Inglés' : 'Español');
+  initTypingLabel(document.querySelector('.engineering-toggle'), document.querySelector('.engineering-label'), '</>', language === 'es' ? 'Modo ingeniería' : 'Engineering mode');
+  initTypingLabel(document.querySelector('.command-toggle'), document.querySelector('.command-label'), '⌕', language === 'es' ? 'Buscar' : 'Search');
 
   themeButton.addEventListener('click', () => {
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';

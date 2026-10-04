@@ -24,3 +24,37 @@ initCredentialImages();
 initCredentialDescriptions();
 
 initProjectGallery();
+
+const locationPreview = document.querySelector('.location-preview');
+const locationWindow = locationPreview?.querySelector('.location-window');
+const positionLocation = () => {
+  if (!locationPreview?.open || !locationWindow) return;
+  const anchor = locationPreview.querySelector('summary').getBoundingClientRect();
+  const panel = locationWindow.getBoundingClientRect();
+  const left = window.innerWidth > 800 ? anchor.right + 12 : 16;
+  const top = window.innerWidth > 800 ? anchor.top : anchor.bottom + 8;
+  locationWindow.style.left = Math.max(16, Math.min(left, window.innerWidth - panel.width - 16)) + 'px';
+  locationWindow.style.top = Math.max(16, Math.min(top, window.innerHeight - panel.height - 16)) + 'px';
+};
+if (locationWindow) {
+  locationWindow.hidden = true;
+  document.body.append(locationWindow);
+  locationPreview.addEventListener('toggle', () => {
+    locationWindow.hidden = !locationPreview.open;
+    const map = locationWindow.querySelector('[data-map-src]');
+    if (locationPreview.open && map && !map.hasAttribute('src')) map.src = map.dataset.mapSrc;
+    positionLocation();
+  });
+  window.addEventListener('resize', positionLocation);
+  window.addEventListener('scroll', positionLocation, { passive: true });
+}
+const closeLocation = () => {
+  if (!locationPreview?.open) return;
+  locationPreview.open = false;
+  if (locationWindow) locationWindow.hidden = true;
+  locationPreview.querySelector('summary').focus();
+};
+document.querySelector('[data-location-close]')?.addEventListener('click', closeLocation);
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && locationPreview?.open) closeLocation();
+});

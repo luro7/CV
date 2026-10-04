@@ -12,6 +12,7 @@ const spanishHtml = readFileSync(resolve(output, 'es/index.html'), 'utf8');
 const siteUrl = new URL(site.siteUrl);
 assert(existsSync(resolve(root, 'public', '.' + site.cvPortrait)), 'CV portrait asset is missing');
 const allowedHosts = new Set([
+  'www.google.com',
   siteUrl.hostname,
   new URL(site.linkedin).hostname,
   ...site.certifications.map(item => new URL(item.credentialUrl).hostname)
@@ -128,7 +129,7 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('class="print-cv" hidden'), name + ': dedicated CV print content is missing');
   assert.equal((documentHtml.match(/class="certification-card"/g) || []).length, site.certifications.length, name + ': all credentials should appear on the page');
   assert(!documentHtml.includes('class="expertise-grid"'), name + ': skills should not be repeated below the interactive map');
-  assert(documentHtml.includes('src="' + site.cvPortrait + '"'), name + ': CV portrait is not connected to site data');
+  assert(!documentHtml.includes('class="print-cv-portrait"'), name + ': CV must remain photo-free');
   const visibleText = documentHtml.replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ');
   assert(!/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(visibleText), name + ': email address exposed');
   assert(!/(?<!\d)\+?\d[\d ()-]{7,}\d(?!\d)/.test(visibleText), name + ': phone number exposed');
@@ -153,7 +154,7 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
     }
   }
 
-  for (const [, source] of documentHtml.matchAll(/\bsrc="([^"]+)"/g)) {
+  for (const [, source] of documentHtml.matchAll(/\ssrc="([^"]+)"/g)) {
     assert(source.startsWith('/'), name + ': asset must be local ' + source);
     const localPath = source.split(/[?#]/, 1)[0];
     assert(existsSync(resolve(output, '.' + localPath)), name + ': missing asset ' + source);
@@ -185,7 +186,7 @@ assert(readFileSync(resolve(output, 'js/project-gallery.js'), 'utf8').includes('
 assert(!spanishHtml.includes('swiper-bundle') && !spanishHtml.includes('project-gallery-main'), 'The previous gallery markup must be removed');
 assert(spanishHtml.includes('href="https://manosalaobra.pages.dev" target="_blank"'), 'Manos a la Obra project card must link to its public landing page');
 assert(printCss.includes('@page{size:A4'), 'Print output must use A4 paper');
-assert(printCss.includes('.print-cv-portrait'), 'Print output must include the CV portrait');
+assert(printCss.includes('.print-cv-header'), 'Print output must include the CV identity header');
 assert(printCss.includes('body>:not(.print-cv)'), 'Print output must use the CV document instead of page styling');
 
 assert(html.includes('<html lang="en">'), 'English page language is incorrect');

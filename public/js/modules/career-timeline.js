@@ -104,16 +104,13 @@ export function initCareerTimeline() {
   const groupContainer = document.createElement('div');
   groupContainer.className = 'career-groups';
 
-  groups.forEach((group, groupIndex) => {
+  groups.forEach(group => {
     const section = document.createElement('section');
     section.className = 'career-company-group';
     section.dataset.company = group.company;
 
     const header = document.createElement('header');
     header.className = 'career-company-header';
-    const index = document.createElement('span');
-    index.className = 'career-company-index';
-    index.textContent = String(groupIndex + 1).padStart(2, '0');
     const heading = document.createElement('div');
     const companyTitle = document.createElement('h3');
     companyTitle.textContent = group.company;
@@ -123,7 +120,7 @@ export function initCareerTimeline() {
     const count = document.createElement('span');
     count.className = 'career-role-count';
     count.textContent = group.items.length + ' ' + (group.items.length === 1 ? labels.role : labels.roles);
-    header.append(index, heading, count);
+    header.append(heading, count);
 
     const stack = document.createElement('div');
     stack.className = 'career-role-stack';

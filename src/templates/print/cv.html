@@ -1,6 +1,5 @@
 <article class="print-cv" hidden aria-label="Curriculum vitae">
   <header class="print-cv-header">
-    <img class="print-cv-portrait" src="{{portraitUrl}}" width="120" height="120" alt="">
     <div class="print-cv-identity">
       <h2 class="print-cv-name">{{name}}</h2>
       <p class="print-cv-headline">{{headline}}</p>
@@ -9,20 +8,22 @@
   </header>
   <section class="print-cv-section">
     <h2>Professional summary</h2>
-    {{summary}}
+    <div class="print-cv-content">{{summary}}</div>
   </section>
   <section class="print-cv-section">
     <h2>Technical skills</h2>
-    <div class="print-cv-skill-groups">{{printExpertise}}</div>
+    <div class="print-cv-content print-cv-skill-groups">{{printExpertise}}</div>
   </section>
   <section class="print-cv-section">
     <h2>Experience</h2>
-    <div class="print-cv-experience">{{printExperience}}</div>
+    <div class="print-cv-content print-cv-experience">{{printExperience}}</div>
   </section>
   <section class="print-cv-section">
     <h2>AI-assisted projects</h2>
+    <div class="print-cv-content">
     <p class="print-cv-projects-intro">{{projectsIntro}}</p>
     <div class="print-cv-projects">{{printProjects}}</div>
+    </div>
   </section>
   <section class="print-cv-section print-cv-bottom">
     <div>

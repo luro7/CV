@@ -1,7 +1,7 @@
 <header class="sidebar">
   <a class="brand" href="#home" aria-label="Lucas Rosat, home"><span aria-hidden="true">[</span> LR <span aria-hidden="true">]</span></a>
   <div class="preferences" role="group" aria-label="Display preferences" hidden>
-    <button class="language-toggle preference-button" type="button" data-language-target="{{languageTarget}}" aria-label="{{languageLabel}}" title="{{languageLabel}}"><span aria-hidden="true">{{currentLanguage}}</span><span class="language-next" aria-hidden="true">{{nextLanguage}}</span></button>
+    <button class="language-toggle preference-button" type="button" data-language-target="{{languageTarget}}" aria-label="{{languageLabel}}"><span class="language-label" aria-hidden="true">{{nextLanguage}}</span></button>
     <button class="theme-toggle preference-button" type="button" role="switch" aria-checked="false" aria-label="Dark mode" title="Dark mode">
       <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
         <g class="sun-icon">
@@ -15,8 +15,8 @@
         </g>
       </svg>
     </button>
-    <button class="engineering-toggle preference-button icon-button" type="button" aria-pressed="false" aria-controls="engineering-panel" aria-label="Engineering mode" title="Engineering mode"><span aria-hidden="true">&lt;/&gt;</span></button>
-    <button class="command-toggle preference-button icon-button" type="button" data-command-open aria-label="Open command palette" title="Open command palette (Ctrl+K)"><span aria-hidden="true">⌕</span></button>
+    <button class="engineering-toggle preference-button icon-button" type="button" aria-pressed="false" aria-controls="engineering-panel" aria-label="Engineering mode"><span class="engineering-label" aria-hidden="true">&lt;/&gt;</span></button>
+    <button class="command-toggle preference-button icon-button" type="button" data-command-open aria-label="Open command palette" title="Open command palette (Ctrl+K)"><span class="command-label" aria-hidden="true">⌕</span></button>
   </div>
   <div class="sidebar-identity"><p class="sidebar-name">Lucas Rosat<span>.</span></p></div>
   <nav aria-label="Main navigation">
@@ -26,4 +26,18 @@
     <a href="#projects">Projects <span class="nav-arrow" aria-hidden="true">↗</span></a>
     <a href="#education">Education <span class="nav-arrow" aria-hidden="true">↗</span></a>
   </nav>
+  <div class="sidebar-contact">
+    <div class="sidebar-contact-actions">
+      <a class="sidebar-linkedin" href="{{linkedin}}" target="_blank" rel="noopener noreferrer"><img src="/assets/linkedin-in-white.png" width="18" height="18" alt="" aria-hidden="true">LinkedIn <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
+      <button type="button" data-print-cv>Save PDF <span aria-hidden="true">↓</span></button>
+    </div>
+    <details class="location-preview">
+      <summary><span aria-hidden="true">⌖</span> {{location}}</summary>
+      <div class="location-window" role="region" aria-label="Location">
+        <div class="location-window-header"><span>Location</span><button type="button" data-location-close aria-label="Close">×</button></div>
+        <iframe class="location-map" data-map-src="{{mapsEmbedUrl}}" title="{{location}}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div class="location-window-body"><a href="{{mapsUrl}}" target="_blank" rel="noopener noreferrer">{{location}}<span class="sr-only"> (opens in a new tab)</span></a></div>
+      </div>
+    </details>
+  </div>
 </header>

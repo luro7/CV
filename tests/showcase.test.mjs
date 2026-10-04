@@ -80,7 +80,8 @@ test('Skillsoft cards use local artwork and reserve embeds for the details dialo
   assert.ok(styles.includes('.credential-dialog-frame-wrap iframe'));
 
   const documentHtml = render(site);
-  assert.equal((documentHtml.match(/<iframe\b/g) || []).length, 1, 'Only the credential details dialog may contain an iframe');
+  assert.equal((documentHtml.match(/<iframe\b/g) || []).length, 2, 'Only credential details and the location map may contain iframes');
+  assert.match(documentHtml, /<iframe class="location-map" data-map-src="https:\/\/www.google.com\/maps\?/);
   assert.equal((documentHtml.match(/data-credential-provider="skillsoft"/g) || []).length, 7);
   for (const asset of Object.values(assets.skillsoft)) assert.ok(documentHtml.includes('src="' + asset + '"'));
 });
