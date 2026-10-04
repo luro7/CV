@@ -196,7 +196,7 @@ export function initPreferences() {
     if (!reducedMotion.matches) {
       void root.offsetWidth;
       root.classList.add(next === 'dark' ? 'sunset' : 'sunrise');
-      themeTimer = setTimeout(() => root.classList.remove('sunset','sunrise'), 900);
+      themeTimer = setTimeout(() => root.classList.remove('sunset','sunrise'), 1800);
     }
     root.dataset.theme = next;
     document.querySelector('meta[name="theme-color"]').content = next === 'dark' ? '#0A0D12' : '#4A52C7';

@@ -56,7 +56,8 @@
   .capability-legend{justify-content:flex-start}
   .capability-stage{min-height:auto;overflow:hidden;padding:.8rem 0 1rem;background:none}
   .capability-stage::before{display:none}
-  .capability-clusters{position:relative;inset:auto;display:grid;gap:1rem}
+  .capability-clusters{position:relative;inset:auto;display:grid;gap:1rem;z-index:auto}
+  .capability-link-layer{z-index:1}
   .capability-cluster{position:relative;display:block;min-height:390px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--paper) 94%,transparent);overflow:hidden}
   .capability-cluster::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,color-mix(in srgb,var(--interactive-accent) 20%,transparent) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(ellipse at center,#000 0 52%,transparent 88%);opacity:.35}
   .capability-node-list{display:contents}

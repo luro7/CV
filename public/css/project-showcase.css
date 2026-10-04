@@ -228,9 +228,9 @@
 .project-card-action:focus-visible,
 .project-card-live-link:hover,
 .project-card-live-link:focus-visible {
-  color: #2f6687;
-  background: color-mix(in srgb, var(--paper) 72%, #6fc9ff 8%);
-  border-color: color-mix(in srgb, var(--line) 45%, #6fc9ff 55%);
+  color: var(--interactive-accent);
+  background: var(--interactive-accent-soft);
+  border-color: var(--interactive-accent-line);
   transform: translateY(-1px);
 }
 

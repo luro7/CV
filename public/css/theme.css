@@ -21,7 +21,7 @@
 body{background:var(--bg);color:var(--ink)}
 ::selection{background:#DDE1FF;color:#181B45}
 a:focus-visible,summary:focus-visible,button:focus-visible{outline-color:var(--focus)}
-a:hover{color:#4048B5}
+main a:hover{color:var(--interactive-accent)}
 
 .sidebar{background:var(--sidebar);color:#F6F7FB}
 @media(min-width:801px){
@@ -41,7 +41,7 @@ a:hover{color:#4048B5}
 @media print{main::before{display:none}}
 @media screen and (min-width:801px){
   :root{--rail:220px}
-  .sidebar{padding-inline:1.5rem}
+  .sidebar{padding-inline:1rem}
   .wrap{width:min(1280px,calc(100% - 6rem))}
 }
 .brand span,.sidebar-name span{color:#8E95FF}
@@ -50,7 +50,9 @@ a:hover{color:#4048B5}
 .sidebar nav a>span:first-child{color:#9EA5B8}
 .nav-arrow{color:#AAB1C4}
 .sidebar nav a[aria-current]{color:#A9AEFF}
-.sidebar a:hover{color:#A9AEFF}
+.sidebar a:hover{color:#fff}
+.sidebar .sidebar-contact-actions .sidebar-linkedin:hover,
+.sidebar .sidebar-contact-actions .sidebar-linkedin:focus-visible{color:#fff}
 .sidebar a:focus-visible{outline-color:#8E95FF}
 
 .document-meta,.eyebrow{color:var(--muted)}
@@ -73,7 +75,7 @@ h2 span{color:var(--ink)}
 .preference-button:hover{background:#33384A;color:#fff}
 .language-next{color:#B7BED0}
 .sidebar nav a[aria-current]{background:#262B3A;box-shadow:inset 3px 0 #8D94FF}
-.sidebar nav a:hover{background:#262B3A}
+.sidebar nav a:hover,.sidebar nav a:focus-visible{background:#303544;color:#fff}
 .command-hero:hover,.download-button:hover{border-color:#A8AFE8}
 .command-hero kbd{background:#F0F1F7;border-color:#DCE0EA;color:#51586A}
 
@@ -124,8 +126,17 @@ h2 span{color:var(--ink)}
 .sky-toggle .stars{fill:#8FD7FF;opacity:0;transform:translateX(0);transition:opacity .28s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
 
 .daylight-transition{background:radial-gradient(circle at 70% 10%,#7379E82C,transparent 42%),linear-gradient(180deg,transparent 30%,#4A52C718 100%)}
-.sunset .daylight-transition{background:radial-gradient(circle at 70% 10%,#6FCBFF38,transparent 42%),linear-gradient(180deg,transparent 24%,#203A551F 100%)}
-.sunrise .daylight-transition{background:radial-gradient(circle at 70% 10%,#8D94FF32,transparent 42%),linear-gradient(0deg,transparent 20%,#4A52C71B 100%)}
+.sunset .daylight-transition{background:linear-gradient(180deg,#10172208,#d3934526 75%,#ebae5733)}
+.sunrise .daylight-transition{background:linear-gradient(0deg,#ffd58b33,transparent 80%)}
+.sunset body,.sunrise body,
+.sunset .section,.sunrise .section,
+.sunset .sidebar,.sunrise .sidebar,
+.sunset .capability-node,.sunrise .capability-node,
+.sunset .capability-hub,.sunrise .capability-hub,
+.sunset .certification-card,.sunrise .certification-card,
+.sunset .project-card,.sunrise .project-card{
+  transition:background-color 1.8s ease,color 1.8s ease,border-color 1.8s ease;
+}
 
 [data-theme=dark]{
   color-scheme:dark;
@@ -144,9 +155,10 @@ h2 span{color:var(--ink)}
 }
 [data-theme=dark] body{background:#0A0D12;color:#EEF4FA}
 [data-theme=dark] ::selection{background:#294A67;color:#F4FAFF}
-[data-theme=dark] a:hover{color:#8AD7FF}
-[data-theme=dark] .brand span,[data-theme=dark] .sidebar-name span,[data-theme=dark] .sidebar nav a[aria-current],[data-theme=dark] .sidebar a:hover{color:#8AD7FF}
-[data-theme=dark] .sidebar nav a[aria-current],[data-theme=dark] .sidebar nav a:hover{background:#172536}
+[data-theme=dark] .brand span,[data-theme=dark] .sidebar-name span,[data-theme=dark] .sidebar nav a[aria-current]{color:#8AD7FF}
+[data-theme=dark] .sidebar a:hover{color:#fff}
+[data-theme=dark] .sidebar nav a[aria-current]{background:#172536}
+[data-theme=dark] .sidebar nav a:hover,[data-theme=dark] .sidebar nav a:focus-visible{background:#263342;color:#fff}
 [data-theme=dark] .sidebar nav a[aria-current]{box-shadow:inset 3px 0 #6FCBFF}
 [data-theme=dark] .sidebar a:focus-visible{outline-color:#77D0FF}
 [data-theme=dark] .preference-button{border-color:#35526A;background:#172536;color:#F4FAFF}
@@ -206,7 +218,7 @@ h2 span{color:var(--ink)}
 .theme-toggle:hover{background:#33384A;color:#fff}
 .theme-icon{width:22px;height:22px;overflow:visible}
 .theme-icon .sun-icon,
-.theme-icon .moon-icon{transform-origin:12px 12px;transition:opacity .28s ease,transform .45s cubic-bezier(.2,.8,.2,1)}
+.theme-icon .moon-icon{transform-origin:12px 12px;transition:none}
 .theme-icon .sun-icon{opacity:0;transform:rotate(75deg) scale(.55)}
 .theme-icon .sun-icon circle{fill:#F5B942}
 .theme-icon .sun-icon path{fill:none;stroke:#F5B942;stroke-width:1.8;stroke-linecap:round}
@@ -217,6 +229,19 @@ h2 span{color:var(--ink)}
 [data-theme=dark] .theme-toggle:hover{background:#203449}
 [data-theme=dark] .theme-icon .sun-icon{opacity:1;transform:rotate(0deg) scale(1)}
 [data-theme=dark] .theme-icon .moon-icon{opacity:0;transform:rotate(-35deg) scale(.6)}
+.sunset .theme-icon .sun-icon{animation:setting-sun 1.8s ease both}
+.sunrise .theme-icon .sun-icon{animation:rising-sun 1.8s ease both}
+.sunset .theme-icon .moon-icon,.sunrise .theme-icon .moon-icon{opacity:0;animation:none}
+@keyframes setting-sun{
+  0%{opacity:1;transform:translate(0,0) rotate(0)}
+  65%{opacity:1;transform:translate(7px,16px) rotate(25deg)}
+  100%{opacity:0;transform:translate(10px,30px) rotate(40deg)}
+}
+@keyframes rising-sun{
+  0%{opacity:0;transform:translate(-10px,30px) rotate(-40deg)}
+  25%{opacity:1;transform:translate(-7px,16px) rotate(-25deg)}
+  100%{opacity:1;transform:translate(0,0) rotate(0)}
+}
 
 /* Keep the capability section clean: no repeated guidance or empty inspector row. */
 .capability-stage:not(.has-pinned-skill) + .capability-inspector{display:none!important}
