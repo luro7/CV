@@ -37,6 +37,11 @@ export function initCareerTimeline() {
   const measure = () => {
     section.classList.add('is-company-journey');
     section.style.removeProperty('height');
+    stops.forEach(company => {
+      const roles = company.querySelectorAll('.career-company-role').length;
+      const columns = Math.max(1, Math.min(roles, Math.floor(track.clientWidth / 480)));
+      company.style.setProperty('--company-columns', columns);
+    });
     const usable = innerWidth > 800 && !motion.matches && wrapper.offsetHeight < innerHeight - 24;
     if (!usable) section.classList.remove('is-company-journey');
     if (usable) {
