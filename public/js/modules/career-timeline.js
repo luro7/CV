@@ -133,7 +133,7 @@ export function initCareerTimeline() {
   const sync = () => {
     frame = 0;
     const start = section.getBoundingClientRect().top + scrollY + parseFloat(getComputedStyle(section).paddingTop) - pinTop;
-    track.scrollLeft = Math.max(0, Math.min(travel, scrollY - start));
+    track.scrollLeft = Math.max(0, Math.min(travel, (scrollY - start) * 2.5));
     update();
   };
   const schedule = () => { if (!frame) frame = requestAnimationFrame(sync); };
@@ -144,7 +144,7 @@ export function initCareerTimeline() {
     const fixedHeight = wrapper.offsetHeight - 180;
     const bodyHeight = Math.max(160, innerHeight - fixedHeight - (innerWidth <= 800 ? 100 : 32));
     track.style.setProperty('--career-body-height', bodyHeight + 'px');
-    const readableSize = Math.max(16, Math.min(26, panelWidth * .022, bodyHeight / 19));
+    const readableSize = Math.max(16, Math.min(19, panelWidth * .018, bodyHeight / 22));
     track.style.setProperty('--career-copy-size', readableSize + 'px');
     items.forEach(item => {
       const points = rolePoints.get(item);
@@ -158,7 +158,7 @@ export function initCareerTimeline() {
         const panel = panels[panelIndex++];
         panel.hidden = false;
         const list = panel.querySelector('.responsibilities');
-        let count = Math.min(4, points.length - cursor);
+        let count = Math.min(6, points.length - cursor);
         // Measure actual localized copy at its unchanged font size.
         do {
           list.replaceChildren(...points.slice(cursor, cursor + count));
@@ -186,7 +186,7 @@ export function initCareerTimeline() {
     travel = Math.max(0, track.scrollWidth - track.clientWidth);
     pinTop = innerWidth <= 800 ? 68 : 0;
     section.style.setProperty('--career-pin-top', pinTop + 'px');
-    section.style.setProperty('--career-journey-height', wrapper.offsetHeight + travel + 'px');
+    section.style.setProperty('--career-journey-height', wrapper.offsetHeight + travel / 2.5 + 'px');
     section.classList.add('is-scroll-journey');
     schedule();
   };
@@ -195,7 +195,7 @@ export function initCareerTimeline() {
     event.preventDefault();
     const index = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : Math.max(0, Math.min(items.length - 1, current + (event.key === 'ArrowLeft' ? -1 : 1)));
     const start = section.getBoundingClientRect().top + scrollY + parseFloat(getComputedStyle(section).paddingTop) - pinTop;
-    window.scrollTo({top: start + Math.min(travel, items[index].offsetLeft - track.offsetLeft), behavior: motion.matches ? 'instant' : 'smooth'});
+    window.scrollTo({top: start + Math.min(travel, items[index].offsetLeft - track.offsetLeft) / 2.5, behavior: motion.matches ? 'instant' : 'smooth'});
   });
   addEventListener('scroll', schedule, {passive:true});
   addEventListener('resize', measure, {passive:true});

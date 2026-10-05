@@ -176,13 +176,13 @@ const projectGalleryCss = readFileSync(resolve(output, 'css/project-gallery.css'
 const projectShowcaseCss = readFileSync(resolve(output, 'css/project-showcase.css'), 'utf8');
 const compactProjectGalleryCss = projectGalleryCss.replace(/\s+/g, '');
 const compactProjectShowcaseCss = projectShowcaseCss.replace(/\s+/g, '');
-assert(compactProjectGalleryCss.includes('grid-column:1/-1'), 'Open gallery must span the project grid');
+assert(compactProjectGalleryCss.includes('.project-photo-dialog'), 'Open gallery must span the project grid');
 assert(compactProjectShowcaseCss.includes('aspect-ratio:16/9') && compactProjectShowcaseCss.includes('width:100%'), 'Project cards must constrain images to their responsive card width');
 assert(compactProjectGalleryCss.includes('.inline-gallery-photoimg'), 'Inline gallery must constrain its photos');
 assert(compactProjectGalleryCss.includes('@media(max-width:760px)'), 'Project gallery must have a mobile layout');
 assert(spanishHtml.includes('project-lightbox-link') && spanishHtml.includes('data-gallery="manos-a-la-obra"'), 'Project gallery must use grouped lightbox images');
 assert(existsSync(resolve(output, 'js/vendor/glightbox.min.js')) && existsSync(resolve(output, 'css/vendor/glightbox.min.css')) && existsSync(resolve(output, 'js/vendor/GLIGHTBOX-LICENSE.md')), 'GLightbox assets and license must be included');
-assert(readFileSync(resolve(output, 'js/project-gallery.js'), 'utf8').includes('galleryScrollFrame'), 'Gallery must advance photos using page scroll');
+assert(readFileSync(resolve(output, 'js/project-gallery.js'), 'utf8').includes('galleryPhotoIndex'), 'Gallery must allow optional photo navigation');
 assert(!spanishHtml.includes('swiper-bundle') && !spanishHtml.includes('project-gallery-main'), 'The previous gallery markup must be removed');
 assert(spanishHtml.includes('href="https://manosalaobra.pages.dev" target="_blank"'), 'Manos a la Obra project card must link to its public landing page');
 assert(printCss.includes('@page{size:A4'), 'Print output must use A4 paper');

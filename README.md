@@ -2,7 +2,7 @@
 
 Source code for the professional CV and technical portfolio published at [lucasrosat.pages.dev](https://lucasrosat.pages.dev).
 
-The project is intentionally lightweight: static generation, progressive enhancement and no npm runtime dependencies. Most interactions use native browser APIs; project images advance with native page scrolling; the former GLightbox assets retain their license. The interface is part of the portfolio itself, demonstrating responsive design, accessibility, browser APIs, secure deployment, bilingual SEO and interaction design without compromising readability.
+The project is intentionally lightweight: static generation, progressive enhancement and no npm runtime dependencies. Most interactions use native browser APIs; project images open in an optional native dialog; the former GLightbox assets retain their license. The interface is part of the portfolio itself, demonstrating responsive design, accessibility, browser APIs, secure deployment, bilingual SEO and interaction design without compromising readability.
 
 ## Highlights
 
@@ -44,7 +44,7 @@ The browser layer is split by feature responsibility. Each feature owns its styl
 - capability-map.js + capability-role-details.js + capability-map.css: skill visualization and role details
 - career-timeline.js + experience-timeline.css: experience progression enhancement
 - project-showcase.js + project-showcase.css: project presentation and Android preview composition
-- project-gallery.js + project-gallery.css: full-width project photo sequences, sticky stages and scroll-driven transitions
+- project-gallery.js + project-gallery.css: optional project photo dialog with keyboard navigation
 - credentials.js + credential-images.js + credential-descriptions.js + credential-wall.css: certification artwork, descriptions, Skillsoft details dialog and credential layout
 
 CSS files are loaded in an explicit order in src/templates/layout.html. Keep that order when reorganizing styles: later rules may intentionally refine earlier shared styles. Third-party gallery assets and their license stay isolated under public/css/vendor and public/js/vendor. Only deployable files belong in public/; temporary deployment markers do not.

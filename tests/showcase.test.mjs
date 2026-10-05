@@ -87,25 +87,19 @@ test('Skillsoft cards use local artwork and reserve embeds for the details dialo
   for (const asset of Object.values(assets.skillsoft)) assert.ok(documentHtml.includes('src="' + asset + '"'));
 });
 
-test('scroll gallery clamps at both ends and interpolates between photos', () => {
+test('optional gallery wraps photo navigation at both ends', () => {
   const source = readFileSync(resolve(root, 'public/js/project-gallery.js'), 'utf8');
   const context = vm.createContext({});
   vm.runInContext(source.replaceAll('export function', 'function'), context);
-  for (const [progress, count, index, fraction] of [[-1,3,0,0],[.5,3,0,.5],[1.25,3,1,.25],[9,3,2,0],[2,1,0,0]]) {
-    const result = context.galleryScrollFrame(progress, count);
-    assert.equal(result.index, index); assert.equal(result.fraction, fraction);
-  }
+  assert.equal(context.galleryPhotoIndex(-1,3),2);
+  assert.equal(context.galleryPhotoIndex(3,3),0);
+  assert.equal(context.galleryPhotoIndex(1,3),1);
 });
-test('project photos are revealed by page scrolling without gallery controls', () => {
+test('project gallery does not lengthen the page or capture page scrolling', () => {
   const script = readFileSync(resolve(root, 'public/js/project-gallery.js'), 'utf8');
-  const css = readFileSync(resolve(root, 'public/css/project-gallery.css'), 'utf8');
-  assert.ok(!script.includes('GLightbox'));
-  assert.ok(!script.includes('preventDefault'));
-  assert.ok(script.includes("addEventListener('scroll'"));
-  assert.ok(script.includes('motion.matches'));
-  assert.ok(css.includes('grid-column:1/-1'));
-  assert.ok(css.includes('position:sticky'));
-  assert.ok(css.includes('prefers-reduced-motion:reduce'));
+  assert.ok(script.includes('dialog.showModal()'));
+  assert.ok(!script.includes("addEventListener('scroll'"));
+  assert.ok(!script.includes('journey.style.height'));
 });
 
 test('portfolio feature styles are owned by their modules instead of patch stylesheets', () => {
