@@ -112,3 +112,12 @@ test('portfolio feature styles are owned by their modules instead of patch style
   assert.ok(layout.includes('/css/project-showcase.css'));
   assert.ok(layout.includes('/css/credential-wall.css'));
 });
+
+test('career chapters preserve three companies without scroll-height or font fitting', () => {
+  const script = readFileSync(resolve(root, 'public/js/modules/career-timeline.js'), 'utf8');
+  assert.ok(script.includes("setAttribute('role','tablist')"));
+  assert.ok(script.includes("setAttribute('role','tabpanel')"));
+  assert.ok(script.includes("event.key==='Home'"));
+  assert.ok(!script.includes('company-copy-size'));
+  assert.ok(!script.includes('section.style.height'));
+});

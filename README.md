@@ -42,7 +42,7 @@ The browser layer is split by feature responsibility. Each feature owns its styl
 - interaction-model.js: pure ranking, pipeline-stage and skill-role matching logic
 - lab.js: command palette, expertise map, scroll pipeline, print behavior and Engineering Mode
 - capability-map.js + capability-role-details.js + capability-map.css: skill visualization and role details
-- career-timeline.js + experience-timeline.css: experience progression enhancement
+- career-timeline.js + experience-timeline.css: editorial company chapters, accessible chronology tabs and restrained transitions
 - project-showcase.js + project-showcase.css: project presentation and Android preview composition
 - project-gallery.js + project-gallery.css: optional project photo dialog with keyboard navigation
 - credentials.js + credential-images.js + credential-descriptions.js + credential-wall.css: certification artwork, descriptions, Skillsoft details dialog and credential layout
