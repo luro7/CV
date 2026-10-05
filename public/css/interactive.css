@@ -222,10 +222,10 @@ button:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
 .hero-summary p{font-size:1.05rem}
 .hero-summary p+p{margin-top:.9rem}
 .hero-focus{list-style:none;display:flex;flex-wrap:wrap;gap:.55rem;padding:0;margin:1.35rem 0 0}
-.hero-focus li{font:600 .72rem Consolas,monospace;letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--interactive-accent-line);padding:.3rem .15rem;color:var(--interactive-accent)}
+.hero-focus li{font:600 .72rem Consolas,monospace;letter-spacing:.04em;text-transform:uppercase;padding:.3rem .15rem;color:var(--interactive-accent)}
 .download-button{min-height:48px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:24px;padding:.65rem 1.2rem;display:inline-flex;align-items:center;gap:.75rem;font-weight:600}
 .download-button:hover{background:var(--interactive-accent-soft);border-color:var(--interactive-accent-line);transform:translateY(-1px)}
-.profile-details{max-width:64ch;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:1.25rem 0 0}
+.profile-details{max-width:64ch;border:0;margin:1.25rem 0 0}
 .profile-details summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:52px;cursor:pointer;font-weight:650;color:var(--ink)}
 .profile-details summary::-webkit-details-marker{display:none}
 .profile-details summary::after{content:"+";font:600 1rem Consolas,monospace;color:var(--interactive-accent)}
@@ -386,3 +386,5 @@ html{scroll-padding-top:80px}
 .sidebar.has-mobile-menu.is-menu-open nav a{display:flex;justify-content:space-between;text-align:left;padding:.5rem .75rem}
 .sidebar.has-mobile-menu.is-menu-open .sidebar-contact{display:block}
 }
+
+@media screen{.hero{border-bottom:0}}

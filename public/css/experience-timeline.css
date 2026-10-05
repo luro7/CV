@@ -31,8 +31,15 @@
   .career-company{container-type:inline-size;display:grid;grid-template-columns:repeat(var(--company-columns,1),minmax(0,1fr));gap:.75rem 2rem;align-content:start}
   .career-company>h3{grid-column:1/-1}
   .career-company-role{min-width:0}
-  .career-company-role .responsibilities{grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));max-width:none;width:100%}
-  .career-company-role .responsibilities li{font-size:clamp(.8rem,.55cqw,1rem);line-height:1.45}
-  .career-company-role .experience-role{font-size:clamp(1rem,.7cqw,1.25rem)}
-  .career-company-role .tags li{font-size:clamp(.65rem,.4cqw,.8rem)}
+  .career-company-role .responsibilities{grid-template-columns:repeat(auto-fit,minmax(min(100%,28ch),1fr));max-width:none;width:100%}
+  .career-company-role .responsibilities li{font-size:var(--company-copy-size,1rem);line-height:1.45}
+  .career-company-role .experience-role{font-size:calc(var(--company-copy-size,1rem) * 1.15)}
+  .career-company-role .tags li{font-size:calc(var(--company-copy-size,1rem) * .72)}
+}
+
+@media screen{
+.career-company-track{align-items:start}
+.career-company>h3{font-size:calc(var(--company-copy-size,1rem) * 1.5)}
+.career-company-role .date{font-size:calc(var(--company-copy-size,1rem) * .8)}
+.career-company-role .responsibilities{font-size:var(--company-copy-size,1rem)}
 }
