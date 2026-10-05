@@ -121,3 +121,11 @@ test('career chapters preserve three companies without scroll-height or font fit
   assert.ok(!script.includes('company-copy-size'));
   assert.ok(!script.includes('section.style.height'));
 });
+
+test('career wheel navigation does not depend on the entire section fitting in the viewport', () => {
+  const script = readFileSync(resolve(root, 'public/js/modules/career-timeline.js'), 'utf8');
+  assert.ok(script.includes("shell.addEventListener('wheel'"));
+  assert.ok(!script.includes('rect.bottom>innerHeight'));
+  assert.ok(!script.includes('rect.top<0'));
+  assert.ok(script.includes('next>=panels.length'));
+});

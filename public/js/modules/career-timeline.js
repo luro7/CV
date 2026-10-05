@@ -56,8 +56,7 @@ export function initCareerTimeline() {
   });
   let wheelTimer = 0;
   shell.addEventListener('wheel',event=>{
-    const rect=shell.getBoundingClientRect();
-    if(event.ctrlKey || !event.deltaY || rect.top<0 || rect.bottom>innerHeight || innerWidth<=800) return;
+    if(event.ctrlKey || !event.deltaY) return;
     const next=current+Math.sign(event.deltaY);
     if(wheelTimer){event.preventDefault();clearTimeout(wheelTimer);wheelTimer=setTimeout(()=>wheelTimer=0,350);return;}
     if(next<0 || next>=panels.length) return;
