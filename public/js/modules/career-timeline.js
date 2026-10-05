@@ -25,9 +25,14 @@ export function initCareerTimeline() {
   track.append(...companies.values()); timeline.replaceChildren(track);
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let distance = 0, start = 0, frame = 0;
+  const stops = [...companies.values()];
+  const stopOffset = index => stops[index].offsetLeft - stops[0].offsetLeft;
   const update = () => {
     frame = 0;
-    if (section.classList.contains('is-company-journey')) track.scrollLeft = Math.round(Math.max(0, Math.min(distance, (scrollY - start) * 4)) / track.clientWidth) * track.clientWidth;
+    if (section.classList.contains('is-company-journey')) {
+      const index = Math.max(0, Math.min(stops.length - 1, Math.round((scrollY - start) * 4 / track.clientWidth)));
+      track.scrollTo({left:stopOffset(index), behavior:'instant'});
+    }
   };
   const measure = () => {
     section.classList.add('is-company-journey');
@@ -51,5 +56,25 @@ export function initCareerTimeline() {
     event.preventDefault();
     window.scrollTo({top:start + Math.max(0,Math.min(distance,track.scrollLeft + (event.key === 'ArrowRight' ? track.clientWidth : -track.clientWidth))) / 4,behavior:motion.matches?'instant':'smooth'});
   });
+  let gestureTimer = 0;
+  addEventListener('wheel', event => {
+    if (!section.classList.contains('is-company-journey') || event.ctrlKey || !event.deltaY) return;
+    const end = start + distance / 4;
+    if (scrollY < start - 2 || scrollY > end + 2) return;
+    if (gestureTimer) {
+      event.preventDefault();
+      clearTimeout(gestureTimer);
+      gestureTimer = setTimeout(() => { gestureTimer = 0; }, 450);
+      return;
+    }
+    const index = Math.max(0, Math.min(stops.length - 1, Math.round((scrollY - start) * 4 / track.clientWidth)));
+    const next = index + Math.sign(event.deltaY);
+    if (next < 0 || next >= stops.length) return;
+    event.preventDefault();
+    window.scrollTo({top:start + stopOffset(next) / 4, behavior:'instant'});
+    track.scrollTo({left:stopOffset(next), behavior:'instant'});
+    gestureTimer = setTimeout(() => { gestureTimer = 0; }, 450);
+  }, {passive:false});
   measure();
 }
+
