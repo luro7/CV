@@ -1,131 +1,33 @@
-/* Capability constellation: native SVG + DOM layout inspired by force-directed and compound graph interfaces. */
+/* Three capability cards with native selectable technologies. */
 .capability-map-shell{margin-top:1.5rem}
-.capability-map-intro{display:flex;justify-content:space-between;align-items:end;gap:2rem;padding-bottom:1.2rem;border-bottom:1px solid var(--line)}
-.capability-map-intro h3{margin:.35rem 0 .45rem;font-size:1.25rem}
-.capability-map-intro>div:first-child>p:last-child{max-width:58ch;color:var(--muted);font-size:.94rem}
-.capability-legend{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.55rem}
-.capability-legend>span{display:inline-flex;align-items:center;gap:.45rem;padding:.4rem .65rem;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--paper) 88%,transparent);font:600 .68rem Consolas,monospace;color:var(--muted)}
-.capability-legend b{color:var(--interactive-accent);font-weight:700}
-.capability-stage{position:relative;isolation:isolate;min-height:610px;overflow:hidden;margin-top:.35rem;border-bottom:1px solid var(--line);background:radial-gradient(circle at 50% 46%,color-mix(in srgb,var(--interactive-accent) 8%,transparent),transparent 34%),linear-gradient(180deg,color-mix(in srgb,var(--paper) 58%,transparent),transparent 24%,transparent 76%,color-mix(in srgb,var(--paper) 45%,transparent))}
-.capability-stage::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(circle,color-mix(in srgb,var(--interactive-accent) 22%,transparent) 1px,transparent 1px);background-size:28px 28px;mask-image:radial-gradient(ellipse at center,#000 0 48%,transparent 82%);opacity:.5}
-.capability-link-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
-.capability-link{stroke:color-mix(in srgb,var(--line) 82%,transparent);stroke-width:1;opacity:.55;transition:stroke .2s ease,opacity .2s ease,stroke-width .2s ease}
-.capability-link.is-group-active{stroke:color-mix(in srgb,var(--interactive-accent) 32%,var(--line));opacity:.7}
-.capability-link.is-active{stroke:var(--interactive-accent);stroke-width:1.8;opacity:1}
-.capability-relation-link{stroke:var(--interactive-accent-bright);stroke-width:1.5;stroke-dasharray:4 5;opacity:.72;animation:capability-line-in .28s ease both}
-.capability-clusters{position:absolute;inset:0;z-index:1}
-.capability-cluster,.capability-node-list{display:contents}
-.capability-hub,.capability-node{position:absolute;left:var(--cap-x);top:var(--cap-y);transform:translate(-50%,-50%);z-index:2}
-.capability-hub{display:grid;gap:.22rem;width:148px;padding:.8rem .9rem;border:1px solid color-mix(in srgb,var(--interactive-accent) 34%,var(--line));border-radius:17px;background:color-mix(in srgb,var(--paper) 92%,transparent);box-shadow:0 14px 34px color-mix(in srgb,var(--ink) 8%,transparent);backdrop-filter:blur(10px);transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease}
-.capability-hub span{font:700 .66rem Consolas,monospace;letter-spacing:.08em;color:var(--interactive-accent)}
-.capability-hub strong{font-size:.84rem;line-height:1.3;text-transform:uppercase;letter-spacing:.025em}
-.capability-hub.is-active{border-color:var(--interactive-accent);box-shadow:0 0 0 5px color-mix(in srgb,var(--interactive-accent) 10%,transparent),0 18px 44px color-mix(in srgb,var(--ink) 11%,transparent);transform:translate(-50%,-50%) scale(1.025)}
-.capability-node{max-width:174px;min-height:36px;padding:.45rem .68rem;border:1px solid color-mix(in srgb,var(--line) 88%,var(--interactive-accent));border-radius:999px;background:color-mix(in srgb,var(--paper) 91%,transparent);color:var(--ink);box-shadow:0 8px 22px color-mix(in srgb,var(--ink) 6%,transparent);backdrop-filter:blur(8px);font-size:.74rem;line-height:1.25;text-align:center;opacity:0;transition:opacity .32s ease var(--cap-delay),transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease}
-.capability-stage.is-ready .capability-node{opacity:1}
-.capability-node-size-2{font-weight:620;padding:.5rem .76rem}
-.capability-node-size-3{font-size:.8rem;font-weight:680;padding:.58rem .85rem;border-color:color-mix(in srgb,var(--interactive-accent) 34%,var(--line))}
-.capability-node:hover,.capability-node:focus-visible{z-index:5;transform:translate(-50%,-50%) translateY(-2px);border-color:var(--interactive-accent);box-shadow:0 12px 30px color-mix(in srgb,var(--interactive-accent) 15%,transparent)}
-.capability-node.is-active{z-index:6;background:var(--interactive-accent);border-color:var(--interactive-accent);color:#fff;box-shadow:0 0 0 6px color-mix(in srgb,var(--interactive-accent) 13%,transparent),0 14px 36px color-mix(in srgb,var(--interactive-accent) 22%,transparent)}
-.capability-node.is-related{z-index:4;border-color:var(--interactive-accent-bright);color:var(--interactive-accent);background:color-mix(in srgb,var(--paper) 84%,var(--interactive-accent-soft))}
-.capability-node.is-dimmed{opacity:.24!important;filter:saturate(.45)}
-.capability-inspector{position:relative;display:none;grid-template-columns:minmax(180px,.7fr) minmax(220px,1.2fr) minmax(220px,1fr);gap:1.25rem;align-items:center;min-height:92px;padding:1rem 0;border-bottom:1px solid var(--line)}
-.capability-inspector-main{display:grid;gap:.22rem}
-.capability-inspector-main span{font:700 .66rem Consolas,monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--interactive-accent)}
-.capability-inspector-main strong{font-size:1rem}
-.capability-inspector>p{margin:0;color:var(--muted);font-size:.84rem;line-height:1.55}
-.capability-inspector .skill-trace-status{margin:0;padding:0;border:0;color:var(--interactive-accent);font-size:.72rem}
-.capability-inspector[data-active=true]{display:grid;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--interactive-accent) 5%,transparent),transparent)}
-.capability-clear{position:absolute;right:0;top:.7rem;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--muted);padding:.38rem .68rem;font:600 .68rem Consolas,monospace;transition:border-color .18s,color .18s,background .18s}
-.capability-clear:hover,.capability-clear:focus-visible{border-color:var(--interactive-accent);color:var(--interactive-accent);background:var(--interactive-accent-soft)}
+.capability-stage{position:relative;min-height:0;isolation:isolate}
+.capability-link-layer{display:none}
+.capability-clusters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.25rem}
+.capability-cluster{min-width:0;display:flex;flex-direction:column;gap:1.5rem;padding:1.75rem;background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:0 8px 24px color-mix(in srgb,var(--ink) 4%,transparent);transition:border-color .25s,transform .25s,box-shadow .25s}
+.capability-cluster:hover,.capability-cluster:focus-within{border-color:var(--interactive-accent-line);transform:translateY(-4px);box-shadow:0 16px 36px color-mix(in srgb,var(--ink) 8%,transparent)}
+.capability-hub{display:grid;gap:.5rem;padding-bottom:1.3rem;border-bottom:1px solid var(--line)}
+.capability-hub>span{font:600 .7rem Consolas,monospace;color:var(--muted);letter-spacing:.08em}
+.capability-hub strong{font-size:clamp(1.25rem,1.65vw,1.7rem);font-weight:600;letter-spacing:-.035em;line-height:1.2}
+.capability-hub.is-active{color:var(--interactive-accent)}
+.capability-node-list{display:flex;align-content:flex-start;flex-wrap:wrap;gap:.6rem}
+.capability-node{max-width:100%;min-height:44px;padding:.55rem .75rem;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--ink) 3%,var(--paper));color:var(--ink);font:inherit;font-size:.85rem;line-height:1.35;text-align:left;transition:background .2s,border-color .2s,opacity .2s,transform .2s}
+.capability-node-size-3{font-weight:600}
+.capability-node:hover,.capability-node:focus-visible{background:var(--interactive-accent-soft);border-color:var(--interactive-accent);transform:translateY(-2px)}
+.capability-node.is-active{background:var(--interactive-accent);border-color:var(--interactive-accent);color:var(--paper)}
+.capability-node.is-related{border-color:var(--interactive-accent);background:var(--interactive-accent-soft)}
+.capability-node.is-dimmed{opacity:.4}
+.capability-inspector{position:relative;display:none;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:1rem;padding:1.25rem;margin-top:1.25rem;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
+.capability-inspector[data-active=true]{display:grid;padding-right:10rem}
+.capability-inspector-main{display:grid;gap:.35rem}
+.capability-inspector-main span{font:600 .7rem Consolas,monospace;color:var(--muted)}
+.capability-inspector-main strong{font-size:1.1rem}
+.capability-inspector>p{margin:0;font-size:.85rem;color:var(--muted)}
+.capability-inspector .skill-trace-status{grid-column:1/-1;color:var(--interactive-accent)}
+.capability-clear{position:absolute;right:1rem;top:1rem;min-height:44px;padding:.5rem .75rem;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink)}
+.capability-clear:hover,.capability-clear:focus-visible{background:var(--interactive-accent-soft);border-color:var(--interactive-accent)}
 .capability-clear[hidden]{display:none!important}
-[data-theme=dark] .capability-stage{background:radial-gradient(circle at 50% 46%,#6FCBFF10,transparent 34%),linear-gradient(180deg,#12172155,transparent 24%,transparent 76%,#12172144)}
-[data-theme=dark] .capability-stage::before{background-image:radial-gradient(circle,#6FCBFF28 1px,transparent 1px)}
-[data-theme=dark] .capability-hub{background:#121A24E8;border-color:#30465A;box-shadow:0 16px 38px #0004}
-[data-theme=dark] .capability-hub.is-active{border-color:#6FCBFF;box-shadow:0 0 0 5px #6FCBFF12,0 18px 44px #0006}
-[data-theme=dark] .capability-node{background:#111923E8;border-color:#2C3B4C;color:#EAF2F8;box-shadow:0 8px 24px #0003}
-[data-theme=dark] .capability-node-size-3{border-color:#355B78}
-[data-theme=dark] .capability-node.is-active{background:#6FCBFF;border-color:#6FCBFF;color:#071019;box-shadow:0 0 0 6px #6FCBFF18,0 14px 34px #0006}
-[data-theme=dark] .capability-node.is-related{background:#17283A;color:#AEE6FF;border-color:#4E7B99}
-[data-theme=dark] .capability-link{stroke:#2C3B4C}
-[data-theme=dark] .capability-link.is-group-active{stroke:#355B78}
-[data-theme=dark] .capability-link.is-active{stroke:#6FCBFF}
-[data-theme=dark] .capability-relation-link{stroke:#8AD7FF}
-@keyframes capability-line-in{from{opacity:0;stroke-dashoffset:14}to{opacity:.72;stroke-dashoffset:0}}
-@media(max-width:1024px){
-  .capability-map-intro{display:grid;align-items:start;gap:1rem}
-  .capability-legend{justify-content:flex-start}
-  .capability-stage{min-height:auto;overflow:hidden;padding:.8rem 0 1rem;background:none}
-  .capability-stage::before{display:none}
-  .capability-clusters{position:relative;inset:auto;display:grid;gap:1rem;z-index:auto}
-  .capability-link-layer{z-index:1}
-  .capability-cluster{position:relative;display:block;min-height:390px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--paper) 94%,transparent);overflow:hidden}
-  .capability-cluster::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,color-mix(in srgb,var(--interactive-accent) 20%,transparent) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(ellipse at center,#000 0 52%,transparent 88%);opacity:.35}
-  .capability-node-list{display:contents}
-  .capability-hub{width:156px}
-  .capability-node{max-width:160px;font-size:.72rem}
-  .capability-node-size-3{font-size:.76rem}
-  .capability-inspector{grid-template-columns:1fr;gap:.45rem;padding:1rem 0 1.15rem;padding-right:9rem}
-  .capability-inspector .skill-trace-status{margin-top:.2rem}
-  [data-theme=dark] .capability-cluster{background:#0E151EE8}
-}
-@media(max-width:620px){
-  .capability-map-intro{gap:.75rem}
-  .capability-legend{gap:.4rem}
-  .capability-legend>span{font-size:.62rem;padding:.32rem .5rem}
-  .capability-cluster{min-height:445px}
-  .capability-hub{width:142px;padding:.7rem .75rem}
-  .capability-node{max-width:145px;font-size:.68rem;padding:.42rem .58rem}
-  .capability-node-size-3{font-size:.71rem}
-  .capability-inspector{padding-right:0;padding-top:3.1rem}
-  .capability-clear{left:0;right:auto;top:.7rem}
-}
-@media(prefers-reduced-motion:reduce){
-  .capability-node,.capability-hub,.capability-link,.capability-relation-link{transition:none;animation:none}
-}
-
-/* Capability map visibility and inspector refinements. Loaded after capability-map.css. */
-.capability-link{
-  stroke:color-mix(in srgb,var(--line) 70%,var(--interactive-accent) 30%);
-  stroke-width:1.15;
-  opacity:.78;
-}
-.capability-link.is-group-active{
-  stroke:color-mix(in srgb,var(--interactive-accent) 48%,var(--line));
-  opacity:.88;
-}
-.capability-inspector{
-  grid-template-columns:minmax(190px,.55fr) minmax(0,1.45fr);
-}
-.capability-inspector>p[data-capability-usage]{
-  color:var(--muted);
-  line-height:1.65;
-}
-.capability-inspector .skill-trace-status{
-  position:absolute;
-  width:1px;
-  height:1px;
-  padding:0;
-  margin:-1px;
-  overflow:hidden;
-  clip:rect(0,0,0,0);
-  white-space:nowrap;
-  border:0;
-}
-.capability-clear{
-  display:none!important;
-}
-[data-theme=dark] .capability-link{
-  stroke:#3A5268;
-  opacity:.82;
-}
-[data-theme=dark] .capability-link.is-group-active{
-  stroke:#4A718E;
-  opacity:.92;
-}
-@media(max-width:1024px){
-  .capability-inspector{
-    grid-template-columns:1fr;
-    gap:.55rem;
-    padding-right:0;
-  }
-}
+[data-theme=dark] .capability-node.is-active{color:#071019}
+@media(max-width:1000px){.capability-clusters{grid-template-columns:1fr}.capability-cluster{padding:1.5rem}.capability-hub strong{font-size:1.6rem}}
+@media(max-width:620px){.capability-cluster{padding:1.15rem;gap:1rem}.capability-node{font-size:.82rem}.capability-inspector[data-active=true]{grid-template-columns:1fr;padding:1rem;padding-bottom:4.5rem}.capability-clear{top:auto;bottom:1rem}}
+@media(prefers-reduced-motion:reduce){.capability-cluster,.capability-node{transition:none}.capability-cluster:hover,.capability-node:hover{transform:none}}
+@media print{.capability-map-shell{display:none}}

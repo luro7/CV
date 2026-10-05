@@ -371,3 +371,18 @@ button:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
   .print-cv-project p{font-size:7.5pt;margin:0;line-height:1.25}
   .print-cv-project .print-cv-project-tech{font-size:7pt;color:#475569}
 }
+
+/* Compact mobile navigation, progressively enhanced. */
+.mobile-menu-toggle{display:none}
+@media screen and (max-width:800px){
+html{scroll-padding-top:80px}
+.sidebar.has-mobile-menu{display:block;padding:.6rem 1rem}
+.has-mobile-menu .sidebar-top{display:flex;align-items:center;gap:.5rem}
+.has-mobile-menu .preferences{display:flex;margin-left:auto;gap:.4rem}
+.has-mobile-menu .engineering-toggle,.has-mobile-menu .command-toggle{display:none}
+.has-mobile-menu .mobile-menu-toggle{display:grid;place-items:center;width:44px;height:44px;background:transparent;border:1px solid var(--sidebar-line);border-radius:50%;color:inherit;font-size:1.3rem;flex:none}
+.sidebar.has-mobile-menu nav,.sidebar.has-mobile-menu .sidebar-contact{display:none}
+.sidebar.has-mobile-menu.is-menu-open nav{display:grid;grid-template-columns:1fr;margin:.75rem 0}
+.sidebar.has-mobile-menu.is-menu-open nav a{display:flex;justify-content:space-between;text-align:left;padding:.5rem .75rem}
+.sidebar.has-mobile-menu.is-menu-open .sidebar-contact{display:block}
+}

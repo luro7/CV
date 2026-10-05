@@ -1,6 +1,6 @@
 import siteData from '../site-data.js';
 import translations from '../translations.js';
-import { buildCapabilityModel, nextPinnedSkill, relaxCapabilityLayout, skillMatchesExperience } from './interaction-model.js?v=capability-layout-20260928';
+import { buildCapabilityModel, nextPinnedSkill, skillMatchesExperience } from './interaction-model.js?v=capability-layout-20260928';
 
 const root = document.documentElement;
 const tr = text => root.lang === 'es' ? (translations[text] || text) : text;
@@ -20,47 +20,6 @@ const estimateNodeBox = node => ({
   width: clamp(74 + node.skill.length * 4.3, 92, node.importance === 3 ? 172 : 154),
   height: node.skill.length > 24 ? 52 : 38
 });
-
-function layoutGroupNodes(nodes, anchor, width, groupIndex) {
-  const ordered = [...nodes].sort((a, b) => b.importance - a.importance || a.order - b.order);
-  const innerCount = Math.min(5, ordered.length);
-  const innerRx = Math.min(118, width * 0.095);
-  const innerRy = 108;
-  const outerRx = Math.min(172, width * 0.135);
-  const outerRy = 182;
-  const rotation = [-0.26, 0.12, -0.1][groupIndex] || 0;
-
-  return ordered.map((node, index) => {
-    const outer = index >= innerCount;
-    const ringIndex = outer ? index - innerCount : index;
-    const ringCount = outer ? ordered.length - innerCount : innerCount;
-    const angle = rotation + (Math.PI * 2 * ringIndex) / Math.max(1, ringCount) - Math.PI / 2;
-    const box = estimateNodeBox(node);
-    const targetX = anchor.x + Math.cos(angle) * (outer ? outerRx : innerRx);
-    const targetY = anchor.y + Math.sin(angle) * (outer ? outerRy : innerRy);
-    return { ...node, ...box, x: targetX, y: targetY, targetX, targetY };
-  });
-}
-
-function layoutMiniGroupNodes(nodes, anchor, width) {
-  const ordered = [...nodes].sort((a, b) => b.importance - a.importance || a.order - b.order);
-  const innerCount = Math.min(4, ordered.length);
-  const innerRx = Math.min(135, width * 0.29);
-  const outerRx = Math.min(205, width * 0.43);
-  const innerRy = 92;
-  const outerRy = 158;
-
-  return ordered.map((node, index) => {
-    const outer = index >= innerCount;
-    const ringIndex = outer ? index - innerCount : index;
-    const ringCount = outer ? ordered.length - innerCount : innerCount;
-    const angle = (Math.PI * 2 * ringIndex) / Math.max(1, ringCount) - Math.PI / 2 + (outer ? 0.28 : -0.12);
-    const box = estimateNodeBox(node);
-    const targetX = anchor.x + Math.cos(angle) * (outer ? outerRx : innerRx);
-    const targetY = anchor.y + Math.sin(angle) * (outer ? outerRy : innerRy);
-    return { ...node, ...box, x: targetX, y: targetY, targetX, targetY };
-  });
-}
 
 export function initCapabilityConstellation() {
   const mounted = document.querySelector('[data-skill-map]');
@@ -388,66 +347,7 @@ export function initCapabilityConstellation() {
     element.style.setProperty('--cap-y', (node.y + offsetY) + 'px');
   };
 
-  const layoutStacked = () => {
-    container.classList.add('is-stacked');
-    for (const group of model.groups) {
-      const cluster = clusterByGroup.get(group.groupIndex);
-      const hub = hubByGroup.get(group.groupIndex);
-      if (!cluster || !hub) continue;
-      const width = cluster.clientWidth;
-      const height = cluster.clientHeight;
-      if (!width || !height) continue;
-      const anchor = { x: width * 0.5, y: height * 0.5 };
-      hub.style.setProperty('--cap-x', anchor.x + 'px');
-      hub.style.setProperty('--cap-y', anchor.y + 'px');
-      const obstacles = [{ x: anchor.x, y: anchor.y, width: Math.min(210, width * 0.62), height: 84, padding: 18 }];
-      const candidates = layoutMiniGroupNodes(
-        model.nodes.filter(node => node.groupIndex === group.groupIndex),
-        anchor,
-        width
-      );
-      const relaxed = relaxCapabilityLayout(candidates, width, height, obstacles, 120);
-      for (const node of relaxed) positionNode(node);
-    }
-  };
-
-  const layoutDesktop = () => {
-    container.classList.remove('is-stacked');
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    if (!width || !height) return;
-
-    const anchors = [
-      { x: width * 0.18, y: height * 0.50 },
-      { x: width * 0.50, y: height * 0.45 },
-      { x: width * 0.82, y: height * 0.50 }
-    ];
-    const obstacles = anchors.map(anchor => ({ ...anchor, width: 202, height: 92, padding: 18 }));
-    const candidates = [];
-
-    for (const group of model.groups) {
-      const hub = hubByGroup.get(group.groupIndex);
-      const anchor = anchors[group.groupIndex];
-      if (hub) {
-        hub.style.setProperty('--cap-x', anchor.x + 'px');
-        hub.style.setProperty('--cap-y', anchor.y + 'px');
-      }
-      candidates.push(...layoutGroupNodes(
-        model.nodes.filter(node => node.groupIndex === group.groupIndex),
-        anchor,
-        width,
-        group.groupIndex
-      ));
-    }
-
-    const relaxed = relaxCapabilityLayout(candidates, width, height, obstacles, 120);
-    for (const node of relaxed) positionNode(node);
-  };
-
   const layout = () => {
-    if (stackedQuery.matches) layoutStacked();
-    else layoutDesktop();
-
     requestAnimationFrame(() => {
       const width = container.clientWidth;
       const height = container.clientHeight;

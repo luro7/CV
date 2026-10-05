@@ -2,14 +2,14 @@ import { trackSections } from './modules/navigation.js';
 import { initPreferences } from './modules/preferences.js';
 import { initMotion } from './modules/motion.js';
 import { initLab } from './modules/lab.js';
-import { initCareerTimeline } from './modules/career-timeline.js?v=career-progression-20260928';
+import { initCareerTimeline } from './modules/career-timeline.js?v=career-horizontal-20261004';
 import { initCapabilityConstellation } from './modules/capability-map.js?v=capability-interaction-20260928';
 import { initCapabilityRoleDetails } from './modules/capability-role-details.js?v=capability-role-detail-20260928b';
 import { initProjectShowcase } from './modules/project-showcase.js?v=project-showcase-layout-fix-20260928';
 import { initCredentials } from './modules/credentials.js?v=credentials-static-badges-20260929';
 import { initCredentialImages } from './modules/credential-images.js?v=credential-registry-v2-20260929';
 import { initCredentialDescriptions } from './modules/credential-descriptions.js?v=credential-local-badges-20260929c';
-import { initProjectGallery } from './project-gallery.js?v=gallery-redesign-20260929';
+import { initProjectGallery } from './project-gallery.js?v=inline-gallery-20261004';
 
 initPreferences();
 trackSections();

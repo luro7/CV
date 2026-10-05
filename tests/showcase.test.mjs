@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { render } from '../src/render.mjs';
+import vm from 'node:vm';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 
@@ -31,7 +32,7 @@ test('android project preview uses multiple screenshots instead of a tiny isolat
   assert.ok(css.includes('.project-phone-shot'));
 });
 
-test('credential cards use a badge-first vertical layout', () => {
+test('credential cards give each badge equal space in a responsive wallet layout', () => {
   const template = readFileSync(resolve(root, 'src/templates/cards/certification.html'), 'utf8');
   const css = readFileSync(resolve(root, 'public/css/credential-wall.css'), 'utf8');
 
@@ -39,9 +40,9 @@ test('credential cards use a badge-first vertical layout', () => {
   assert.ok(template.includes('class="credential-info"'));
   assert.ok(template.includes('class="credential-actions"'));
   assert.ok(!template.includes('credential-card-link'));
-  assert.ok(css.includes('flex-direction: column'));
-  assert.ok(css.includes('min-height: clamp(205px, 18vw, 250px)'));
-  assert.ok(css.includes('width: min(64%, 200px)'));
+  assert.ok(css.includes('grid-template-columns:minmax(110px,.65fr) minmax(0,1.6fr)'));
+  assert.ok(css.includes('min-height:270px'));
+  assert.ok(css.includes('max-width:150px'));
   assert.ok(!css.includes('.skillsoft-card-preview'));
 });
 
@@ -86,19 +87,25 @@ test('Skillsoft cards use local artwork and reserve embeds for the details dialo
   for (const asset of Object.values(assets.skillsoft)) assert.ok(documentHtml.includes('src="' + asset + '"'));
 });
 
-test('gallery thumbnail navigation cannot bubble into the outside-click closer', () => {
+test('scroll gallery clamps at both ends and interpolates between photos', () => {
+  const source = readFileSync(resolve(root, 'public/js/project-gallery.js'), 'utf8');
+  const context = vm.createContext({});
+  vm.runInContext(source.replaceAll('export function', 'function'), context);
+  for (const [progress, count, index, fraction] of [[-1,3,0,0],[.5,3,0,.5],[1.25,3,1,.25],[9,3,2,0],[2,1,0,0]]) {
+    const result = context.galleryScrollFrame(progress, count);
+    assert.equal(result.index, index); assert.equal(result.fraction, fraction);
+  }
+});
+test('project photos are revealed by page scrolling without gallery controls', () => {
   const script = readFileSync(resolve(root, 'public/js/project-gallery.js'), 'utf8');
   const css = readFileSync(resolve(root, 'public/css/project-gallery.css'), 'utf8');
-  const layout = readFileSync(resolve(root, 'src/templates/layout.html'), 'utf8');
-
-  assert.ok(script.includes("chrome.addEventListener('click', event => event.stopPropagation())"));
-  assert.match(script, /event\.preventDefault\(\);\r?\n\s+event\.stopPropagation\(\);/);
-  assert.ok(script.includes('gallery.goToSlide(index)'));
-  assert.ok(script.includes('closeOnOutsideClick: true'));
-  assert.ok(css.includes('.project-gallery-thumbs'));
-  assert.ok(css.includes('.project-gallery-thumb.is-active'));
-  assert.ok(layout.includes('/css/project-gallery.css'));
-  assert.ok(!layout.includes('/css/gallery-premium.css'));
+  assert.ok(!script.includes('GLightbox'));
+  assert.ok(!script.includes('preventDefault'));
+  assert.ok(script.includes("addEventListener('scroll'"));
+  assert.ok(script.includes('motion.matches'));
+  assert.ok(css.includes('grid-column:1/-1'));
+  assert.ok(css.includes('position:sticky'));
+  assert.ok(css.includes('prefers-reduced-motion:reduce'));
 });
 
 test('portfolio feature styles are owned by their modules instead of patch stylesheets', () => {

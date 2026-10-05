@@ -55,7 +55,7 @@ export function initMotion() {
     }
   }, { threshold: 0, rootMargin: '48px' });
 
-  document.querySelectorAll('.section-heading,.skill-map-panel,.expertise-card,.experience-item,.education-item,.certification-card,.languages')
+  document.querySelectorAll('.section-heading,.skill-map-panel,.expertise-card,.timeline .experience-item,.career-detail-panel,.education-item,.certification-card,.languages')
     .forEach((element, index) => {
       element.classList.add('reveal');
       element.style.setProperty('--reveal-delay', String(Math.min(index % 4, 3) * 55) + 'ms');

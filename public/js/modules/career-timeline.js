@@ -1,6 +1,6 @@
 const root = document.documentElement;
 
-const styleHref = '/css/experience-timeline.css?v=career-progression-20260928';
+const styleHref = '/css/experience-timeline.css?v=career-horizontal-20261004';
 if (!document.querySelector('link[data-career-timeline-style]')) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
@@ -68,121 +68,139 @@ export function initCareerTimeline() {
     }
   });
 
-  const groups = [];
-  for (const item of items) {
-    const company = item.dataset.company || '';
-    const previous = groups.at(-1);
-    if (previous?.company === company) previous.items.push(item);
-    else groups.push({ company, items: [item] });
-  }
-
   const layout = document.createElement('div');
   layout.className = 'career-layout';
-
-  const rail = document.createElement('aside');
-  rail.className = 'career-rail';
-  rail.dataset.careerRail = '';
-  rail.setAttribute('aria-hidden', 'true');
-
-  const railKicker = document.createElement('span');
-  railKicker.className = 'career-rail-kicker';
-  railKicker.textContent = labels.progression;
-  const railCompany = document.createElement('strong');
-  railCompany.className = 'career-rail-company';
-  railCompany.dataset.careerCompany = '';
-  const railRole = document.createElement('span');
-  railRole.className = 'career-rail-role';
-  railRole.dataset.careerRole = '';
-  const railDate = document.createElement('span');
-  railDate.className = 'career-rail-date';
-  railDate.dataset.careerDate = '';
-  const railMeta = document.createElement('span');
-  railMeta.className = 'career-rail-meta';
-  railMeta.textContent = items.length + ' ' + (items.length === 1 ? labels.role : labels.roles) + ' · ' + groups.length + ' ' + (groups.length === 1 ? labels.company : labels.companies);
-  rail.append(railKicker, railCompany, railRole, railDate, railMeta);
-
-  const groupContainer = document.createElement('div');
-  groupContainer.className = 'career-groups';
-
-  groups.forEach(group => {
-    const section = document.createElement('section');
-    section.className = 'career-company-group';
-    section.dataset.company = group.company;
-
-    const header = document.createElement('header');
-    header.className = 'career-company-header';
-    const heading = document.createElement('div');
-    const companyTitle = document.createElement('h3');
-    companyTitle.textContent = group.company;
-    const span = document.createElement('p');
-    span.textContent = rangeFor(group.items);
-    heading.append(companyTitle, span);
-    const count = document.createElement('span');
-    count.className = 'career-role-count';
-    count.textContent = group.items.length + ' ' + (group.items.length === 1 ? labels.role : labels.roles);
-    header.append(heading, count);
-
-    const stack = document.createElement('div');
-    stack.className = 'career-role-stack';
-    group.items.forEach(item => stack.append(item));
-    section.append(header, stack);
-    groupContainer.append(section);
+  const track = document.createElement('div');
+  track.className = 'career-track'; track.id = 'career-track'; track.tabIndex = 0;
+  track.setAttribute('role', 'region'); track.setAttribute('aria-label', labels.progression);
+  const rolePoints = new Map();
+  const roleStacks = new Map();
+  items.forEach(item => {
+    const heading = document.createElement('div'); heading.className = 'career-stop';
+    const date = document.createElement('span'); date.textContent = item.dataset.date;
+    const company = document.createElement('h3'); company.textContent = item.dataset.company;
+    heading.append(date, company); item.prepend(heading);
+    const body = item.querySelector('.experience-body');
+    const list = body.querySelector('.responsibilities');
+    const points = [...list.children];
+    const stack = body.querySelector('.experience-stack');
+    body.replaceChildren();
+    rolePoints.set(item, points);
+    roleStacks.set(item, stack);
+    const pointsPerPanel = 1;
+    for (let index = 0; index < points.length; index += pointsPerPanel) {
+      const panel = document.createElement('div');
+      panel.className = 'career-detail-panel';
+      const panelList = document.createElement('ul');
+      panelList.className = 'responsibilities';
+      panelList.append(...points.slice(index, index + pointsPerPanel));
+      panel.append(panelList); body.append(panel);
+    }
+    if (stack) {
+      const panel = document.createElement('div'); panel.className = 'career-detail-panel';
+      const emptyList = document.createElement('ul'); emptyList.className = 'responsibilities';
+      panel.append(emptyList, stack); body.append(panel);
+    }
+    track.append(item);
   });
-
-  layout.append(rail, groupContainer);
-  timeline.replaceChildren(layout);
-  timeline.classList.remove('timeline');
-  timeline.classList.add('career-timeline');
-  timeline.dataset.careerEnhanced = 'true';
-
-  const company = rail.querySelector('[data-career-company]');
-  const role = rail.querySelector('[data-career-role]');
-  const date = rail.querySelector('[data-career-date]');
-  let activeIndex = -1;
-
-  const setActive = index => {
-    const safeIndex = Math.max(0, Math.min(items.length - 1, index));
-    if (safeIndex === activeIndex) return;
-    activeIndex = safeIndex;
-
-    const active = items[safeIndex];
-    if (company) company.textContent = active.dataset.company || '';
-    if (role) role.textContent = active.dataset.role || '';
-    if (date) date.textContent = active.dataset.date || '';
-    rail.style.setProperty('--career-progress', String(items.length <= 1 ? 1 : safeIndex / (items.length - 1)));
-
-    items.forEach((item, itemIndex) => item.classList.toggle('is-career-active', itemIndex === safeIndex));
-    groupContainer.querySelectorAll('.career-company-group').forEach(group => {
-      group.classList.toggle('is-career-active', group.contains(active));
-    });
-  };
-
-  const pickClosest = () => {
-    const targetY = innerHeight * 0.42;
-    let bestIndex = 0;
-    let bestDistance = Number.POSITIVE_INFINITY;
-
+  const context = document.createElement('header');
+  context.className = 'career-context';
+  const companyLabel = document.createElement('h3');
+  const dateLabel = document.createElement('span');
+  const roleLabel = document.createElement('div');
+  roleLabel.className = 'career-context-role';
+  context.append(companyLabel, dateLabel, roleLabel);
+  layout.append(context, track); timeline.replaceChildren(layout);
+  timeline.classList.replace('timeline', 'career-timeline'); timeline.dataset.careerEnhanced = 'true';
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  let current = 0;
+  const update = () => {
+    current = 0;
     items.forEach((item, index) => {
-      const rect = item.getBoundingClientRect();
-      const center = rect.top + Math.min(rect.height * 0.35, 150);
-      const distance = Math.abs(center - targetY);
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        bestIndex = index;
-      }
+      if (item.offsetLeft - track.offsetLeft <= track.scrollLeft + track.clientWidth * .5) current = index;
     });
-
-    setActive(bestIndex);
+    const active = items[current];
+    if (companyLabel.textContent !== active.dataset.company) companyLabel.textContent = active.dataset.company;
+    dateLabel.textContent = active.dataset.date;
+    roleLabel.replaceChildren(active.querySelector('.experience-role').cloneNode(true));
+    items.forEach((item, index) => item.classList.toggle('is-career-active', index === current));
   };
-
+  const section = timeline.closest('.experience-section');
+  const wrapper = section.querySelector(':scope > .wrap');
+  let travel = 0;
+  let pinTop = 0;
   let frame = 0;
-  const schedule = () => {
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(pickClosest);
+  const sync = () => {
+    frame = 0;
+    const start = section.getBoundingClientRect().top + scrollY + parseFloat(getComputedStyle(section).paddingTop) - pinTop;
+    track.scrollLeft = Math.max(0, Math.min(travel, scrollY - start));
+    update();
   };
-
-  addEventListener('scroll', schedule, { passive: true });
-  addEventListener('resize', schedule, { passive: true });
-  schedule();
+  const schedule = () => { if (!frame) frame = requestAnimationFrame(sync); };
+  const measure = () => {
+    const panelWidth = Math.floor(track.clientWidth);
+    track.style.setProperty('--career-panel-width', panelWidth + 'px');
+    track.style.setProperty('--career-body-height', '180px');
+    const fixedHeight = wrapper.offsetHeight - 180;
+    const bodyHeight = Math.max(160, innerHeight - fixedHeight - (innerWidth <= 800 ? 100 : 32));
+    track.style.setProperty('--career-body-height', bodyHeight + 'px');
+    const readableSize = Math.max(16, Math.min(26, panelWidth * .022, bodyHeight / 19));
+    track.style.setProperty('--career-copy-size', readableSize + 'px');
+    items.forEach(item => {
+      const points = rolePoints.get(item);
+      const stack = roleStacks.get(item);
+      const panels = [...item.querySelectorAll('.career-detail-panel')];
+      panels.forEach(panel => { panel.hidden = true; panel.querySelector('.responsibilities').replaceChildren(); panel.querySelector('.responsibilities').style.height = 'auto'; });
+      stack?.remove();
+      let cursor = 0;
+      let panelIndex = 0;
+      while (cursor < points.length) {
+        const panel = panels[panelIndex++];
+        panel.hidden = false;
+        const list = panel.querySelector('.responsibilities');
+        let count = Math.min(4, points.length - cursor);
+        // Measure actual localized copy at its unchanged font size.
+        do {
+          list.replaceChildren(...points.slice(cursor, cursor + count));
+          if (list.offsetHeight <= bodyHeight - 24 || count === 1) break;
+          count--;
+        } while (count > 0);
+        cursor += count;
+        if (cursor === points.length && stack) {
+          panel.append(stack);
+          if (list.offsetHeight + stack.offsetHeight + 32 > bodyHeight) {
+            stack.remove();
+            const stackPanel = panels[panelIndex++];
+            stackPanel.hidden = false; stackPanel.append(stack);
+          }
+        }
+      }
+      panels.filter(panel => !panel.hidden).forEach(panel => {
+        const list = panel.querySelector('.responsibilities');
+        const tools = panel.querySelector('.experience-stack');
+        if (list.children.length) list.style.height = Math.max(list.offsetHeight, bodyHeight - (tools ? tools.offsetHeight + 32 : 16)) + 'px';
+      });
+      const body = item.querySelector('.experience-body');
+      item.style.flexBasis = body.scrollWidth + 'px';
+    });
+    travel = Math.max(0, track.scrollWidth - track.clientWidth);
+    pinTop = innerWidth <= 800 ? 68 : 0;
+    section.style.setProperty('--career-pin-top', pinTop + 'px');
+    section.style.setProperty('--career-journey-height', wrapper.offsetHeight + travel + 'px');
+    section.classList.add('is-scroll-journey');
+    schedule();
+  };
+  track.addEventListener('keydown', event => {
+    if (event.target !== track || !['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+    event.preventDefault();
+    const index = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : Math.max(0, Math.min(items.length - 1, current + (event.key === 'ArrowLeft' ? -1 : 1)));
+    const start = section.getBoundingClientRect().top + scrollY + parseFloat(getComputedStyle(section).paddingTop) - pinTop;
+    window.scrollTo({top: start + Math.min(travel, items[index].offsetLeft - track.offsetLeft), behavior: motion.matches ? 'instant' : 'smooth'});
+  });
+  addEventListener('scroll', schedule, {passive:true});
+  addEventListener('resize', measure, {passive:true});
+  new ResizeObserver(measure).observe(track);
+  document.fonts.ready.then(measure);
+  measure();
   root.classList.add('career-trace-ready');
 }

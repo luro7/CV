@@ -1,128 +1,73 @@
-import translations from './translations.js';
+export function galleryScrollFrame(progress, count) {
+  const bounded = Math.max(0, Math.min(Math.max(0, count - 1), progress));
+  return {index: Math.floor(bounded), fraction: bounded - Math.floor(bounded)};
+}
 
-// The library owns slides and gestures; this module owns gallery controls.
 export function initProjectGallery() {
-  if (typeof window.GLightbox !== 'function') return;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const translate = text => document.documentElement.lang === 'es' ? translations[text] || text : text;
-  const gallery = window.GLightbox({
-    selector: '.project-lightbox-link',
-    touchNavigation: true,
-    touchFollowAxis: true,
-    keyboardNavigation: true,
-    zoomable: false,
-    draggable: true,
-    loop: true,
-    preload: true,
-    moreLength: 0,
-    openEffect: reducedMotion ? 'none' : 'fade',
-    closeEffect: reducedMotion ? 'none' : 'fade',
-    slideEffect: reducedMotion ? 'none' : 'slide',
-    closeOnOutsideClick: true
-  });
-  let sources = [];
-  let chrome = null;
-  let trigger = null;
-
-  document.addEventListener('click', event => {
-    const source = event.target.closest('.project-lightbox-link[data-gallery]');
+  const grid = document.querySelector('.projects-grid');
+  if (!grid) return;
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const journeys = [];
+  grid.querySelectorAll('.project-card').forEach(card => {
+    const source = card.querySelector('.project-card-link.project-lightbox-link');
     if (!source) return;
-    trigger = document.activeElement?.matches('[data-open-project-gallery]') ? document.activeElement : source;
-    sources = [...document.querySelectorAll('.project-lightbox-link[data-gallery]')]
+    const sources = [...document.querySelectorAll('.project-lightbox-link[data-gallery]')]
       .filter(link => link.dataset.gallery === source.dataset.gallery);
-  }, true);
-
-  function updateChrome() {
-    if (!chrome || !sources.length) return;
-    const index = gallery.getActiveSlideIndex();
-    const source = sources[index];
-    if (!source) return;
-    chrome.querySelector('.project-gallery-title').textContent = source.dataset.title;
-    chrome.querySelector('.project-gallery-caption').textContent = source.dataset.description;
-    chrome.querySelector('.project-gallery-counter').textContent = `${index + 1} / ${sources.length}`;
-    chrome.querySelectorAll('.project-gallery-thumb').forEach((button, position) => {
-      const active = position === index;
-      button.classList.toggle('is-active', active);
-      if (active) {
-        button.setAttribute('aria-current', 'true');
-        // Scroll the rail only, keeping the underlying CV in place.
-        const rail = button.parentElement;
-        rail.scrollTo({ left: button.offsetLeft - rail.offsetLeft - rail.clientWidth / 2 + button.clientWidth / 2,
-          behavior: reducedMotion ? 'auto' : 'smooth' });
-      } else button.removeAttribute('aria-current');
+    const journey = document.createElement('div');
+    journey.className = 'project-scroll-journey';
+    const stage = document.createElement('div');
+    stage.className = 'project-scroll-stage';
+    stage.setAttribute('aria-label', source.dataset.title);
+    const photos = sources.map(link => {
+      const figure = document.createElement('figure');
+      figure.className = 'inline-gallery-photo';
+      const image = document.createElement('img');
+      image.src = link.href;
+      image.alt = link.dataset.alt || link.dataset.description || '';
+      image.loading = 'lazy'; image.decoding = 'async';
+      const caption = document.createElement('figcaption');
+      caption.textContent = link.dataset.description;
+      figure.append(image, caption); stage.append(figure);
+      return figure;
     });
-  }
-
-  gallery.on('open', () => {
-    const container = document.querySelector('.glightbox-container');
-    if (!container || !sources.length) return;
-    container.setAttribute('role', 'dialog');
-    container.setAttribute('aria-modal', 'true');
-    container.setAttribute('aria-label', sources[0].dataset.title);
-    for (const [selector, label] of Object.entries({ '.gclose': 'Close gallery', '.gprev': 'Previous image', '.gnext': 'Next image' })) {
-      const control = container.querySelector(selector);
-      control?.setAttribute('aria-label', translate(label));
-      control?.setAttribute('title', translate(label));
-    }
-    chrome = document.createElement('div');
-    chrome.className = 'project-gallery-chrome';
-    chrome.addEventListener('click', event => event.stopPropagation());
-    const copy = document.createElement('div');
-    copy.className = 'project-gallery-copy';
-    const title = document.createElement('strong');
-    title.className = 'project-gallery-title';
-    const caption = document.createElement('p');
-    caption.className = 'project-gallery-caption';
-    const counter = document.createElement('span');
-    counter.className = 'project-gallery-counter';
-    counter.setAttribute('aria-live', 'polite');
-    copy.append(title, caption, counter);
-    chrome.append(copy);
-    if (sources.length > 1) {
-      const rail = document.createElement('div');
-      rail.className = 'project-gallery-thumbs';
-      rail.setAttribute('role', 'group');
-      rail.setAttribute('aria-label', document.documentElement.lang === 'es' ? 'Miniaturas del proyecto' : 'Project thumbnails');
-      sources.forEach((source, index) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'project-gallery-thumb';
-        button.setAttribute('aria-label', source.dataset.description);
-        const image = document.createElement('img');
-        image.src = source.href;
-        image.alt = '';
-        image.loading = 'lazy';
-        image.decoding = 'async';
-        button.append(image);
-        button.addEventListener('click', event => {
-          event.preventDefault();
-          event.stopPropagation();
-          gallery.goToSlide(index);
-        });
-        rail.append(button);
+    journey.append(stage); card.append(journey);
+    card.classList.add('has-scroll-gallery');
+    journeys.push({journey, stage, photos});
+  });
+  if (!journeys.length) return;
+  grid.classList.add('has-scroll-galleries');
+  let frame = 0;
+  const update = () => {
+    frame = 0;
+    journeys.forEach(({journey, stage, photos}) => {
+      if (motion.matches) {
+        photos.forEach(photo => { photo.removeAttribute('style'); photo.removeAttribute('aria-hidden'); });
+        return;
+      }
+      const top = innerWidth <= 800 ? 76 : 16;
+      const step = stage.offsetHeight;
+      const {index, fraction} = galleryScrollFrame((top - journey.getBoundingClientRect().top) / step, photos.length);
+      photos.forEach((photo, position) => {
+        const current = position === index;
+        const incoming = position === index + 1;
+        photo.style.opacity = current ? String(1 - fraction * .35) : incoming ? '1' : '0';
+        photo.style.zIndex = incoming ? '2' : '1';
+        photo.style.clipPath = incoming ? 'inset(0 0 0 ' + (100 - fraction * 100) + '%)' : 'inset(0 0 0 0)';
+        photo.style.transform = current ? 'scale(' + (1 - fraction * .04) + ')' : incoming ? 'scale(' + (1.04 - fraction * .04) + ')' : 'none';
+        photo.setAttribute('aria-hidden', String(position !== index));
       });
-      chrome.append(rail);
-    }
-    container.querySelector('.gcontainer').append(chrome);
-    updateChrome();
-    container.querySelector('.gclose')?.focus();
-    container.addEventListener('keydown', event => {
-      if (event.key !== 'Tab') return;
-      const controls = [...container.querySelectorAll('button, [href]')]
-        .filter(control => !control.disabled && control.getClientRects().length && getComputedStyle(control).display !== 'none');
-      const position = controls.indexOf(document.activeElement);
-      if (!controls.length) return;
-      event.preventDefault();
-      event.stopPropagation();
-      controls[(position + (event.shiftKey ? -1 : 1) + controls.length) % controls.length].focus();
     });
-  });
-  gallery.on('slide_changed', updateChrome);
-  gallery.on('close', () => {
-    chrome?.remove();
-    chrome = null;
-    sources = [];
-    trigger?.focus({ preventScroll: true });
-    trigger = null;
-  });
+  };
+  const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+  const measure = () => {
+    journeys.forEach(({journey,stage,photos}) => {
+      journey.style.height = motion.matches ? 'auto' : stage.offsetHeight * photos.length + 'px';
+    });
+    schedule();
+  };
+  addEventListener('scroll', schedule, {passive:true});
+  addEventListener('resize', measure, {passive:true});
+  motion.addEventListener('change', measure);
+  document.fonts.ready.then(measure);
+  measure();
 }

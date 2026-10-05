@@ -1,72 +1,25 @@
-/* Project gallery: fixed controls and an image stage independent of captions. */
-.project-gallery-source[hidden] { display: none !important; }
-.goverlay { background: rgba(6, 10, 18, .98) !important; backdrop-filter: blur(16px); }
-.glightbox-container .gcontainer { padding: 64px 76px 154px; box-sizing: border-box; }
-.glightbox-container .ginner-container { height: 100% !important; }
-.glightbox-container .gslide-media { background: transparent; box-shadow: none; }
-.glightbox-container .gslide-image img {
-  max-width: calc(100vw - 152px);
-  max-height: calc(100dvh - 218px);
-  min-width: 0;
-  object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 16px 64px rgba(0, 0, 0, .25);
+/* Project images are part of the page; scrolling advances each visual story. */
+.project-gallery-source[hidden]{display:none!important}
+.projects-grid.has-scroll-galleries{display:grid;grid-template-columns:1fr;gap:4rem}
+.has-scroll-galleries .project-card{grid-column:1/-1;overflow:visible;border:0;background:transparent}
+.has-scroll-gallery .project-card-media,.has-scroll-gallery [data-open-project-gallery]{display:none!important}
+.has-scroll-gallery .project-card-content{padding:0 0 2rem}
+.has-scroll-gallery .project-card-title{font-size:clamp(2rem,4vw,3.5rem)}
+.has-scroll-gallery .project-card-description{max-width:75ch}
+.project-scroll-journey{position:relative}
+.project-scroll-stage{position:sticky;top:16px;height:calc(100svh - 32px);max-height:1000px;overflow:hidden;background:var(--paper)}
+.inline-gallery-photo{position:absolute;inset:0;min-width:0;margin:0;display:flex;flex-direction:column;transform-origin:center;background:var(--paper);will-change:transform,clip-path}
+.inline-gallery-photo img{display:block;width:100%;height:calc(100% - 54px);min-height:0;object-fit:contain;background:color-mix(in srgb,var(--ink) 4%,var(--paper))}
+.inline-gallery-photo figcaption{display:flex;align-items:center;min-height:54px;padding:.6rem 1rem;font-size:.85rem;line-height:1.4;color:var(--muted)}
+@media(max-width:760px){
+.projects-grid.has-scroll-galleries{gap:2.5rem}
+.has-scroll-gallery .project-card-content{padding-bottom:1rem}
+.project-scroll-stage{top:76px;height:calc(100svh - 90px)}
+.inline-gallery-photo figcaption{font-size:.75rem}
 }
-/* Captions are presented once, in the persistent footer. */
-.glightbox-container .gslide-description { display: none !important; }
-.glightbox-container .gbtn {
-  width: 44px; height: 44px;
-  color: #eaf6ff;
-  background: #172536;
-  border: 1px solid #35526a;
-  border-radius: 50%;
-  opacity: 1;
-  z-index: 100001;
+@media(prefers-reduced-motion:reduce){
+.project-scroll-stage{position:static;height:auto;max-height:none;overflow:visible}
+.inline-gallery-photo{position:relative;inset:auto;will-change:auto;margin-bottom:1rem}
+.inline-gallery-photo img{height:auto;max-height:75svh}
 }
-.glightbox-container .gclose { top: 16px; right: 20px; }
-.glightbox-container .gprev { left: 16px; top: calc(50% - 68px); }
-.glightbox-container .gnext { right: 16px; top: calc(50% - 68px); }
-.glightbox-container .gbtn:hover { background: #35526a; }
-.glightbox-container .gbtn:focus-visible { outline: 3px solid #8ad7ff; outline-offset: 3px; }
-.project-gallery-chrome {
-  position: absolute; z-index: 100000;
-  left: 24px; right: 24px; bottom: 18px;
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center; gap: 24px;
-  padding: 16px 20px;
-  color: #eef5fc; background: #101925;
-  border: 1px solid #26384d; border-radius: 12px;
-}
-.project-gallery-copy { min-width: 0; }
-.project-gallery-title { display: block; font-size: 1rem; }
-.project-gallery-caption { margin: 6px 0; color: #bac9d8; font-size: .82rem; line-height: 1.45; }
-.project-gallery-counter { color: #8ad7ff; font: .75rem/1.4 Consolas, monospace; }
-.project-gallery-thumbs {
-  position: relative; display: flex; gap: 8px; min-width: 0;
-  overflow-x: auto; padding: 4px;
-  overscroll-behavior-inline: contain; scrollbar-width: thin;
-}
-.project-gallery-thumb {
-  flex: 0 0 72px; width: 72px; height: 58px; padding: 3px;
-  background: #080e16; border: 1px solid #35526a; border-radius: 6px;
-  cursor: pointer; opacity: .65;
-}
-.project-gallery-thumb:hover, .project-gallery-thumb.is-active { opacity: 1; border-color: #8ad7ff; }
-.project-gallery-thumb:focus-visible { outline: 2px solid #8ad7ff; outline-offset: 2px; }
-.project-gallery-thumb img { display: block; width: 100%; height: 100%; object-fit: contain; }
-body.glightbox-open { overflow: hidden; }
-@media (max-width: 760px) {
-  .glightbox-container .gcontainer { padding: 64px 12px 228px; }
-  .glightbox-container .gslide-image img { max-width: calc(100vw - 24px); max-height: calc(100dvh - 292px); }
-  .glightbox-container .gprev { left: 12px; top: 12px; }
-  .glightbox-container .gnext { left: 64px; right: auto; top: 12px; }
-  .glightbox-container .gclose { top: 12px; right: 12px; }
-  .project-gallery-chrome { left: 12px; right: 12px; bottom: 12px; grid-template-columns: 1fr; gap: 8px; padding: 12px; }
-  .project-gallery-caption { font-size: .75rem; }
-  .project-gallery-thumb { flex-basis: 60px; width: 60px; height: 48px; }
-}
-@media (max-height: 500px) and (min-width: 761px) {
-  .glightbox-container .gcontainer { padding-top: 12px; padding-bottom: 130px; }
-  .glightbox-container .gslide-image img { max-height: calc(100dvh - 142px); }
-  .project-gallery-chrome { padding: 10px 14px; bottom: 8px; }
-}
+@media print{.project-scroll-journey{display:none}}

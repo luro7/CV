@@ -119,7 +119,7 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('data-skill-status'), name + ': skill trace status is missing');
   assert(documentHtml.includes('data-print-cv'), name + ': PDF/print action is missing');
   assert(!documentHtml.includes('class="project-gallery-link" href="#projects"'), name + ': hero must not duplicate the projects navigation');
-  const primaryNavigation = documentHtml.match(/<nav aria-label="[^"]+">([\s\S]*?)<\/nav>/)?.[1] || '';
+  const primaryNavigation = documentHtml.match(/<nav\b[^>]*aria-label="[^"]+"[^>]*>([\s\S]*?)<\/nav>/)?.[1] || '';
   assert(primaryNavigation.includes('#projects'), name + ': projects must be accessible from the main navigation');
   assert(documentHtml.includes('class="project-lightbox-link"'), name + ': project gallery library triggers are missing');
   assert(documentHtml.includes('data-gallery="manos-a-la-obra"'), name + ': project gallery images must be grouped per project');
@@ -176,13 +176,13 @@ const projectGalleryCss = readFileSync(resolve(output, 'css/project-gallery.css'
 const projectShowcaseCss = readFileSync(resolve(output, 'css/project-showcase.css'), 'utf8');
 const compactProjectGalleryCss = projectGalleryCss.replace(/\s+/g, '');
 const compactProjectShowcaseCss = projectShowcaseCss.replace(/\s+/g, '');
-assert(compactProjectGalleryCss.includes('backdrop-filter:blur('), 'Project gallery must blur the page behind its modal');
+assert(compactProjectGalleryCss.includes('grid-column:1/-1'), 'Open gallery must span the project grid');
 assert(compactProjectShowcaseCss.includes('aspect-ratio:16/9') && compactProjectShowcaseCss.includes('width:100%'), 'Project cards must constrain images to their responsive card width');
-assert(compactProjectGalleryCss.includes('.glightbox-container.gslide-imageimg') || compactProjectGalleryCss.includes('.glightbox-container.gslide-image img'), 'Project gallery must style the library image stage');
+assert(compactProjectGalleryCss.includes('.inline-gallery-photoimg'), 'Inline gallery must constrain its photos');
 assert(compactProjectGalleryCss.includes('@media(max-width:760px)'), 'Project gallery must have a mobile layout');
 assert(spanishHtml.includes('project-lightbox-link') && spanishHtml.includes('data-gallery="manos-a-la-obra"'), 'Project gallery must use grouped lightbox images');
 assert(existsSync(resolve(output, 'js/vendor/glightbox.min.js')) && existsSync(resolve(output, 'css/vendor/glightbox.min.css')) && existsSync(resolve(output, 'js/vendor/GLIGHTBOX-LICENSE.md')), 'GLightbox assets and license must be included');
-assert(readFileSync(resolve(output, 'js/project-gallery.js'), 'utf8').includes('touchNavigation: true') && readFileSync(resolve(output, 'js/project-gallery.js'), 'utf8').includes('draggable: true'), 'Project gallery must use the library touch and mouse navigation');
+assert(readFileSync(resolve(output, 'js/project-gallery.js'), 'utf8').includes('galleryScrollFrame'), 'Gallery must advance photos using page scroll');
 assert(!spanishHtml.includes('swiper-bundle') && !spanishHtml.includes('project-gallery-main'), 'The previous gallery markup must be removed');
 assert(spanishHtml.includes('href="https://manosalaobra.pages.dev" target="_blank"'), 'Manos a la Obra project card must link to its public landing page');
 assert(printCss.includes('@page{size:A4'), 'Print output must use A4 paper');

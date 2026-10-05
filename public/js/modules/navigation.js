@@ -1,5 +1,20 @@
 // Progressive enhancement: every anchor and disclosure also works without JS.
 export function trackSections() {
+  const sidebar = document.querySelector('.sidebar');
+  const menu = sidebar?.querySelector('.mobile-menu-toggle');
+  if (menu) {
+    sidebar.querySelector('.sidebar-top').append(menu);
+    menu.hidden = false;
+    sidebar.classList.add('has-mobile-menu');
+    const setOpen = open => {
+      sidebar.classList.toggle('is-menu-open', open);
+      menu.setAttribute('aria-expanded', String(open));
+      menu.textContent = open ? '×' : '☰';
+    };
+    menu.addEventListener('click', () => setOpen(menu.getAttribute('aria-expanded') !== 'true'));
+    sidebar.querySelectorAll('nav a').forEach(link => link.addEventListener('click', () => setOpen(false)));
+    sidebar.addEventListener('keydown', event => { if (event.key === 'Escape') { setOpen(false); menu.focus(); } });
+  }
   const links = [...document.querySelectorAll('.sidebar nav a')];
   const sections = links.map(link => document.querySelector(link.hash)).filter(Boolean);
   let scheduled = false;
