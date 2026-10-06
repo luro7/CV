@@ -1,6 +1,9 @@
 export function galleryPhotoIndex(index, count) {
   return ((index % count) + count) % count;
 }
+export function gallerySwipeDirection(dx,dy) {
+  return Math.abs(dx)>=48 && Math.abs(dx)>Math.abs(dy)*1.5 ? (dx<0?1:-1) : 0;
+}
 
 export function initProjectGallery() {
   const grid = document.querySelector('.projects-grid');
@@ -43,6 +46,18 @@ export function initProjectGallery() {
   dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
   previous.addEventListener('click', () => show(index - 1));
   next.addEventListener('click', () => show(index + 1));
+  let touchStart=null;
+  figure.addEventListener('touchstart',event=>{
+    touchStart=event.touches.length===1?{x:event.touches[0].clientX,y:event.touches[0].clientY}:null;
+  },{passive:true});
+  figure.addEventListener('touchend',event=>{
+    if(!touchStart || !event.changedTouches.length) return;
+    const touch=event.changedTouches[0];
+    const direction=gallerySwipeDirection(touch.clientX-touchStart.x,touch.clientY-touchStart.y);
+    touchStart=null;
+    if(direction && photos.length>1) show(index+direction);
+  },{passive:true});
+  figure.addEventListener('touchcancel',()=>touchStart=null,{passive:true});
   dialog.addEventListener('keydown', event => {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.preventDefault(); show(index + (event.key === 'ArrowLeft' ? -1 : 1));

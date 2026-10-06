@@ -37,6 +37,19 @@ export function initCareerTimeline() {
     button.append(year,label); tabs.append(button); buttons.push(button);
   });
   shell.append(tabs,stage); timeline.replaceChildren(shell);
+  // Touch scrolling stays native: every company remains in document flow,
+  // so dragging and momentum never fight chapter-alignment corrections.
+  if(matchMedia('(pointer: coarse)').matches || innerWidth<=800) {
+    shell.classList.add('career-touch');
+    buttons.forEach((button,index)=>{
+      button.setAttribute('aria-selected',String(index===0));
+      button.addEventListener('click',()=>{
+        panels[index].scrollIntoView({block:'start',behavior:'auto'});
+        buttons.forEach((tab,i)=>tab.setAttribute('aria-selected',String(i===index)));
+      });
+    });
+    return;
+  }
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let current = 0, animation;
   const select = (index, focus = false) => {
