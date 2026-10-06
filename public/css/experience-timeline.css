@@ -1,11 +1,17 @@
 /* Editorial career chapters: a compact chronology with stable, readable type. */
+/* Chapter swaps must not trigger browser scroll anchoring on following sections. */
+main{overflow-anchor:none}
 .career-editorial{container-type:inline-size}
+.career-stage{display:block}
 .career-years{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:2rem;border-bottom:1px solid var(--line)}
 .career-years button{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:.5rem;padding:1rem 0 1.3rem;border:0;background:transparent;color:var(--muted);text-align:left;cursor:pointer}
 .career-years button::after{content:'';position:absolute;inset:auto 0 -1px;height:2px;background:var(--interactive-accent);transform:scaleX(0);transform-origin:left;transition:transform .25s}
 .career-years button[aria-selected=true]{color:var(--ink)}
 .career-years button[aria-selected=true]::after{transform:scaleX(1)}
 .career-years button:hover{color:var(--interactive-accent)}
+.career-years button:focus:not(:focus-visible){outline:none}
+.career-years button:focus-visible{outline:none;background:color-mix(in srgb,var(--focus) 12%,transparent)}
+.career-years button:focus-visible strong{text-decoration:underline;text-decoration-color:var(--focus);text-underline-offset:.3em;text-decoration-thickness:2px}
 .career-years button span{font:.8rem Consolas,monospace;letter-spacing:.05em}
 .career-years button strong{font-size:clamp(.85rem,1.2cqw,1.15rem);font-weight:600}
 .career-chapter{display:grid;grid-template-columns:minmax(180px,.7fr) minmax(0,2.3fr);gap:clamp(1.5rem,4cqw,5rem);align-items:start}
@@ -15,6 +21,7 @@
 .career-masthead h3{font-size:clamp(1.8rem,3.7cqw,4rem);font-weight:600;letter-spacing:-.045em;line-height:1.05;overflow-wrap:anywhere}
 .career-roles{display:grid;gap:2rem;min-width:0}
 .career-roles .experience-item{border:0!important;padding:0;background:transparent}
+.career-roles .experience-item.reveal{opacity:1;transform:none;transition:none}
 .career-roles .experience-heading{display:flex!important;flex-direction:column;align-items:flex-start!important;gap:.45rem!important;padding:0!important;margin:0 0 1rem;cursor:default}
 .career-roles .experience-meta{display:block}
 .career-roles .experience-role{font-size:clamp(1.05rem,1.5cqw,1.5rem);font-weight:600;line-height:1.3}
@@ -27,8 +34,10 @@
 @container(min-width:1400px){.career-roles{grid-template-columns:2fr 1fr;gap:2.5rem}.career-roles .responsibilities{grid-template-columns:repeat(auto-fit,minmax(min(100%,32ch),1fr))}}
 @media(max-width:800px){.career-chapter{grid-template-columns:1fr;gap:1.5rem}.career-masthead{position:static}.career-masthead h3{font-size:2.25rem}.career-years{margin-bottom:1.5rem}.career-years button{padding:.8rem .25rem 1rem}.career-years button strong{font-size:.8rem}.career-roles .responsibilities{grid-template-columns:1fr}.career-roles .experience-role{font-size:1.1rem}}
 @media(prefers-reduced-motion:reduce){.career-years button::after{transition:none}}
-@media print{.career-years{display:none}.career-chapter[hidden],.career-chapter{display:block}.career-masthead{position:static}.career-stage{min-height:0!important}}
+@media print{.career-editorial{height:auto!important}.career-years{display:none}.career-chapter[hidden],.career-chapter{display:block;margin-top:0!important}.career-masthead{position:static}.career-stage{height:auto!important;overflow:visible;min-height:0!important}}
 .career-roles .experience-item::before,.career-roles .experience-item::after{display:none}
-.experience-section>.wrap{width:calc(100% - clamp(2rem,5vw,10rem));max-width:none}
+
 .experience-section .timeline{border:0;padding:0;margin:0}
 .experience-section .timeline::before,.experience-section .timeline::after{display:none}
+
+@media screen{.experience-section{padding-bottom:clamp(1.5rem,2vw,2rem)}.experience-section + #education{padding-top:clamp(1.5rem,2vw,2rem)}}

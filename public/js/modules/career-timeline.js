@@ -1,3 +1,5 @@
+import { careerScrollDecision, careerAlignmentOffset } from './career-wheel-model.js';
+
 export function initCareerTimeline() {
   const timeline = document.querySelector('#experience .timeline');
   if (!timeline) return;
@@ -48,28 +50,73 @@ export function initCareerTimeline() {
     ],{duration:300,easing:'cubic-bezier(.2,.7,.2,1)'});
     if(focus) buttons[current].focus();
   };
-  buttons.forEach((button,index)=>button.addEventListener('click',()=>select(index)));
+  const section=timeline.closest('#experience');
+  const anchor=()=>innerWidth<=800?80:24;
+  let lastY=scrollY, lastRect=section.getBoundingClientRect(), ignoreScroll=false;
+  let gestureTimer=0, gestureDirection=0;
+  let nativeTimer=0,nativeDirection=0,heldY=0;
+  let alignmentVersion=0;
+  const originalAnchoring=document.documentElement.style.overflowAnchor;
+  const settleNative=()=>{
+    clearTimeout(nativeTimer);nativeTimer=setTimeout(()=>nativeTimer=0,300);
+  };
+  const snapshot=()=>{lastY=scrollY;lastRect=section.getBoundingClientRect();};
+  const align=(index,edge='top',focus=false)=>{
+    const version=++alignmentVersion;
+    document.documentElement.style.overflowAnchor='none';
+    ignoreScroll=true;select(index,focus);
+    const rect=section.getBoundingClientRect();
+    window.scrollTo({top:scrollY+careerAlignmentOffset({top:rect.top,bottom:rect.bottom,anchor:anchor(),viewport:innerHeight,edge}),behavior:'instant'});
+    snapshot();requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      if(version!==alignmentVersion) return;
+      snapshot();ignoreScroll=false;document.documentElement.style.overflowAnchor=originalAnchoring;
+    }));
+  };
+  const settleGesture=(direction)=>{
+    gestureDirection=direction;clearTimeout(gestureTimer);
+    gestureTimer=setTimeout(()=>gestureTimer=0,300);
+  };
+  const decision=(rect,previous,direction)=>careerScrollDecision({
+    top:rect.top,bottom:rect.bottom,previousTop:previous.top,previousBottom:previous.bottom,
+    direction,anchor:anchor(),viewport:innerHeight,index:current,count:panels.length
+  });
+  buttons.forEach((button,index)=>button.addEventListener('click',()=>align(index)));
   tabs.addEventListener('keydown',event=>{
     if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
-    event.preventDefault();
-    select(event.key==='Home'?0:event.key==='End'?panels.length-1:current+(event.key==='ArrowRight'?1:-1),true);
+    event.preventDefault();align(event.key==='Home'?0:event.key==='End'?panels.length-1:current+(event.key==='ArrowRight'?1:-1),'top',true);
   });
-  let wheelTimer = 0;
-  shell.addEventListener('wheel',event=>{
-    if(event.ctrlKey || !event.deltaY) return;
-    const next=current+Math.sign(event.deltaY);
-    if(wheelTimer){event.preventDefault();clearTimeout(wheelTimer);wheelTimer=setTimeout(()=>wheelTimer=0,350);return;}
-    if(next<0 || next>=panels.length) return;
-    event.preventDefault(); select(next); wheelTimer=setTimeout(()=>wheelTimer=0,350);
+  window.addEventListener('scroll',()=>{
+    if(ignoreScroll){snapshot();return;}
+    const rect=section.getBoundingClientRect(),direction=Math.sign(scrollY-lastY);
+    if(nativeTimer && direction===nativeDirection){
+      ignoreScroll=true;window.scrollTo({top:heldY,behavior:'instant'});snapshot();
+      requestAnimationFrame(()=>{ignoreScroll=false;snapshot();});settleNative();return;
+    }
+    const next=decision(rect,lastRect,direction);
+    if(next){align(next.index,next.edge);heldY=scrollY;nativeDirection=direction;settleNative();}
+    else snapshot();
+  },{passive:true});
+  window.addEventListener('wheel',event=>{
+    if(event.ctrlKey || !event.deltaY || document.querySelector('dialog[open]')) return;
+    clearTimeout(nativeTimer);nativeTimer=0;
+    const direction=Math.sign(event.deltaY);
+    if(gestureTimer && direction===gestureDirection){event.preventDefault();settleGesture(direction);return;}
+    const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?innerHeight:1);
+    const rect=section.getBoundingClientRect();
+    const next=decision({top:rect.top-delta,bottom:rect.bottom-delta},rect,direction);
+    if(!next) return;
+    event.preventDefault();align(next.index,next.edge);settleGesture(direction);
   },{passive:false});
-  const measure=()=>{
-    stage.style.removeProperty('min-height');
-    let height=0;
-    panels.forEach(panel=>{panel.hidden=false;height=Math.max(height,panel.offsetHeight);});
-    stage.style.minHeight=height+'px';
-    panels.forEach((panel,index)=>panel.hidden=index!==current);
-  };
-  select(0); measure();
-  new ResizeObserver(measure).observe(tabs);
-  document.fonts.ready.then(measure);
+  window.addEventListener('keydown',event=>{
+    if(!['PageDown','PageUp'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || document.querySelector('dialog[open]')) return;
+    if(event.target.closest?.('input,textarea,select,[contenteditable=true]')) return;
+    clearTimeout(nativeTimer);nativeTimer=0;
+    const direction=event.key==='PageDown'?1:-1;
+    const rect=section.getBoundingClientRect(),delta=direction*innerHeight*.875;
+    const next=decision({top:rect.top-delta,bottom:rect.bottom-delta},rect,direction);
+    if(!next) return;
+    event.preventDefault();align(next.index,next.edge);
+  });
+  window.addEventListener('resize',snapshot);
+  select(0);snapshot();
 }

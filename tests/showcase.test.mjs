@@ -124,8 +124,20 @@ test('career chapters preserve three companies without scroll-height or font fit
 
 test('career wheel navigation does not depend on the entire section fitting in the viewport', () => {
   const script = readFileSync(resolve(root, 'public/js/modules/career-timeline.js'), 'utf8');
-  assert.ok(script.includes("shell.addEventListener('wheel'"));
+  assert.ok(script.includes("window.addEventListener('scroll'"));
   assert.ok(!script.includes('rect.bottom>innerHeight'));
   assert.ok(!script.includes('rect.top<0'));
-  assert.ok(script.includes('next>=panels.length'));
+  assert.ok(script.includes('careerScrollDecision'));
+});
+
+test('career section height follows the selected company instead of the longest company', () => {
+  const script = readFileSync(resolve(root, 'public/js/modules/career-timeline.js'), 'utf8');
+  assert.ok(!script.includes('stage.style.minHeight'));
+  assert.ok(!script.includes('Math.max(height,panel.offsetHeight)'));
+  assert.ok(script.includes('panel.hidden = i!==current'));
+  assert.ok(!script.includes('shell.style.height'));
+  assert.ok(!script.includes('stage.style.height'));
+  assert.ok(!script.includes('stage.style.minHeight'));
+
+
 });

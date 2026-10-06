@@ -42,7 +42,7 @@ main a:hover{color:var(--interactive-accent)}
 @media screen and (min-width:801px){
   :root{--rail:220px}
   .sidebar{padding-inline:1rem}
-  .wrap{width:min(1280px,calc(100% - 6rem))}
+
 }
 .brand span,.sidebar-name span{color:#8E95FF}
 .sidebar-identity>p:last-child{color:#B5BCCB}
