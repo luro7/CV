@@ -37,19 +37,6 @@ export function initCareerTimeline() {
     button.append(year,label); tabs.append(button); buttons.push(button);
   });
   shell.append(tabs,stage); timeline.replaceChildren(shell);
-  // Touch scrolling stays native: every company remains in document flow,
-  // so dragging and momentum never fight chapter-alignment corrections.
-  if(matchMedia('(pointer: coarse)').matches || innerWidth<=800) {
-    shell.classList.add('career-touch');
-    buttons.forEach((button,index)=>{
-      button.setAttribute('aria-selected',String(index===0));
-      button.addEventListener('click',()=>{
-        panels[index].scrollIntoView({block:'start',behavior:'auto'});
-        buttons.forEach((tab,i)=>tab.setAttribute('aria-selected',String(i===index)));
-      });
-    });
-    return;
-  }
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let current = 0, animation;
   const select = (index, focus = false) => {
@@ -93,12 +80,29 @@ export function initCareerTimeline() {
     top:rect.top,bottom:rect.bottom,previousTop:previous.top,previousBottom:previous.bottom,
     direction,anchor:anchor(),viewport:innerHeight,index:current,count:panels.length
   });
+  let touchOrigin=null;
+  window.addEventListener('touchstart',event=>{
+    clearTimeout(nativeTimer);nativeTimer=0;
+    touchOrigin=event.touches.length===1 && !document.querySelector('dialog[open]')
+      ? {y:scrollY,rect:section.getBoundingClientRect()} : null;
+  },{passive:true});
+  window.addEventListener('touchend',()=>{
+    if(!touchOrigin) return;
+    const origin=touchOrigin;touchOrigin=null;
+    const direction=Math.sign(scrollY-origin.y);
+    const next=decision(section.getBoundingClientRect(),origin.rect,direction);
+    if(next){align(next.index,next.edge);heldY=scrollY;nativeDirection=direction;settleNative();}
+    else snapshot();
+  },{passive:true});
+  window.addEventListener('touchcancel',()=>{touchOrigin=null;snapshot();},{passive:true});
   buttons.forEach((button,index)=>button.addEventListener('click',()=>align(index)));
   tabs.addEventListener('keydown',event=>{
     if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
     event.preventDefault();align(event.key==='Home'?0:event.key==='End'?panels.length-1:current+(event.key==='ArrowRight'?1:-1),'top',true);
   });
   window.addEventListener('scroll',()=>{
+    if(document.querySelector('dialog[open]')){snapshot();return;}
+    if(touchOrigin){snapshot();return;}
     if(ignoreScroll){snapshot();return;}
     const rect=section.getBoundingClientRect(),direction=Math.sign(scrollY-lastY);
     if(nativeTimer && direction===nativeDirection){

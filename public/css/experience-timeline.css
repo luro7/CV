@@ -3,8 +3,6 @@
 main{overflow-anchor:none}
 .career-editorial{container-type:inline-size}
 .career-stage{display:block}
-.career-touch .career-stage{display:grid;gap:2.5rem}
-.career-touch .career-chapter{scroll-margin-top:80px}
 .career-years{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:2rem;border-bottom:1px solid var(--line)}
 .career-years button{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:.5rem;padding:1rem 0 1.3rem;border:0;background:transparent;color:var(--muted);text-align:left;cursor:pointer}
 .career-years button::after{content:'';position:absolute;inset:auto 0 -1px;height:2px;background:var(--interactive-accent);transform:scaleX(0);transform-origin:left;transition:transform .25s}

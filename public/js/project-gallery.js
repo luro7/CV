@@ -4,6 +4,22 @@ export function galleryPhotoIndex(index, count) {
 export function gallerySwipeDirection(dx,dy) {
   return Math.abs(dx)>=48 && Math.abs(dx)>Math.abs(dy)*1.5 ? (dx<0?1:-1) : 0;
 }
+export function lockGalleryPage(page=window) {
+  const body=page.document.body, root=page.document.documentElement;
+  const position={x:page.scrollX,y:page.scrollY};
+  const properties=['position','top','left','width','overflow','paddingRight'];
+  const saved=Object.fromEntries(properties.map(key=>[key,body.style[key]]));
+  const rootOverflow=root.style.overflow;
+  const scrollbar=Math.max(0,page.innerWidth-root.clientWidth);
+  body.style.position='fixed';body.style.top=`-${position.y}px`;
+  body.style.left=`-${position.x}px`;body.style.width='100%';body.style.overflow='hidden';
+  if(scrollbar) body.style.paddingRight=`${parseFloat(page.getComputedStyle(body).paddingRight)+scrollbar}px`;
+  root.style.overflow='hidden';
+  return ()=>{
+    Object.assign(body.style,saved);root.style.overflow=rootOverflow;
+    page.scrollTo({left:position.x,top:position.y,behavior:'instant'});
+  };
+}
 
 export function initProjectGallery() {
   const grid = document.querySelector('.projects-grid');
@@ -33,6 +49,8 @@ export function initProjectGallery() {
   dialog.append(close, figure, controls);
   document.body.append(dialog);
   let photos = [], index = 0;
+  let unlockPage;
+  dialog.addEventListener('close',()=>{unlockPage?.();unlockPage=null;touchStart=null;});
   const show = value => {
     index = galleryPhotoIndex(value, photos.length);
     const source = photos[index];
@@ -73,7 +91,8 @@ export function initProjectGallery() {
       event.preventDefault();
       photos = [...document.querySelectorAll('.project-lightbox-link[data-gallery]')]
         .filter(link => link.dataset.gallery === source.dataset.gallery);
-      show(0); dialog.showModal();
+      if(dialog.open) return;
+      show(0); unlockPage=lockGalleryPage();dialog.showModal();
     };
     source.addEventListener('click', open);
     button?.addEventListener('click', open);
