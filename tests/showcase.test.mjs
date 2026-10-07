@@ -113,31 +113,19 @@ test('portfolio feature styles are owned by their modules instead of patch style
   assert.ok(layout.includes('/css/credential-wall.css'));
 });
 
-test('career chapters preserve three companies without scroll-height or font fitting', () => {
-  const script = readFileSync(resolve(root, 'public/js/modules/career-timeline.js'), 'utf8');
-  assert.ok(script.includes("setAttribute('role','tablist')"));
-  assert.ok(script.includes("setAttribute('role','tabpanel')"));
-  assert.ok(script.includes("event.key==='Home'"));
-  assert.ok(!script.includes('company-copy-size'));
-  assert.ok(!script.includes('section.style.height'));
-});
+test('career is rendered as continuous static company sections with native role disclosures', () => {
+  const renderer = readFileSync(resolve(root, 'src/render.mjs'), 'utf8');
+  const companyTemplate = readFileSync(resolve(root, 'src/templates/cards/career-company.html'), 'utf8');
+  const roleTemplate = readFileSync(resolve(root, 'src/templates/cards/experience.html'), 'utf8');
+  const indicator = readFileSync(resolve(root, 'public/js/modules/career-timeline.js'), 'utf8');
 
-test('career wheel navigation does not depend on the entire section fitting in the viewport', () => {
-  const script = readFileSync(resolve(root, 'public/js/modules/career-timeline.js'), 'utf8');
-  assert.ok(script.includes("window.addEventListener('scroll'"));
-  assert.ok(!script.includes('rect.bottom>innerHeight'));
-  assert.ok(!script.includes('rect.top<0'));
-  assert.ok(script.includes('careerScrollDecision'));
-});
-
-test('career section height follows the selected company instead of the longest company', () => {
-  const script = readFileSync(resolve(root, 'public/js/modules/career-timeline.js'), 'utf8');
-  assert.ok(!script.includes('stage.style.minHeight'));
-  assert.ok(!script.includes('Math.max(height,panel.offsetHeight)'));
-  assert.ok(script.includes('panel.hidden = i!==current'));
-  assert.ok(!script.includes('shell.style.height'));
-  assert.ok(!script.includes('stage.style.height'));
-  assert.ok(!script.includes('stage.style.minHeight'));
-
-
+  assert.ok(renderer.includes("'cards/career-company'"));
+  assert.ok(renderer.includes("'shared/career-link'"));
+  assert.ok(companyTemplate.includes('class="career-company"'));
+  assert.ok(companyTemplate.includes('id="{{companyId}}"'));
+  assert.ok(roleTemplate.includes('<details class="career-role-details" {{openState}}>'));
+  assert.ok(!indicator.includes('touchstart'));
+  assert.ok(!indicator.includes('wheel'));
+  assert.ok(!indicator.includes('scrollTo'));
+  assert.ok(!indicator.includes('.hidden'));
 });

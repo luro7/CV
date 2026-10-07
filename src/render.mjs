@@ -81,16 +81,37 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     year: new Date().getFullYear()
   };
 
-  const experienceCards = site.experience.map(item =>
-    template('cards/experience', {
-      ...localizedObject(item, t),
-      tools: tags(item.tools, t),
-      points: tags(item.points, t),
-      toolData: escapeHtml(item.tools.join('|')),
-      experienceId: escapeHtml(item.id),
-      currentBadge: item.current ? '<span class="current-badge">' + escapeHtml(t('Current')) + '</span>' : ''
-    })
-  ).join('\n');
+  const companies = new Map();
+  for (const item of site.experience) {
+    if (!companies.has(item.company)) companies.set(item.company, []);
+    companies.get(item.company).push(item);
+  }
+  const careerCompanies = [...companies].map(([company, roles], index) => {
+    const latest = roles[0].date.split(' — ');
+    const earliest = roles.at(-1).date.split(' — ');
+    const firstYear = earliest[0].match(/\d{4}/)?.[0] || earliest[0];
+    const lastYear = roles.some(item => item.current) ? t('Present') :
+      (latest[1] || latest[0]).match(/\d{4}/)?.[0] || latest[0];
+    return {
+      company: escapeHtml(company),
+      companyId: 'career-' + roles[0].id,
+      number: String(index + 1).padStart(2, '0'),
+      period: escapeHtml(t(roles.at(-1).date).split(' — ')[0] + ' — ' +
+        (t(roles[0].date).split(' — ')[1] || t(roles[0].date))),
+      years: escapeHtml(firstYear === lastYear ? firstYear : firstYear + ' — ' + lastYear),
+      roles: roles.map(item => template('cards/experience', {
+        ...localizedObject(item, t),
+        tools: tags(item.tools, t),
+        points: tags(item.points, t),
+        toolData: escapeHtml(item.tools.join('|')),
+        experienceId: escapeHtml(item.id),
+        openState: item.current ? 'open' : '',
+        currentBadge: item.current ? '<span class="current-badge">' + escapeHtml(t('Current')) + '</span>' : ''
+      })).join('\n')
+    };
+  });
+  const experienceCards = careerCompanies.map(company => template('cards/career-company', company)).join('\n');
+  const careerLinks = careerCompanies.map(company => template('shared/career-link', company)).join('\n');
 
   const educationCards = site.education.map(item =>
     template('cards/education', localizedObject(item, t))
@@ -237,6 +258,7 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     mapsUrl: escapeHtml('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(site.location)),
     mapsEmbedUrl: escapeHtml('https://www.google.com/maps?q=' + encodeURIComponent(site.location) + '&z=12&output=embed'),
     experienceCards,
+    careerLinks,
     educationCards,
     certificationCards,
     engineeringItems,

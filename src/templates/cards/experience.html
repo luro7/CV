@@ -1,7 +1,10 @@
 <article class="experience-item" data-experience-id="{{experienceId}}" data-tools="{{toolData}}">
-  <header class="experience-heading">
-    <span class="experience-meta"><span class="company">{{company}}</span><span class="date">{{date}}</span></span>
+  <details class="career-role-details" {{openState}}>
+  <summary class="experience-heading">
+    <span class="experience-meta"><span class="company sr-only">{{company}}</span><span class="date">{{date}}</span></span>
     <span class="experience-role">{{role}}{{currentBadge}}</span>
-  </header>
+    <span class="career-disclosure" aria-hidden="true"><span class="career-read-more">Role details</span><span class="career-read-less">Hide details</span><svg viewBox="0 0 20 20" width="20" height="20"><path d="m5 7.5 5 5 5-5"/></svg></span>
+  </summary>
   <div class="experience-body"><ul class="responsibilities">{{points}}</ul><ul class="tags" aria-label="Technologies used">{{tools}}</ul></div>
+  </details>
 </article>

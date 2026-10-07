@@ -17,11 +17,9 @@ test('gallery horizontal swipes navigate both ways without treating vertical ges
  assert.equal(gallerySwipeDirection(100,10),-1);
  for(const [x,y] of [[10,100],[100,100],[20,0],[0,-100]]) assert.equal(gallerySwipeDirection(x,y),0);
 });
-test('touch career keeps one company and defers alignment until the finger is released',()=>{
+test('career indicator does not intercept touch, wheel or page scrolling',()=>{
  const source=readFileSync('public/js/modules/career-timeline.js','utf8');
- assert.match(source,/panel\.hidden = i!==current/);
- assert.match(source,/if\(touchOrigin\)\{snapshot\(\);return;\}/);
- assert.match(source,/window\.addEventListener\('touchend'/);
- assert.match(source,/origin\.rect,direction/);
- assert.doesNotMatch(source,/career-touch/);
+ assert.doesNotMatch(source,/touchstart|touchmove|touchend|wheel/);
+ assert.doesNotMatch(source,/scrollTo|preventDefault/);
+ assert.match(source,/addEventListener\('scroll', schedule, \{ passive: true \}\)/);
 });

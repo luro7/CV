@@ -10,7 +10,7 @@ The project is intentionally lightweight: static generation, progressive enhance
 - Indexable English and Spanish routes with canonical + hreflang metadata
 - Light / dark theme with reduced-motion support
 - Interactive expertise map with explicit skill-to-role tracing
-- Scroll-driven data pipeline and experience timeline
+- Scroll-driven data pipeline and continuous career overview with native role disclosures
 - Ctrl + K command palette with ranked search and typed expertise categories
 - Optional Engineering Mode with live section inspection and architecture metrics
 - Browser print flow optimized for saving the public CV as PDF
@@ -42,7 +42,7 @@ The browser layer is split by feature responsibility. Each feature owns its styl
 - interaction-model.js: pure ranking, pipeline-stage and skill-role matching logic
 - lab.js: command palette, expertise map, scroll pipeline, print behavior and Engineering Mode
 - capability-map.js + capability-role-details.js + capability-map.css: skill visualization and role details
-- career-timeline.js + experience-timeline.css: editorial company chapters, accessible chronology tabs and restrained transitions
+- career-timeline.js + experience-timeline.css: continuous company cards, direct company links, native role disclosures and a passive reading indicator
 - project-showcase.js + project-showcase.css: project presentation and Android preview composition
 - project-gallery.js + project-gallery.css: optional project photo dialog with keyboard navigation
 - credentials.js + credential-images.js + credential-descriptions.js + credential-wall.css: certification artwork, descriptions, Skillsoft details dialog and credential layout
