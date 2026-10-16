@@ -40,9 +40,11 @@ test('credential cards give each badge equal space in a responsive wallet layout
   assert.ok(template.includes('class="credential-info"'));
   assert.ok(template.includes('class="credential-actions"'));
   assert.ok(!template.includes('credential-card-link'));
-  assert.ok(css.includes('grid-template-columns:minmax(110px,.65fr) minmax(0,1.6fr)'));
-  assert.ok(css.includes('min-height:270px'));
+  assert.ok(css.includes('grid-template-columns:165px minmax(0,1fr)'));
+  assert.ok(css.includes('min-height:245px'));
   assert.ok(css.includes('max-width:150px'));
+  assert.ok(css.includes('grid-template-columns:126px minmax(0,1fr)'));
+  assert.ok(!css.includes('rotate(-3deg)'));
   assert.ok(!css.includes('.skillsoft-card-preview'));
 });
 
