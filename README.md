@@ -10,7 +10,7 @@ The project is intentionally lightweight: static generation, progressive enhance
 - Indexable English and Spanish routes with canonical + hreflang metadata
 - Light / dark theme with reduced-motion support
 - Interactive expertise map with explicit skill-to-role tracing
-- Scroll-driven data pipeline and continuous career overview with native role disclosures
+- Static data workflow strip and continuous career overview with native role disclosures
 - Ctrl + K command palette with ranked search and typed expertise categories
 - Optional Engineering Mode with live section inspection and architecture metrics
 - Browser print flow optimized for saving the public CV as PDF
@@ -38,11 +38,11 @@ The browser layer is split by feature responsibility. Each feature owns its styl
 - theme.css: color tokens, theme appearance and preference controls
 - navigation.js: active-section navigation
 - preferences.js: locale navigation and theme state
-- motion.js: reveal, pointer and reading-progress effects
+- motion.js: optional pointer polish only; it deliberately contains no scroll-triggered visual effects
 - interaction-model.js: pure ranking, pipeline-stage and skill-role matching logic
-- lab.js: command palette, expertise map, scroll pipeline, print behavior and Engineering Mode
+- lab.js: command palette, expertise tracing, print behavior and Engineering Mode
 - capability-map.js + capability-role-details.js + capability-map.css: skill visualization and role details
-- career-timeline.js + experience-timeline.css: continuous company cards, direct company links, native role disclosures and a passive reading indicator
+- career-timeline.js + experience-timeline.css: continuous company cards, direct company links, native role disclosures and passive current-company state
 - project-showcase.js + project-showcase.css: project presentation and Android preview composition
 - project-gallery.js + project-gallery.css: optional project photo dialog with keyboard navigation
 - credentials.js + credential-images.js + credential-descriptions.js + credential-wall.css: certification artwork, descriptions, Skillsoft details dialog and credential layout

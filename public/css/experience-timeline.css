@@ -2,7 +2,7 @@
 .experience-section>.wrap{max-width:1600px}
 .career-intro{max-width:50ch;margin:-.5rem 0 2.5rem;color:var(--muted);font-size:1.05rem;line-height:1.6}
 .career-layout{display:grid;grid-template-columns:minmax(180px,.75fr) minmax(0,2.5fr);gap:clamp(2rem,4vw,5rem);align-items:start}
-.career-index{position:sticky;top:2rem;display:grid;gap:.5rem;min-width:0}
+.career-index{position:static;display:grid;gap:.5rem;min-width:0}
 .career-index>.eyebrow{font-size:.7rem;margin-bottom:.6rem}
 .career-index a{display:flex;align-items:center;gap:.75rem;min-height:76px;padding:.9rem .75rem;border:1px solid transparent;border-radius:12px;color:var(--muted);transition:background-color .18s,border-color .18s}
 .career-index a:hover,.career-index a[aria-current]{background:var(--interactive-accent-soft);border-color:var(--interactive-accent-line);color:var(--ink)}
@@ -14,7 +14,7 @@
 .career-link-arrow{margin-left:auto;color:var(--interactive-accent)}
 .experience-section .timeline{display:grid;gap:2rem;border:0;padding:0;margin:0;min-width:0}
 .experience-section .timeline::before,.experience-section .timeline::after{display:none}
-.career-company{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--paper);scroll-margin-top:1rem;min-width:0}
+.career-company{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper);scroll-margin-top:1rem;min-width:0}
 .career-company:focus-visible{outline:3px solid var(--focus);outline-offset:5px}
 .career-company-heading{display:flex;align-items:flex-start;gap:1rem;padding:clamp(1.25rem,2.5vw,2rem);border-bottom:1px solid var(--line)}
 .career-number{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--interactive-accent-line);color:var(--interactive-accent);font:.75rem Consolas,monospace}
@@ -22,7 +22,6 @@
 .career-company-heading h3{font-size:clamp(1.6rem,2.7vw,2.5rem);letter-spacing:-.04em;line-height:1.15;font-weight:600;overflow-wrap:anywhere}
 .career-roles{padding-inline:clamp(1.25rem,2.5vw,2rem);min-width:0}
 .career-roles .experience-item{border:0;border-radius:0;background:transparent;transform:none}
-.career-roles .experience-item.reveal{opacity:1;transform:none;transition:none}
 .career-roles .experience-item+.experience-item{border-top:1px solid var(--line)}
 .career-roles .experience-item::before,.career-roles .experience-item::after{display:none}
 .career-roles .experience-item.skill-match{background:var(--interactive-accent-soft);box-shadow:inset 3px 0 var(--interactive-accent);transform:none}

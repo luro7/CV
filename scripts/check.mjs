@@ -115,7 +115,7 @@ for (const [name, documentHtml] of [['en', html], ['es', spanishHtml]]) {
   assert(documentHtml.includes('class="engineering-toggle'), name + ': engineering mode toggle is missing');
   assert(documentHtml.includes('data-skill-map'), name + ': interactive expertise map is missing');
   assert(documentHtml.includes('class="hero-pipeline"'), name + ': data pipeline is missing');
-  assert(documentHtml.includes('class="pipeline-dock"'), name + ': persistent scroll pipeline is missing');
+  assert(!documentHtml.includes('class="pipeline-dock"'), name + ': scroll-driven pipeline dock must not be rendered');
   assert(documentHtml.includes('data-skill-status'), name + ': skill trace status is missing');
   assert(documentHtml.includes('data-print-cv'), name + ': PDF/print action is missing');
   assert(!documentHtml.includes('class="project-gallery-link" href="#projects"'), name + ': hero must not duplicate the projects navigation');

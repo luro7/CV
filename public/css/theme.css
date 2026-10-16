@@ -19,6 +19,10 @@
 }
 
 body{background:var(--bg);color:var(--ink)}
+.wrap{width:min(calc(100% - clamp(2.25rem,5vw,7rem)),1480px)}
+.section{padding-block:clamp(5rem,6vw,7rem)}
+@media(max-width:800px){.wrap{width:calc(100% - 2rem)}.section{padding-block:4.25rem}}
+@media(max-width:560px){.wrap{width:calc(100% - 1.5rem)}.section{padding-block:3.75rem}}
 ::selection{background:#DDE1FF;color:#181B45}
 a:focus-visible,summary:focus-visible,button:focus-visible{outline-color:var(--focus)}
 main a:hover{color:var(--interactive-accent)}
@@ -87,7 +91,6 @@ h2 span{color:var(--ink)}
 .timeline .experience-item.skill-match::before{background:#8D94FF;border-color:#4A52C7}
 .credential-art-label{color:#4148A5;background:#F0F1FA}
 .credential-art-label span{border-color:#A8AFE8}
-.pipeline-dock{background:color-mix(in srgb,var(--paper) 94%,transparent)}
 .engineering-panel{background:#111522F2;color:#EEF1F8;border-color:#343A50}
 .engineering-panel-head,.engineering-inspector,.engineering-metrics{border-color:#2A3043}
 .engineering-kicker,.engineering-inspector>strong{color:#9FA5FF}
@@ -176,10 +179,7 @@ h2 span{color:var(--ink)}
 [data-theme=dark] .skill-node:hover,[data-theme=dark] .skill-node:focus-visible,[data-theme=dark] .skill-node.is-active,[data-theme=dark] .command-result:hover,[data-theme=dark] .command-result:focus-visible{background:#17283A;color:#AEE6FF;border-color:#355B78}
 [data-theme=dark] .hero-signal span{background:#6FCBFF;box-shadow:0 0 0 7px #6FCBFF12}
 [data-theme=dark] .hero-signal span::after{background:linear-gradient(90deg,#6FCBFF55,transparent)}
-[data-theme=dark] .skill-hub,[data-theme=dark] .hero-pipeline span.is-active,[data-theme=dark] .pipeline-dock-head strong,[data-theme=dark] .pipeline-dock-stage.is-active,[data-theme=dark] .skill-trace-status{color:#8AD7FF}
-[data-theme=dark] .hero-pipeline::before,[data-theme=dark] .pipeline-dock-fill,[data-theme=dark] .timeline::after{background:#6FCBFF}
-[data-theme=dark] .hero-pipeline span.is-active::before,[data-theme=dark] .pipeline-dock-stage.is-active i{background:#8AD7FF;border-color:#6FCBFF}
-[data-theme=dark] .pipeline-dock{background:#101720E8;border-color:#2D3E4F}
+[data-theme=dark] .skill-hub,[data-theme=dark] .skill-trace-status{color:#8AD7FF}
 [data-theme=dark] .engineering-mode [data-engineering-label]::after{color:#9FDCFF;background:#111A25;border-color:#355064}
 [data-theme=dark] .project-card-title>span,[data-theme=dark] .project-card-content .project-technologies,[data-theme=dark] .project-card-action,[data-theme=dark] .project-card-live-link{color:#8AD7FF}
 [data-theme=dark] .project-card-live-link:hover,[data-theme=dark] .project-card-live-link:focus-visible{border-color:#5A9BC2}

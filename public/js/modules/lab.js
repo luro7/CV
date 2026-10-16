@@ -1,12 +1,11 @@
 import siteData from '../site-data.js';
 import translations from '../translations.js';
-import { progressToStage, rankCommandItems, skillMatchesExperience } from './interaction-model.js';
+import { rankCommandItems, skillMatchesExperience } from './interaction-model.js';
 
 const root = document.documentElement;
 const read = key => { try { return localStorage.getItem(key); } catch { return null; } };
 const store = (key, value) => { try { localStorage.setItem(key, value); } catch {} };
 const tr = text => root.lang === 'es' ? (translations[text] || text) : text;
-const stageLabels = ['Data', 'Transform', 'Automate', 'AI', 'Report'];
 
 function createSkillMap(container) {
   const experienceItems = [...document.querySelectorAll('.experience-item')];
@@ -323,62 +322,6 @@ function initCommandPalette(skillApi, toggleEngineering) {
   });
 }
 
-function initScrollSystems() {
-  const dock = document.querySelector('.pipeline-dock');
-  const dockStages = [...document.querySelectorAll('.pipeline-dock-stage')];
-  const dockFill = document.querySelector('.pipeline-dock-fill');
-  const dockState = document.querySelector('[data-pipeline-state]');
-  const hero = document.querySelector('.hero');
-  const heroStages = [...document.querySelectorAll('.hero-pipeline span')];
-  const timeline = document.querySelector('.timeline');
-  let frame = 0;
-
-  const update = () => {
-    frame = 0;
-    const pageRange = document.documentElement.scrollHeight - innerHeight;
-    const pageProgress = Math.max(0, Math.min(1, pageRange > 0 ? scrollY / pageRange : 0));
-    const pageStage = progressToStage(pageProgress);
-
-    if (dockFill) dockFill.style.transform = 'scaleX(' + pageProgress + ')';
-    dockStages.forEach((node, index) => {
-      node.classList.toggle('is-active', index <= pageStage);
-      node.classList.toggle('is-current', index === pageStage);
-    });
-    if (dockState) dockState.textContent = tr(stageLabels[pageStage]);
-
-    if (hero) {
-      const rect = hero.getBoundingClientRect();
-      const heroRange = Math.max(1, rect.height - Math.min(innerHeight * 0.2, 160));
-      const heroProgress = Math.max(0, Math.min(1, -rect.top / heroRange));
-      const heroStage = progressToStage(heroProgress);
-
-      hero.style.setProperty('--hero-pipeline-progress', heroProgress);
-      heroStages.forEach((node, index) => {
-        node.classList.toggle('is-active', index <= heroStage);
-        node.classList.toggle('is-current', index === heroStage);
-      });
-
-      if (dock) dock.classList.toggle('is-visible', rect.bottom < 110 && pageProgress < 0.985);
-    }
-
-    if (timeline) {
-      const rect = timeline.getBoundingClientRect();
-      const start = innerHeight * 0.75;
-      const distance = rect.height + innerHeight * 0.5;
-      const progress = Math.max(0, Math.min(1, (start - rect.top) / distance));
-      timeline.style.setProperty('--timeline-progress', progress);
-    }
-  };
-
-  const schedule = () => {
-    if (!frame) frame = requestAnimationFrame(update);
-  };
-
-  addEventListener('scroll', schedule, { passive: true });
-  addEventListener('resize', schedule);
-  update();
-}
-
 function initPrint() {
   document.querySelectorAll('[data-print-cv]').forEach(button => {
     button.addEventListener('click', () => print());
@@ -390,6 +333,5 @@ export function initLab() {
   const skillApi = container ? createSkillMap(container) : { skills: [], highlight() {}, clear() {} };
   const toggleEngineering = initEngineering();
   initCommandPalette(skillApi, toggleEngineering);
-  initScrollSystems();
   initPrint();
 }

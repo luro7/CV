@@ -1,5 +1,4 @@
 <section class="hero wrap" id="home" aria-labelledby="hero-title" data-engineering-label="profile.render()">
-  <div class="hero-signal" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
   <div class="document-meta"><span>RÉSUMÉ</span><span>Professional profile</span></div>
   <div class="hero-identity">
     <h1 id="hero-title">Lucas Rosat<span>.</span></h1>
@@ -16,8 +15,12 @@
       <div class="profile-details-body">{{aboutDetailContent}}</div>
     </details>
     <ul class="hero-focus" aria-label="Focus areas">{{heroFocus}}</ul>
+    <div class="actions hero-actions">
+      <a class="linkedin-button" href="{{linkedin}}" target="_blank" rel="noopener noreferrer"><img src="/assets/linkedin-in-white.png" width="22" height="22" alt="" aria-hidden="true">Open LinkedIn <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
+      <button class="download-button" type="button" data-print-cv>Save PDF <span aria-hidden="true">↓</span></button>
+    </div>
   </div>
-  <div class="hero-pipeline" aria-label="Data pipeline">
+  <div class="hero-pipeline" aria-label="Data workflow">
     <span>Data</span><span>Transform</span><span>Automate</span><span>AI</span><span>Report</span>
   </div>
 </section>

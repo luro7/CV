@@ -41,7 +41,8 @@ Preserve the current static/progressive-enhancement architecture unless a reques
 The site should feel professional, modern and technically polished rather than decorative for its own sake.
 
 - Prioritize readability, hierarchy and restrained interaction over visual noise.
-- Keep animations purposeful and compatible with `prefers-reduced-motion`.
+- Do not add scroll-triggered visual effects, reveal animations, scroll-progress decorations or parallax. Scrolling should move the document, not animate it; passive navigation state tracking is fine.
+- Keep any non-scroll animation purposeful and compatible with `prefers-reduced-motion`.
 - Avoid redesigning unrelated sections when changing one component.
 - Credentials/certifications should be presented with equal visual importance unless the content explicitly defines a hierarchy.
 - Maintain visual consistency between projects, experience, expertise, credentials and navigation.
