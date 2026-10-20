@@ -34,7 +34,7 @@ test('capability collision relaxation treats hubs as fixed obstacles',()=>{
 });
 
 test('capability model groups skills, derives importance and relates shared experience',()=>{
-  const expertise=[{number:'01',title:'Data engineering',tools:['SQL Development','SQL Server','ETL']}];
+  const expertise=[{title:'Data engineering',tools:['SQL Development','SQL Server','ETL']}];
   const experience=[
     {id:'role-a',tools:['SQL Server','ETL']},
     {id:'role-b',tools:['SQL Server']}

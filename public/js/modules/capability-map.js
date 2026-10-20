@@ -69,7 +69,7 @@ export function initCapabilityConstellation() {
   if (legend) {
     legend.replaceChildren(...model.groups.map(group => {
       const item = document.createElement('span');
-      item.innerHTML = '<b>' + group.number + '</b><span>' + tr(group.title) + '</span>';
+      item.textContent = tr(group.title);
       return item;
     }));
   }
@@ -83,11 +83,9 @@ export function initCapabilityConstellation() {
     const hub = document.createElement('div');
     hub.className = 'capability-hub';
     hub.dataset.capabilityHub = String(group.groupIndex);
-    const number = document.createElement('span');
-    number.textContent = group.number;
     const title = document.createElement('strong');
     title.textContent = tr(group.title);
-    hub.append(number, title);
+    hub.append(title);
     hubByGroup.set(group.groupIndex, hub);
 
     const list = document.createElement('div');

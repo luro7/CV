@@ -70,7 +70,7 @@ for (const phrase of requiredUiTranslations) {
 }
 
 for (const item of site.expertise) {
-  assert(item.number && item.title && Array.isArray(item.tools) && item.tools.length, 'Expertise groups need a number, title and tools');
+  assert(item.title && Array.isArray(item.tools) && item.tools.length, 'Expertise groups need a title and tools');
 }
 for (const item of site.experience) {
   for (const key of ['company', 'role', 'date', 'id']) assert(typeof item[key] === 'string' && item[key].trim(), 'Experience item missing ' + key);

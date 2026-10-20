@@ -3,7 +3,7 @@ import { initPreferences } from './modules/preferences.js';
 import { initMotion } from './modules/motion.js?v=portfolio-polish-20261015';
 import { initLab } from './modules/lab.js?v=portfolio-polish-20261015';
 import { initCareerTimeline } from './modules/career-timeline.js?v=career-native-20261006';
-import { initCapabilityConstellation } from './modules/capability-map.js?v=capability-interaction-20260928';
+import { initCapabilityConstellation } from './modules/capability-map.js?v=capability-responsive-20261020';
 import { initCapabilityRoleDetails } from './modules/capability-role-details.js?v=capability-role-detail-20260928b';
 import { initProjectShowcase } from './modules/project-showcase.js?v=project-showcase-layout-fix-20260928';
 import { initCredentials } from './modules/credentials.js?v=credentials-static-badges-20260929';

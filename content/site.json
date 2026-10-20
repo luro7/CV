@@ -8,7 +8,6 @@
   "intro": "I am a Data Engineering Analyst and AI Automation Engineer with a strong background in SQL development, data integration, reporting, process automation, and enterprise solutions.",
   "expertise": [
     {
-      "number": "01",
       "title": "Data engineering",
       "tools": [
         "SQL Development",
@@ -23,7 +22,6 @@
       ]
     },
     {
-      "number": "02",
       "title": "AI & automation",
       "tools": [
         "Artificial Intelligence",
@@ -39,7 +37,6 @@
       ]
     },
     {
-      "number": "03",
       "title": "Reporting & operations",
       "tools": [
         "Data Analysis",
@@ -248,11 +245,12 @@
       "category": "windows",
       "description": "A Windows audio mixer for per-application sessions, with browser-tab volume control through a Chromium extension and Native Messaging integration.",
       "technologies": "C# 14, .NET 10, WinUI 3, WASAPI, Chromium extension",
-      "screenshots": [{
-        "image": "/assets/projects/sound-mixer-main.png",
-        "alt": "Sound Mixer main window controlling separate browser tabs and Windows audio sessions.",
-        "caption": "Main window · browser tabs and Windows audio sessions"
-      },
+      "screenshots": [
+        {
+          "image": "/assets/projects/sound-mixer-main.png",
+          "alt": "Sound Mixer main window controlling separate browser tabs and Windows audio sessions.",
+          "caption": "Main window · browser tabs and Windows audio sessions"
+        },
         {
           "image": "/assets/projects/sound-mixer-compact.png",
           "alt": "Sound Mixer compact view with quick volume and mute controls for browser tabs and Windows audio.",
@@ -279,8 +277,14 @@
     }
   ],
   "languages": [
-    { "name": "Spanish", "level": "Native" },
-    { "name": "English", "level": "C1 · CEFR" }
+    {
+      "name": "Spanish",
+      "level": "Native"
+    },
+    {
+      "name": "English",
+      "level": "C1 · CEFR"
+    }
   ],
   "certifications": [
     {

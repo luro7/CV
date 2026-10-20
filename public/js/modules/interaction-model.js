@@ -92,7 +92,6 @@ export function buildCapabilityModel(expertise = [], experience = [], skillTypes
 
   const groups = expertise.map((group, groupIndex) => ({
     id: 'capability-group-' + groupIndex,
-    number: group.number || String(groupIndex + 1).padStart(2, '0'),
     title: group.title,
     groupIndex
   }));

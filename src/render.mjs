@@ -86,7 +86,7 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     if (!companies.has(item.company)) companies.set(item.company, []);
     companies.get(item.company).push(item);
   }
-  const careerCompanies = [...companies].map(([company, roles], index) => {
+  const careerCompanies = [...companies].map(([company, roles]) => {
     const latest = roles[0].date.split(' — ');
     const earliest = roles.at(-1).date.split(' — ');
     const firstYear = earliest[0].match(/\d{4}/)?.[0] || earliest[0];
@@ -95,7 +95,6 @@ export function render(site, { language = 'en', translations = {} } = {}) {
     return {
       company: escapeHtml(company),
       companyId: 'career-' + roles[0].id,
-      number: String(index + 1).padStart(2, '0'),
       period: escapeHtml(t(roles.at(-1).date).split(' — ')[0] + ' — ' +
         (t(roles[0].date).split(' — ')[1] || t(roles[0].date))),
       years: escapeHtml(firstYear === lastYear ? firstYear : firstYear + ' — ' + lastYear),
