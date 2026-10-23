@@ -15,7 +15,8 @@
 .experience-section .timeline::before,.experience-section .timeline::after{display:none}
 .career-company{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper);scroll-margin-top:1rem;min-width:0}
 .career-company:focus-visible{outline:3px solid var(--focus);outline-offset:5px}
-.career-company-heading{display:flex;align-items:flex-start;gap:1rem;padding:clamp(1.25rem,2.5vw,2rem);border-bottom:1px solid var(--line)}
+.career-company-heading{display:flex;align-items:flex-start;gap:1rem;padding:clamp(1.25rem,2.5vw,2rem);border-bottom:1px solid var(--line);min-width:0}
+.career-company-heading>div{min-width:0}
 .career-period{font:.75rem Consolas,monospace;color:var(--muted);line-height:1.6;margin-bottom:.5rem}
 .career-company-heading h3{font-size:clamp(1.6rem,2.7vw,2.5rem);letter-spacing:-.04em;line-height:1.15;font-weight:600;overflow-wrap:anywhere}
 .career-roles{padding-inline:0;min-width:0}
@@ -41,13 +42,13 @@
 .career-role-details[open] .career-disclosure svg{transform:rotate(180deg)}
 .career-roles .experience-body{margin:0;padding:0 0 1.75rem;display:block;min-width:0}
 .career-roles .responsibilities{display:grid;gap:1rem;list-style:none;padding:0;margin:0;max-width:68ch;font-size:1rem;line-height:1.7}
-.career-roles .responsibilities li{position:relative;padding-left:1rem;margin:0;color:var(--muted)}
+.career-roles .responsibilities li{position:relative;min-width:0;padding-left:1rem;margin:0;color:var(--muted);overflow-wrap:anywhere}
 .career-roles .responsibilities li::before{content:'';position:absolute;left:0;top:.65em;width:4px;height:4px;background:var(--interactive-accent);border-radius:50%}
 .career-roles .tags{gap:.4rem;margin:1.5rem 0 0}
 .career-roles .tags li{font:.72rem/1.5 Consolas,monospace;padding:.3rem .5rem;border-radius:6px;background:var(--bg);border:1px solid var(--line);color:var(--muted);overflow-wrap:anywhere;max-width:100%}
 @media(min-width:1700px){.career-layout{grid-template-columns:240px minmax(0,1fr)}.career-roles .responsibilities{grid-template-columns:1fr 1fr;max-width:none;gap:1rem 2rem}}
 @media(max-width:1050px){.career-layout{grid-template-columns:1fr;gap:1.5rem}.career-index{position:static;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}.career-index>.eyebrow{grid-column:1/-1;margin-bottom:0}.career-index a{border-color:var(--line)}.career-disclosure>span{display:none!important}}
 @media(max-width:600px){.career-intro{font-size:1rem;margin-bottom:1.5rem}.career-index{grid-template-columns:1fr;gap:.5rem}.career-index a{min-height:60px;padding:.65rem .9rem}.career-link-copy{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.75rem;flex:1}.career-link-copy strong{font-size:.9rem}.career-link-copy>span{font-size:.7rem}.career-company{border-radius:16px;scroll-margin-top:.75rem}.career-company-heading{padding:1.25rem}.career-company-heading h3{font-size:1.75rem}.career-roles .experience-item{padding-inline:1.25rem}.career-roles .experience-heading{grid-template-columns:minmax(0,1fr) auto;gap:.4rem .65rem;padding:1.25rem 0}.career-roles .experience-role{font-size:1.1rem;overflow-wrap:anywhere}.career-roles .date{overflow-wrap:anywhere}.career-roles .responsibilities{font-size:.95rem;line-height:1.7}.career-roles .current-badge{font-size:.7rem}.experience-section .timeline{gap:1.25rem}}
-@media(max-width:360px){.career-link-copy{grid-template-columns:1fr;gap:.2rem}}
+@media(max-width:400px){.career-company-heading{padding:1rem}.career-roles .experience-item{padding-inline:1rem}.career-link-copy{grid-template-columns:1fr;gap:.2rem}}
 @media(prefers-reduced-motion:reduce){.career-index a,.career-disclosure svg{transition:none}}
 @media print{.career-index,.career-intro,.career-disclosure{display:none}.career-layout{display:block}.career-company{border:0;overflow:visible}.career-role-details::details-content{content-visibility:visible!important}.career-roles .experience-body{display:block!important}}

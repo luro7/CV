@@ -19,6 +19,8 @@
 }
 
 body{background:var(--bg);color:var(--ink)}
+main,.wrap,.section,.section-heading,.hero,.hero-profile,.education-ledger,.credential-wall,.projects-section .wrap{min-width:0}
+h1,h2,h3,h4,p{max-width:100%;overflow-wrap:break-word}
 .wrap{width:min(calc(100% - clamp(2.25rem,5vw,7rem)),1480px)}
 .section{padding-block:clamp(5rem,6vw,7rem)}
 @media(max-width:800px){.wrap{width:calc(100% - 2rem)}.section{padding-block:4.25rem}}
@@ -241,21 +243,6 @@ h2 span{color:var(--ink)}
   0%{opacity:0;transform:translate(-10px,30px) rotate(-40deg)}
   25%{opacity:1;transform:translate(-7px,16px) rotate(-25deg)}
   100%{opacity:1;transform:translate(0,0) rotate(0)}
-}
-
-/* Keep the capability section clean: no repeated guidance or empty inspector row. */
-.capability-stage:not(.has-pinned-skill) + .capability-inspector{display:none!important}
-.capability-stage.has-pinned-skill + .capability-inspector{
-  display:flex!important;
-  min-height:0!important;
-  padding:.7rem 0!important;
-  justify-content:flex-end;
-  border-bottom:1px solid var(--line);
-  background:none!important;
-}
-.capability-stage.has-pinned-skill + .capability-inspector .capability-clear{
-  position:static!important;
-  margin-left:auto;
 }
 
 @media(prefers-reduced-motion:reduce){

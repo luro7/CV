@@ -39,8 +39,9 @@
   .capability-node-list{gap:.5rem}
   .capability-node{font-size:.82rem}
 }
-@media(max-width:420px){
-  .capability-node{flex:1 1 calc(50% - .5rem);min-width:min(9.5rem,100%)}
+@media(max-width:480px){
+  .capability-cluster{padding:1rem}
+  .capability-node{flex:1 1 100%;width:100%;min-width:0}
   .capability-node-size-3{flex-basis:100%}
   .capability-inspector{border-radius:14px}
 }

@@ -9,5 +9,6 @@
 .project-photo-controls button{padding:.75rem;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);cursor:pointer}
 .project-photo-controls button:hover{background:color-mix(in srgb,var(--interactive-accent) 12%,var(--paper))}
 .project-photo-controls button:disabled{opacity:.4;cursor:default}
-@media(max-width:760px){.project-photo-dialog{padding:.6rem}.inline-gallery-photo img{height:55svh}.project-photo-controls{gap:.4rem;font-size:.8rem}}
+@media(max-width:760px){.project-photo-dialog{width:calc(100vw - 1rem);max-height:96svh;padding:.6rem}.inline-gallery-photo img{height:55svh}.project-photo-controls{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:.4rem;font-size:.8rem}.project-photo-controls button{min-width:0;padding:.65rem .45rem}.project-photo-controls button:last-child{text-align:right}}
+@media(max-width:420px){.inline-gallery-photo img{height:50svh}.project-photo-controls{font-size:.72rem}.inline-gallery-photo figcaption{padding:.6rem .2rem}}
 @media print{.project-photo-dialog{display:none}}
