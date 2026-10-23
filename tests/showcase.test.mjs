@@ -146,4 +146,8 @@ test('career is rendered as continuous static company sections with native role 
   assert.ok(!indicator.includes('wheel'));
   assert.ok(!indicator.includes('scrollTo'));
   assert.ok(!indicator.includes('.hidden'));
+  const careerCss = readFileSync(resolve(root, 'public/css/experience-timeline.css'), 'utf8');
+  assert.ok(careerCss.includes('.career-roles{padding-inline:0;min-width:0}'));
+  assert.ok(careerCss.includes('padding-inline:clamp(1.25rem,2.5vw,2rem)'));
+  assert.ok(careerCss.includes('.career-roles .career-role-details{display:block;min-width:0}'));
 });
