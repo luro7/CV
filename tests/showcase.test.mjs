@@ -126,8 +126,8 @@ test('decorative section numbering is absent and the capability inspector has a 
   assert.ok(!capabilityScript.includes('group.number'));
   assert.ok(!companyTemplate.includes('career-number'));
   assert.ok(!careerLinkTemplate.includes('career-link-number'));
-  assert.ok(capabilityCss.includes('@media(max-width:760px)'));
-  assert.ok(capabilityCss.includes('.capability-clear{justify-self:start'));
+  assert.ok(capabilityCss.includes('@media(max-width:1000px)'));
+  assert.ok(capabilityCss.includes('.capability-clear{justify-self:stretch'));
   assert.ok(capabilityCss.includes('overflow-wrap:anywhere'));
 });
 

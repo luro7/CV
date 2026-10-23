@@ -30,17 +30,14 @@
   .capability-clusters{grid-template-columns:1fr}
   .capability-cluster{padding:1.5rem}
   .capability-hub strong{font-size:1.6rem}
-  .capability-inspector{grid-template-columns:minmax(0,1fr) auto;gap:.75rem 1rem;padding:1.1rem}
-  .capability-inspector-main,.capability-inspector>p,.capability-inspector .skill-trace-status{grid-column:1}
-  .capability-clear{grid-column:2;grid-row:1;align-self:start}
+  .capability-inspector[data-active=true]{display:grid;grid-template-columns:minmax(0,1fr);gap:.75rem;padding:1rem}
+  .capability-inspector-main,.capability-inspector>p,.capability-inspector .skill-trace-status,.capability-clear{grid-column:1;grid-row:auto;width:100%;min-width:0}
+  .capability-clear{justify-self:stretch;margin-top:.15rem;text-align:center;white-space:normal}
 }
 @media(max-width:760px){
   .capability-cluster{padding:1.15rem;gap:1rem}
   .capability-node-list{gap:.5rem}
   .capability-node{font-size:.82rem}
-  .capability-inspector[data-active=true]{grid-template-columns:minmax(0,1fr);gap:.75rem;padding:1rem}
-  .capability-inspector-main,.capability-inspector>p,.capability-inspector .skill-trace-status,.capability-clear{grid-column:1;grid-row:auto}
-  .capability-clear{justify-self:start;margin-top:.15rem}
 }
 @media(max-width:420px){
   .capability-node{flex:1 1 calc(50% - .5rem);min-width:min(9.5rem,100%)}
