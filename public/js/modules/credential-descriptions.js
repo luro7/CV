@@ -1,5 +1,7 @@
 const descriptions = {
   en: new Map([
+    ['f3357bee-cd6a-11f1-8e57-af708f98066f', 'Verified completion of the Udacity Data Analyst Nanodegree program.'],
+    ['fe6d913c-cd64-11f1-a2f6-9f197f889d6c', 'Verified completion of the Udacity TQ Physical AI course.'],
     ['a42c4332-35ac-47e7-b437-99037b692bf8', 'Applies agentic AI concepts to practical business and technology scenarios.'],
     ['a18db90b-3b9f-4e06-961c-92f686679d34', 'Introduces generative AI APIs and their use in practical applications.'],
     ['c736b38b-c866-49f1-82ed-57cdf5887686', 'Covers core AI and machine learning concepts and applications.'],
@@ -10,6 +12,8 @@ const descriptions = {
     ['e76f6824-61cc-43d2-9624-b6799e3620d2', 'Reviews the OWASP Top 10 web-application security risks.']
   ]),
   es: new Map([
+    ['f3357bee-cd6a-11f1-8e57-af708f98066f', 'Certificado de finalización del Nanodegree Data Analyst de Udacity.'],
+    ['fe6d913c-cd64-11f1-a2f6-9f197f889d6c', 'Certificado de finalización del curso TQ Physical AI de Udacity.'],
     ['a42c4332-35ac-47e7-b437-99037b692bf8', 'Aplica conceptos de IA agéntica a escenarios prácticos de negocio y tecnología.'],
     ['a18db90b-3b9f-4e06-961c-92f686679d34', 'Introduce APIs de IA generativa y su uso en aplicaciones prácticas.'],
     ['c736b38b-c866-49f1-82ed-57cdf5887686', 'Cubre conceptos y aplicaciones fundamentales de IA y machine learning.'],
@@ -53,7 +57,7 @@ export function initCredentialDescriptions() {
       const originalSrc = image.getAttribute('src');
       if (originalSrc?.startsWith('/assets/credentials/')) {
         image.loading = 'eager';
-        image.src = originalSrc.split('?')[0] + '?v=credential-badges-20260929c';
+        image.src = originalSrc.split('?')[0] + '?v=udacity-certificates-20261026';
       }
     }
 

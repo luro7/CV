@@ -1,5 +1,7 @@
 export class CredentialImageRegistry {
   static images = new Map([
+    ['f3357bee-cd6a-11f1-8e57-af708f98066f', '/assets/credentials/udacity-data-analyst.svg'],
+    ['fe6d913c-cd64-11f1-a2f6-9f197f889d6c', '/assets/credentials/udacity-tq-physical-ai.svg'],
     ['a42c4332-35ac-47e7-b437-99037b692bf8', '/assets/credentials/accenture-agentic-ai.png'],
     ['a18db90b-3b9f-4e06-961c-92f686679d34', '/assets/credentials/skillsoft-generative-ai.png'],
     ['c736b38b-c866-49f1-82ed-57cdf5887686', '/assets/credentials/skillsoft-ai-machine-learning.png'],
@@ -30,7 +32,7 @@ export class CredentialImageRegistry {
       const imagePath = this.images.get(this.credentialId(card));
       if (!image || !imagePath) return;
 
-      image.src = imagePath + '?v=credential-registry-v2-20260929';
+      image.src = imagePath + '?v=udacity-certificates-20261026';
       image.loading = 'eager';
       image.decoding = 'async';
     });
