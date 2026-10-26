@@ -8,6 +8,23 @@ import vm from 'node:vm';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 
+test('Udacity certificates appear first and link to their official verification pages', () => {
+  const site = JSON.parse(readFileSync(resolve(root, 'content/site.json'), 'utf8'));
+  const html = render(site);
+  const firstTwo = site.certifications.slice(0, 2);
+  assert.deepEqual(firstTwo.map(item => item.title), ['Data Analyst', 'TQ Physical AI']);
+  for (const item of firstTwo) {
+    assert.equal(item.institution, 'Udacity');
+    assert.match(item.credentialUrl, /^https:\/\/www\.udacity\.com\/certificate\/e\/[a-f0-9-]+$/);
+    assert.match(item.image, /udacity-[a-z-]+\.svg$/);
+    assert.ok(existsSync(resolve(root, 'public', '.' + item.image)));
+    assert.ok(html.includes('href="' + item.credentialUrl + '"'));
+    assert.ok(html.includes('src="' + item.image + '"'));
+  }
+  assert.equal((html.match(/data-credential-provider="udacity"/g) || []).length, 2);
+  assert.ok(html.indexOf('data-credential-provider="udacity"') < html.indexOf('data-credential-provider="skillsoft"'));
+});
+
 test('project showcase stays unnumbered and owns its layout', () => {
   const template = readFileSync(resolve(root, 'src/templates/cards/project.html'), 'utf8');
   const css = readFileSync(resolve(root, 'public/css/project-showcase.css'), 'utf8');

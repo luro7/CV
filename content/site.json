@@ -288,6 +288,20 @@
   ],
   "certifications": [
     {
+      "title": "Data Analyst",
+      "institution": "Udacity",
+      "date": "Oct 2026",
+      "image": "/assets/credentials/udacity-data-analyst.svg",
+      "credentialUrl": "https://www.udacity.com/certificate/e/f3357bee-cd6a-11f1-8e57-af708f98066f"
+    },
+    {
+      "title": "TQ Physical AI",
+      "institution": "Udacity",
+      "date": "Oct 2026",
+      "image": "/assets/credentials/udacity-tq-physical-ai.svg",
+      "credentialUrl": "https://www.udacity.com/certificate/e/fe6d913c-cd64-11f1-a2f6-9f197f889d6c"
+    },
+    {
       "title": "Reinvention with Agentic AI",
       "institution": "Accenture",
       "date": "Feb 2026",

@@ -7,8 +7,8 @@ import { initCapabilityConstellation } from './modules/capability-map.js?v=capab
 import { initCapabilityRoleDetails } from './modules/capability-role-details.js?v=capability-role-detail-20260928b';
 import { initProjectShowcase } from './modules/project-showcase.js?v=project-showcase-layout-fix-20260928';
 import { initCredentials } from './modules/credentials.js?v=credentials-static-badges-20260929';
-import { initCredentialImages } from './modules/credential-images.js?v=credential-registry-v2-20260929';
-import { initCredentialDescriptions } from './modules/credential-descriptions.js?v=credential-local-badges-20260929c';
+import { initCredentialImages } from './modules/credential-images.js?v=udacity-certificates-20261026';
+import { initCredentialDescriptions } from './modules/credential-descriptions.js?v=udacity-certificates-20261026';
 import { initProjectGallery } from './project-gallery.js?v=inline-gallery-20261004';
 
 initPreferences();

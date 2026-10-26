@@ -95,10 +95,10 @@ for (const item of site.languages) {
 }
 for (const item of site.certifications) {
   for (const key of ['title', 'institution', 'date', 'credentialUrl']) assert(typeof item[key] === 'string' && item[key].trim(), 'Certification item missing ' + key);
-  if (item.image) assert(/^\/assets\/credentials\/[a-z0-9-]+\.png$/.test(item.image), 'Invalid credential image: ' + item.title);
+  if (item.image) { assert(/^\/assets\/credentials\/[a-z0-9-]+\.(?:png|svg)$/.test(item.image), 'Invalid credential image: ' + item.title); assert(existsSync(resolve(root, 'public', '.' + item.image)), 'Missing credential image: ' + item.title); }
   else assert(/^[A-Za-z0-9]{2,8}$/.test(item.badgeLabel || ''), 'Credential without an image needs a short label: ' + item.title);
 }
-assert.equal(site.certifications.length, 8, 'All public credentials should be listed');
+assert.equal(site.certifications.length, 10, 'All public credentials should be listed');
 
 const experienceIds = new Set(site.experience.map(item => item.id));
 assert.equal(experienceIds.size, site.experience.length, 'Experience IDs must be unique');

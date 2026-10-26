@@ -118,22 +118,27 @@ export function render(site, { language = 'en', translations = {} } = {}) {
 
   const certificationCards = site.certifications.map(item => {
     const url = new URL(item.credentialUrl);
-    if (url.protocol !== 'https:' || !['www.credly.com', 'skillsoft.digitalbadges.skillsoft.com'].includes(url.hostname)) {
+    if (url.protocol !== 'https:' || !['www.credly.com', 'skillsoft.digitalbadges.skillsoft.com', 'www.udacity.com'].includes(url.hostname)) {
       throw new Error('Invalid credential URL');
     }
 
-    const credentialProvider = url.hostname === 'skillsoft.digitalbadges.skillsoft.com' ? 'skillsoft' : 'credly';
+    const credentialProvider = url.hostname === 'skillsoft.digitalbadges.skillsoft.com' ? 'skillsoft' : url.hostname === 'www.udacity.com' ? 'udacity' : 'credly';
     const credentialId = credentialProvider === 'skillsoft'
       ? (url.pathname.split('/').filter(Boolean).at(0) || '')
-      : '';
+      : credentialProvider === 'udacity'
+        ? (url.pathname.split('/').filter(Boolean).at(-1) || '')
+        : '';
     if (credentialProvider === 'skillsoft' && !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(credentialId)) {
       throw new Error('Invalid Skillsoft credential ID');
     }
 
+    if (credentialProvider === 'udacity' && !/^\/certificate\/e\/[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(url.pathname)) {
+      throw new Error('Invalid Udacity certificate URL');
+    }
     const credentialImage = credentialProvider === 'skillsoft'
       ? credentialAssets.skillsoft?.[credentialId]
       : item.image;
-    if (!/^\/assets\/credentials\/[a-z0-9-]+\.png$/.test(credentialImage || '')) {
+    if (!/^\/assets\/credentials\/[a-z0-9-]+\.(?:png|svg)$/.test(credentialImage || '')) {
       throw new Error('Missing or invalid credential artwork: ' + item.title);
     }
     const credentialArt = '<div class="credential-art"><img src="' + escapeHtml(credentialImage) + '" alt="" width="400" height="400" loading="lazy" decoding="async"></div>';
