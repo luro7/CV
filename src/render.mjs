@@ -233,7 +233,7 @@ export function render(site, { language = 'en', translations = {} } = {}) {
       name: site.name,
       url: siteUrl.origin + '/',
       sameAs: [site.linkedin],
-      jobTitle: site.title.split(' | ').map(t),
+      jobTitle: t(site.experience.find(item => item.current)?.role || site.title.split(' | ')[0]),
       description: t(site.intro),
       worksFor: {
         '@type': 'Organization',
@@ -249,10 +249,11 @@ export function render(site, { language = 'en', translations = {} } = {}) {
 
   const heroSummary = [site.intro, site.about.at(-1)];
   const heroDetails = site.about.slice(1, -1);
-  const heroFocus = ['Data Engineering', 'AI Automation', 'Reporting & Operations'];
+  const heroFocus = ['Data Engineering', 'SQL Development', 'Business Intelligence (BI)', 'AI Automation'];
 
   const values = {
     ...base,
+    heroRoleContent: '<strong>' + escapeHtml(t(site.experience.find(item => item.current)?.role || site.title.split(' | ')[0])) + '</strong><br>' + site.title.split(' | ').slice(1).map(value => escapeHtml(t(value))).join(' <span class="role-divider">/</span> '),
     heroSummaryContent: paragraphs(heroSummary, t),
     aboutDetailContent: paragraphs(heroDetails, t),
     heroDataProfile: paragraphs([site.about[0], site.about[1], site.about[4]], t),
@@ -272,7 +273,7 @@ export function render(site, { language = 'en', translations = {} } = {}) {
       headline: escapeHtml(site.title.split(' | ').map(t).join(' | ')),
       linkedin: escapeHtml(site.linkedin.replace(/^https:\/\/(www\.)?/, '')),
       linkedinUrl: escapeHtml(site.linkedin),
-      summary: paragraphs([site.intro], t),
+      summary: paragraphs([site.intro, site.about[1], site.about[2]], t),
       printExpertise,
       printExperience,
       projectsIntro: escapeHtml(t(site.projectsIntro)),

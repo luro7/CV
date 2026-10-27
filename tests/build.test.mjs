@@ -33,4 +33,21 @@ test('build starts clean and generates English and Spanish indexable pages', () 
   assert.match(en, /hreflang="es"/);
   assert.match(es, /rel="canonical" href="https:\/\/lucasrosat\.pages\.dev\/es\/"/);
   assert.match(sitemap, /lucasrosat\.pages\.dev\/es\//);
+
+  // Current Accenture role is the real job title; BI/SQL/AI remain specialties.
+  assert.match(en, /<p class="hero-role"><strong>Data Engineering Analyst<\/strong>/);
+  assert.match(es, /Analista de Ingeniería de Datos<\/strong>/);
+  assert.match(en, /Design and build end-to-end ETL processes from scratch/);
+  assert.match(en, /Design SQL Server database structures and data models/);
+  assert.match(en, /Develop, troubleshoot and optimize complex T-SQL queries/);
+  assert.match(en, /Power BI Paginated Reports \(RDL\)/);
+  assert.match(en, /Design and develop AI agents with Microsoft Copilot/);
+  assert.match(es, /Diseño y desarrollo de procesos ETL de punta a punta desde cero/);
+  assert.match(es, /Diseño de estructuras de bases de datos SQL Server y modelos de datos/);
+  assert.match(es, /Desarrollo y mantenimiento de soluciones de inteligencia de negocios/);
+  const printSummary = en.match(/<h2>Professional summary<\/h2>\s*<div class="print-cv-content">([\s\S]*?)<\/div>/)?.[1] || '';
+  assert.match(printSummary, /end-to-end ETL processes/);
+  const profileSchema = JSON.parse(en.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  assert.equal(profileSchema.mainEntity.jobTitle, 'Data Engineering Analyst');
+
 });
