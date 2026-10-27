@@ -58,8 +58,8 @@ export function render(site, { language = 'en', translations = {} } = {}) {
   const pagePath = spanish ? '/es/' : '/';
   const pageUrl = siteUrl.origin + pagePath;
   const pageTitle = spanish
-    ? 'Lucas Rosat - Ingeniería de Datos y Automatización con IA'
-    : 'Lucas Rosat — Data Engineering & AI Automation';
+    ? 'Lucas Rosat | Ingeniería de Datos, BI, SQL y Automatización con IA'
+    : 'Lucas Rosat | Data Engineering, BI, SQL & AI Automation';
   const pageDescription = spanish
     ? (translations[site.description] || site.description)
     : site.description;

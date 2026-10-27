@@ -4,8 +4,8 @@
   "location": "Bahía Blanca, Buenos Aires, Argentina",
   "cvPortrait": "/assets/lucas-rosat-portrait.png",
   "title": "Data Engineering Analyst | AI Automation Engineer | SQL Developer",
-  "description": "Lucas Rosat, Data Engineering Analyst, AI Automation Engineer and SQL Developer. Experience with SQL Server, Azure Data Factory, SSIS, Power BI and Power Automate.",
-  "intro": "I am a Data Engineering Analyst and AI Automation Engineer with a strong background in SQL development, data integration, reporting, process automation, and enterprise solutions.",
+  "description": "Lucas Rosat is a Data Engineering Analyst and AI Automation Engineer with experience in SQL Server, Business Intelligence (BI), ETL development, data modeling, Power BI Paginated Reports, Generative AI and process automation.",
+  "intro": "I am a Data Engineering Analyst and AI Automation Engineer specializing in SQL development, Business Intelligence (BI), ETL and data integration, enterprise reporting, Generative AI, and process automation.",
   "expertise": [
     {
       "title": "Data engineering",
@@ -18,7 +18,11 @@
         "Query Optimization",
         "Database Systems",
         "SSIS",
-        "Azure Data Factory"
+        "Azure Data Factory",
+        "Stored Procedures",
+        "Data Modeling",
+        "Database Design",
+        "SQL Performance Tuning"
       ]
     },
     {
@@ -47,7 +51,9 @@
         "Azure DevOps",
         "Technical Analysis",
         "Troubleshooting",
-        "Enterprise Data and Business Processes"
+        "Enterprise Data and Business Processes",
+        "Business Intelligence (BI)",
+        "Power BI Paginated Reports (RDL)"
       ]
     }
   ],
@@ -58,12 +64,13 @@
       "date": "Dec 2022 — Present",
       "current": true,
       "points": [
-        "Design and maintain complex data-processing and reporting logic, including stored procedures, validations, ETL workflows and business rules.",
-        "Design AI agents that support technical analysis, troubleshooting, requirements understanding, process documentation and engineering workflows.",
-        "Apply AI-assisted development to reduce repetitive work, accelerate debugging and code analysis, and support implementation workflows.",
-        "Build and support automated data integrations and scheduled processes across enterprise systems.",
-        "Build and maintain reporting solutions focused on data accuracy, usability and alignment with business requirements.",
-        "Collaborate with functional, development and testing teams to define technical solutions, establish acceptance criteria, validate end-to-end behavior and resolve complex data issues."
+        "Design and develop end-to-end ETL processes and automated data integrations, including SQL Server tables, data models, relationships and data transformations.",
+        "Develop and optimize complex T-SQL queries and Stored Procedures, including SQL performance tuning, data validations and business rules.",
+        "Build and maintain Business Intelligence and enterprise reporting solutions using Power BI Paginated Reports (RDL), SQL-based datasets and existing reporting models.",
+        "Design AI agents using Microsoft Copilot to support technical analysis, troubleshooting, requirements understanding, process documentation and engineering workflows.",
+        "Apply AI-assisted development and Power Automate to reduce repetitive tasks, accelerate debugging and code analysis, and streamline development and business workflows.",
+        "Build and support enterprise data processing, scheduled integrations and production workflows using Microsoft data and automation technologies.",
+        "Collaborate with functional, development and testing teams to translate requirements into technical solutions, establish acceptance criteria, validate end-to-end behavior and resolve complex data issues."
       ],
       "tools": [
         "Microsoft Copilot Enterprise",
@@ -77,7 +84,8 @@
         "SSRS",
         "PowerShell",
         "BMC Control-M",
-        "Azure DevOps"
+        "Azure DevOps",
+        "Power BI Paginated Reports (RDL)"
       ],
       "id": "accenture-data-engineering"
     },
@@ -359,12 +367,12 @@
     }
   ],
   "about": [
-    "I am a Data Engineering Analyst and AI Automation Engineer with a strong background in SQL development, data integration, reporting, process automation, and enterprise solutions.",
-    "Throughout my experience, I have worked with SQL Server, ETL processes, data analysis, reporting solutions, Power BI, Power Automate, Azure DevOps, BMC Control-M, and Microsoft development technologies, designing and supporting solutions that improve data processing, reporting, and business operations.",
-    "In addition to my Data Engineering background, I actively work with Generative AI and AI-driven automation. I have designed and developed multiple AI agents using Microsoft Copilot to support technical analysis, SQL development, troubleshooting, requirements understanding, process documentation, and day-to-day engineering activities.",
-    "I also use AI and automation technologies to improve development workflows, reduce repetitive work, accelerate problem solving, and create more efficient ways of interacting with technical and business processes.",
-    "My background in Systems Analysis, programming, algorithms, databases, and software development allows me to quickly adapt to new technologies and programming languages and apply them to real-world problems.",
-    "I am especially interested in opportunities where Data Engineering, automation, and Artificial Intelligence come together to build practical solutions that improve business processes and engineering productivity."
+    "I am a Data Engineering Analyst and AI Automation Engineer with a strong background in SQL development, Business Intelligence (BI), data integration, reporting, data modeling, database design, Generative AI and process automation.",
+    "Throughout my experience, I have designed and developed end-to-end ETL processes, data integrations and SQL Server database structures, including tables, relationships and data models. I develop complex T-SQL queries and Stored Procedures, optimize query and database performance, and implement validations and business rules for reliable enterprise solutions.",
+    "In addition to Data Engineering and Business Intelligence, I actively work with Generative AI and AI-driven automation. I have designed and developed multiple AI agents using Microsoft Copilot to support technical analysis, SQL development, troubleshooting, requirements understanding, process documentation and day-to-day engineering activities.",
+    "I use Power Automate, Microsoft Copilot and other AI and automation technologies to improve development workflows, reduce repetitive work, accelerate problem-solving and make technical and business processes more efficient.",
+    "My Business Intelligence experience includes Power BI Paginated Reports (RDL), SQL-based datasets, data analysis and existing reporting models. I also work with Azure DevOps, BMC Control-M and Microsoft development technologies to support enterprise reporting, production systems and business operations. My background in Systems Analysis, programming, algorithms, databases and software development helps me quickly adapt to new technologies and programming languages.",
+    "I am interested in opportunities across Data Engineering, SQL Development, Business Intelligence, Reporting, Data Integration, AI Automation and related technology fields, where I can build practical enterprise solutions that improve business processes and engineering productivity."
   ],
   "siteUrl": "https://lucasrosat.pages.dev",
   "engineering": [
@@ -421,7 +429,13 @@
     "Azure DevOps": "Technology",
     "Technical Analysis": "Skill",
     "Troubleshooting": "Skill",
-    "Enterprise Data and Business Processes": "Domain"
+    "Enterprise Data and Business Processes": "Domain",
+    "Stored Procedures": "Skill",
+    "Data Modeling": "Skill",
+    "Database Design": "Skill",
+    "SQL Performance Tuning": "Skill",
+    "Business Intelligence (BI)": "Domain",
+    "Power BI Paginated Reports (RDL)": "Technology"
   },
   "skillRoleIds": {
     "SQL Development": [
@@ -438,6 +452,7 @@
       "accenture-sql-developer"
     ],
     "Query Optimization": [
+      "accenture-data-engineering",
       "accenture-sql-developer"
     ],
     "Database Systems": [
@@ -481,6 +496,28 @@
       "aoniken-sql-support"
     ],
     "Enterprise Data and Business Processes": [
+      "accenture-data-engineering"
+    ],
+    "Stored Procedures": [
+      "accenture-data-engineering",
+      "accenture-sql-developer"
+    ],
+    "Data Modeling": [
+      "accenture-data-engineering"
+    ],
+    "Database Design": [
+      "accenture-data-engineering",
+      "accenture-sql-developer"
+    ],
+    "SQL Performance Tuning": [
+      "accenture-data-engineering",
+      "accenture-sql-developer"
+    ],
+    "Business Intelligence (BI)": [
+      "accenture-data-engineering",
+      "accenture-sql-developer"
+    ],
+    "Power BI Paginated Reports (RDL)": [
       "accenture-data-engineering"
     ]
   },
